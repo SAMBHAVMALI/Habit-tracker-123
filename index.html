@@ -27,10 +27,24 @@
         }
 
         .app-shell { height: 100vh; display: flex; flex-direction: column; position: relative; }
-        .content-area { flex: 1; display: flex; flex-direction: column; padding: 28px 28px 120px 28px; overflow-y: auto; }
         
-        /* Splash Overlay */
-        .overlay-screen { position: fixed; inset: 0; background: #FFFFFF; display: flex; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.8s ease; }
+        /* content-area now allows scrolling but bottom-padding protects the nav */
+        .content-area { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            padding: 28px 28px 100px 28px; 
+            overflow-y: auto; 
+            scrollbar-width: none;
+        }
+        .content-area::-webkit-scrollbar { display: none; }
+
+        /* Restored Smooth Splash Animations */
+        .overlay-screen { 
+            position: fixed; inset: 0; background: #FFFFFF; 
+            display: flex; align-items: center; justify-content: center; 
+            z-index: 9999; transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
         .hide-overlay { opacity: 0; pointer-events: none; }
         
         .logo-gradient { background: linear-gradient(135deg, #1A1A1A 0%, #444444 100%); }
@@ -38,23 +52,31 @@
         .nav-text { font-size: 9px; font-weight: 800; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.1em; }
 
         .centered-container { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        
+        /* Calendar UI */
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
         .calendar-day { aspect-ratio: 1; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; }
 
-        /* FIXED HORIZONTAL SCROLLING */
+        /* FIXED HORIZONTAL SCROLLING FOR PICKERS */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        .scroll-row { 
-            display: flex; 
-            overflow-x: auto; 
-            gap: 12px; 
-            padding: 10px; 
-            width: calc(100vw - 120px); /* Ensures it has space to scroll */
-            white-space: nowrap;
+        /* scroll-container ensures the inner row can expand beyond the screen */
+        .scroll-container {
+            display: flex;
+            overflow-x: auto;
+            width: calc(100vw - 120px); 
+            padding: 5px 0;
+            scroll-behavior: smooth;
         }
+        
+        .scroll-row { display: flex; gap: 12px; flex-shrink: 0; }
+        
+        /* Force buttons to stay circular/square and not shrink */
+        .picker-btn { flex-shrink: 0 !important; }
 
-        .month-picker-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade { animation: fadeIn 0.4s ease-out forwards; }
     </style>
 </head>
 <body>
@@ -79,7 +101,7 @@
                 customCount: 1, customPeriod: 'Week'
             });
 
-            const quotes = ["Consistency is your signature.", "Quality is a habit.", "Discipline is freedom."];
+            const quotes = ["Consistency is your signature.", "Small habits lead to big changes.", "The secret is in the routine."];
             const [activeQuote] = useState(() => quotes[Math.floor(Math.random() * quotes.length)]);
 
             const colorPalette = ['#1A1A1A', '#D4AF37', '#6366F1', '#EC4899', '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6', '#FF6B6B', '#4ECDC4', '#A8E6CF', '#FFD3B6', '#FFAAA5', '#88D8B0'];
@@ -87,7 +109,7 @@
 
             useEffect(() => {
                 const t1 = setTimeout(() => setOverlayStage('quote'), 1200);
-                const t2 = setTimeout(() => setOverlayStage('none'), 3000);
+                const t2 = setTimeout(() => setOverlayStage('none'), 3200);
                 return () => { clearTimeout(t1); clearTimeout(t2); };
             }, []);
 
@@ -113,7 +135,7 @@
                         </button>
                         {showMenu && (
                             <div className="absolute right-0 top-14 w-48 bg-white border border-black/5 rounded-3xl shadow-2xl z-[70] p-2">
-                                <button onClick={() => {localStorage.clear(); window.location.reload();}} className="w-full px-5 py-4 text-left text-xs font-bold text-rose-500 hover:bg-rose-50 flex items-center gap-3 rounded-2xl transition-colors">
+                                <button onClick={() => {localStorage.clear(); window.location.reload();}} className="w-full px-5 py-4 text-left text-xs font-bold text-rose-500 hover:bg-rose-50 flex items-center gap-3 rounded-2xl">
                                     <i className="fa-solid fa-trash-can opacity-50"></i> Clear All Data
                                 </button>
                             </div>
@@ -124,14 +146,17 @@
 
             return (
                 <div className="app-shell max-w-lg mx-auto">
+                    {/* Splash Screen - Restored Smooth Flow */}
                     <div className={`overlay-screen ${overlayStage === 'none' ? 'hide-overlay' : ''}`}>
                         {overlayStage === 'logo' ? (
-                            <div className="flex flex-col items-center">
+                            <div className="flex flex-col items-center animate-fade">
                                 <img src="./logo512.png" alt="Routiq" className="w-40 h-40 object-contain" />
                                 <h1 className="text-4xl font-black text-black mt-4 italic">Routiq</h1>
                             </div>
                         ) : (
-                            <p className="px-12 text-center text-xl font-bold italic leading-relaxed">"{activeQuote}"</p>
+                            <div className="px-12 text-center animate-fade">
+                                <p className="text-xl font-bold italic leading-relaxed text-black">"{activeQuote}"</p>
+                            </div>
                         )}
                     </div>
 
@@ -169,7 +194,7 @@
                         )}
 
                         {currentPage === 'calendar_full' && (
-                            <div className="animate-in fade-in flex flex-col h-full">
+                            <div className="animate-fade flex flex-col h-full">
                                 <div className="flex justify-between items-center mb-8">
                                     <h2 className="text-2xl font-black italic">{viewDate.toLocaleString('default', { month: 'long' })} {viewDate.getFullYear()}</h2>
                                     <div className="flex gap-2">
@@ -193,10 +218,12 @@
                                         })}
                                     </div>
                                 </div>
-                                {/* FIXED: BACK TO TODAY BUTTON POSITION */}
-                                <button onClick={() => { setViewDate(new Date()); setCurrentPage('home'); }} className="w-full mt-6 py-5 rounded-[32px] bg-black text-white font-black text-lg shadow-xl shrink-0">
-                                    Back to Today
-                                </button>
+                                {/* FIXED: BACK TO TODAY BUTTON POSITION & VISIBILITY */}
+                                <div className="mt-8 mb-10">
+                                    <button onClick={() => { setViewDate(new Date()); setCurrentPage('home'); }} className="w-full py-6 rounded-[32px] bg-black text-white font-black text-lg shadow-xl active:scale-95 transition-all">
+                                        Back to Today
+                                    </button>
+                                </div>
                             </div>
                         )}
 
@@ -236,36 +263,38 @@
                         )}
 
                         {currentPage === 'add' && (
-                            <div className="animate-in slide-in-from-bottom-6 space-y-6 pb-20">
+                            <div className="animate-fade space-y-6 pb-20">
                                 <h2 className="text-2xl font-black italic">New Ritual</h2>
                                 <input className="w-full p-6 rounded-3xl bg-white font-bold outline-none shadow-sm" placeholder="Habit Name" value={form.name} onChange={e => setForm({...form, name: e.target.value})} />
                                 <textarea className="w-full p-6 rounded-3xl bg-white font-medium text-sm outline-none shadow-sm" placeholder="Description" rows="2" value={form.description} onChange={e => setForm({...form, description: e.target.value})} />
                                 
-                                <div className="flex flex-col gap-4">
-                                    {/* COLOR PICKER SCROLL FIX */}
-                                    <div className="flex flex-col gap-2">
-                                        <p className="text-[10px] font-black uppercase tracking-widest ml-2 opacity-50">Theme Color</p>
-                                        <div className="flex items-center">
-                                            <button onClick={() => setPickers({color: !pickers.color, icon: false})} className="w-14 h-14 rounded-full border-4 border-white shadow-md z-10 shrink-0" style={{ backgroundColor: form.color }} />
-                                            {pickers.color && (
-                                                <div className="scroll-row no-scrollbar bg-white/50 rounded-full ml-2">
-                                                    {colorPalette.map(c => <button key={c} onClick={() => {setForm({...form, color: c}); setPickers({color: false})}} className="w-10 h-10 rounded-full shrink-0 shadow-sm" style={{ backgroundColor: c }} />)}
+                                {/* FIXED: HORIZONTAL SCROLLING FOR COLOR PICKER */}
+                                <div className="flex flex-col gap-2">
+                                    <p className="text-[10px] font-black uppercase tracking-widest ml-2 opacity-50">Theme Color</p>
+                                    <div className="flex items-center">
+                                        <button onClick={() => setPickers({color: !pickers.color, icon: false})} className="w-14 h-14 rounded-full border-4 border-white shadow-md z-10 shrink-0" style={{ backgroundColor: form.color }} />
+                                        {pickers.color && (
+                                            <div className="scroll-container no-scrollbar ml-2 bg-white/40 rounded-full">
+                                                <div className="scroll-row px-4">
+                                                    {colorPalette.map(c => <button key={c} onClick={() => {setForm({...form, color: c}); setPickers({color: false})}} className="w-10 h-10 rounded-full picker-btn shadow-sm" style={{ backgroundColor: c }} />)}
                                                 </div>
-                                            )}
-                                        </div>
+                                            </div>
+                                        )}
                                     </div>
+                                </div>
 
-                                    {/* ICON PICKER SCROLL FIX */}
-                                    <div className="flex flex-col gap-2">
-                                        <p className="text-[10px] font-black uppercase tracking-widest ml-2 opacity-50">Select Icon</p>
-                                        <div className="flex items-center">
-                                            <button onClick={() => setPickers({icon: !pickers.icon, color: false})} className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center text-2xl shadow-sm z-10 border border-black/5 shrink-0">{form.icon}</button>
-                                            {pickers.icon && (
-                                                <div className="scroll-row no-scrollbar bg-white/50 rounded-2xl ml-2">
-                                                    {iconLibrary.map(i => <button key={i} onClick={() => {setForm({...form, icon: i}); setPickers({icon: false})}} className="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-xl shadow-sm border border-black/5 shrink-0">{i}</button>)}
+                                {/* FIXED: HORIZONTAL SCROLLING FOR ICON PICKER */}
+                                <div className="flex flex-col gap-2">
+                                    <p className="text-[10px] font-black uppercase tracking-widest ml-2 opacity-50">Select Icon</p>
+                                    <div className="flex items-center">
+                                        <button onClick={() => setPickers({icon: !pickers.icon, color: false})} className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center text-2xl shadow-sm z-10 shrink-0 border border-black/5">{form.icon}</button>
+                                        {pickers.icon && (
+                                            <div className="scroll-container no-scrollbar ml-2 bg-white/40 rounded-2xl">
+                                                <div className="scroll-row px-4">
+                                                    {iconLibrary.map(i => <button key={i} onClick={() => {setForm({...form, icon: i}); setPickers({icon: false})}} className="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-xl shadow-sm border border-black/5 picker-btn">{i}</button>)}
                                                 </div>
-                                            )}
-                                        </div>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
 
@@ -279,18 +308,18 @@
                                 </div>
 
                                 {form.frequency === 'Specific Days of Week' && (
-                                    <div className="flex justify-between gap-1 animate-in fade-in p-1">
+                                    <div className="flex justify-between gap-1 animate-fade">
                                         {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d => (
                                             <button key={d} onClick={() => {
                                                 const n = form.weekDays.includes(d) ? form.weekDays.filter(x => x !== d) : [...form.weekDays, d];
                                                 setForm({...form, weekDays: n});
-                                            }} className={`w-11 h-11 rounded-2xl text-[10px] font-black transition-all ${form.weekDays.includes(d) ? 'bg-black text-white shadow-lg' : 'bg-white text-slate-300 border border-black/5'}`}>{d[0]}</button>
+                                            }} className={`w-11 h-11 rounded-2xl text-[10px] font-black transition-all ${form.weekDays.includes(d) ? 'bg-black text-white shadow-lg' : 'bg-white text-slate-300 shadow-sm border border-black/5'}`}>{d[0]}</button>
                                         ))}
                                     </div>
                                 )}
 
                                 {form.frequency === 'Specific Days of Month' && (
-                                    <div className="month-picker-grid bg-white p-5 rounded-[32px] animate-in fade-in shadow-sm border border-black/5">
+                                    <div className="month-picker-grid bg-white p-5 rounded-[32px] animate-fade shadow-sm border border-black/5">
                                         {[...Array(31)].map((_, i) => (
                                             <button key={i} onClick={() => {
                                                 const n = form.monthDays.includes(i+1) ? form.monthDays.filter(x => x !== i+1) : [...form.monthDays, i+1];
@@ -301,12 +330,10 @@
                                 )}
 
                                 {form.frequency === 'Customise Days' && (
-                                    <div className="flex items-center gap-4 bg-white p-6 rounded-[32px] animate-in fade-in shadow-sm border border-black/5">
+                                    <div className="flex items-center gap-4 bg-white p-6 rounded-[32px] animate-fade shadow-sm border border-black/5">
                                         <input type="number" className="w-16 font-black text-xl text-center outline-none border-b-2 border-black/5 bg-transparent" value={form.customCount} onChange={e => setForm({...form, customCount: e.target.value})} />
                                         <span className="font-bold text-xs opacity-40 uppercase tracking-widest">Times per</span>
-                                        <select className="font-black text-sm outline-none bg-transparent" value={form.customPeriod} onChange={e => setForm({...form, customPeriod: e.target.value})}>
-                                            <option>Week</option><option>Month</option>
-                                        </select>
+                                        <select className="font-black text-sm outline-none bg-transparent" value={form.customPeriod} onChange={e => setForm({...form, customPeriod: e.target.value})}><option>Week</option><option>Month</option></select>
                                     </div>
                                 )}
 
