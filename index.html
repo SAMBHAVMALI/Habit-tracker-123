@@ -13,6 +13,31 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; color: #1E293B; overflow-x: hidden; }
+        
+        /* Splash Screen Animation */
+        .splash-container {
+            position: fixed;
+            inset: 0;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out, visibility 0.5s;
+        }
+        .splash-logo {
+            animation: pulse-logo 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse-logo {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+        }
+        .hide-splash {
+            opacity: 0;
+            visibility: hidden;
+        }
+
         .card-standard { background: #FFFFFF; border: 1px solid #F1F5F9; border-radius: 24px; padding: 20px; transition: transform 0.2s; }
         .coach-gradient { background: linear-gradient(135deg, #6366F1 0%, #A855F7 100%); }
         .timeline-dot { width: 12px; height: 12px; border-radius: 50%; background: #6366F1; position: relative; z-index: 10; border: 3px solid white; }
@@ -30,13 +55,21 @@
 
         const App = () => {
             const [currentPage, setCurrentPage] = useState('home');
+            const [isSplashing, setIsSplashing] = useState(true);
             const [habits, setHabits] = useState(() => JSON.parse(localStorage.getItem('habits')) || []);
             const [logs, setLogs] = useState(() => JSON.parse(localStorage.getItem('habitLogs')) || {});
             const infographicRef = useRef(null);
 
             useEffect(() => {
+                // Splash Timer
+                const timer = setTimeout(() => {
+                    setIsSplashing(false);
+                }, 1200);
+
                 localStorage.setItem('habits', JSON.stringify(habits));
                 localStorage.setItem('habitLogs', JSON.stringify(logs));
+                
+                return () => clearTimeout(timer);
             }, [habits, logs]);
 
             const today = new Date().toISOString().split('T')[0];
@@ -64,8 +97,19 @@
 
             // --- UI Pages ---
 
+            const SplashScreen = () => (
+                <div className={`splash-container ${!isSplashing ? 'hide-splash' : ''}`}>
+                    <div className="splash-logo mb-4">
+                        <div className="w-20 h-20 coach-gradient rounded-[24px] flex items-center justify-center text-white shadow-2xl shadow-indigo-200">
+                            <i className="fa-solid fa-feather-pointed text-4xl"></i>
+                        </div>
+                    </div>
+                    <h1 className="text-xl font-bold tracking-tight text-slate-800">HabitFlow</h1>
+                    <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mt-2">Elevate Your Routine</p>
+                </div>
+            );
+
             const TimelinePage = () => {
-                // Mocking journey milestones based on existing data
                 const milestones = [
                     { date: 'Day 1', title: 'The Journey Began', icon: 'fa-seedling', desc: 'You committed to change.' },
                     { date: 'Day 3', title: 'First Momentum', icon: 'fa-fire', desc: '3-day streak achieved.' },
@@ -124,10 +168,6 @@
                                 })}
                             </div>
                         </div>
-                        <div className="card-standard border-none bg-slate-900 text-white">
-                            <h4 className="text-xs font-bold uppercase tracking-widest text-indigo-400 mb-2">Coach Insight</h4>
-                            <p className="text-sm opacity-80 leading-relaxed">Your consistency peaks on Tuesdays. Try scheduling your hardest tasks then!</p>
-                        </div>
                     </div>
                 );
             };
@@ -142,14 +182,6 @@
                         </div>
                         <p className="text-xs text-slate-500 mb-4">Complete all habits this Sat/Sun to unlock the "Unstoppable" badge.</p>
                         <div className="w-full bg-slate-100 h-1 rounded-full"><div className="w-1/3 h-full bg-amber-400"></div></div>
-                    </div>
-                    <div className="grid grid-cols-3 gap-4 mt-8">
-                        <div className="flex flex-col items-center">
-                            <div className="w-16 h-16 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-500 badge-anim mb-2">
-                                <i className="fa-solid fa-medal text-2xl"></i>
-                            </div>
-                            <span className="text-[10px] font-bold text-slate-400">7-Day Sprint</span>
-                        </div>
                     </div>
                 </div>
             );
@@ -168,8 +200,9 @@
 
             return (
                 <div className="min-h-screen relative bg-slate-50 max-w-lg mx-auto shadow-2xl overflow-hidden">
+                    <SplashScreen />
                     {currentPage === 'home' && (
-                        <div className="p-7 pb-28">
+                        <div className="p-7 pb-28 animate-in fade-in duration-700">
                             <header className="mb-8">
                                 <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">Dec 21, 2025</p>
                                 <h1 className="text-2xl font-bold">Today's Focus</h1>
@@ -196,7 +229,7 @@
                     {currentPage === 'calendar' && <CalendarPage />}
                     {currentPage === 'challenges' && <ChallengesPage />}
                     {currentPage === 'timeline' && <TimelinePage />}
-                    {currentPage === 'add' && <div className="p-7"><h2 className="text-2xl font-bold mb-4 text-slate-800">Add New Habit</h2><button onClick={() => setHabits([...habits, {id: Date.now(), name: "Morning Ritual"}])} className="w-full btn-primary coach-gradient py-4 rounded-2xl text-white font-bold">Quick Create</button></div>}
+                    {currentPage === 'add' && <div className="p-7"><h2 className="text-2xl font-bold mb-4 text-slate-800">Add New Habit</h2><button onClick={() => setHabits([...habits, {id: Date.now(), name: "New Ritual"}])} className="w-full btn-primary coach-gradient py-4 rounded-2xl text-white font-bold">Quick Create</button></div>}
                     <Nav />
                 </div>
             );
