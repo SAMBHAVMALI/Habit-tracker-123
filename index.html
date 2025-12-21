@@ -18,31 +18,36 @@
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; color: #1E293B; overflow-x: hidden; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; color: #1E293B; }
         
+        /* Premium Splash Screen */
         .splash-container {
             position: fixed;
             inset: 0;
-            background: white;
+            background: #FFFFFF;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 9999;
-            transition: opacity 0.8s ease-in-out;
+            transition: opacity 0.6s cubic-bezier(0.45, 0, 0.55, 1);
         }
-        .splash-logo-container {
-            width: 160px;
-            height: 160px;
-            animation: logo-entrance 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+        .splash-logo {
+            width: 140px;
+            height: 140px;
+            animation: logo-pop 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        @keyframes logo-entrance {
-            0% { transform: scale(0.8); opacity: 0; filter: blur(10px); }
-            100% { transform: scale(1); opacity: 1; filter: blur(0); }
+        @keyframes logo-pop {
+            0% { transform: scale(0.6); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
         }
+        .loading-bar-bg { width: 120px; height: 3px; background: #F1F5F9; border-radius: 10px; margin-top: 24px; overflow: hidden; }
+        .loading-bar-fill { height: 100%; background: #6366F1; width: 0%; animation: load 1.8s ease-in-out forwards; }
+        @keyframes load { to { width: 100%; } }
         .hide-splash { opacity: 0; pointer-events: none; }
+
         .coach-gradient { background: linear-gradient(135deg, #6366F1 0%, #A855F7 100%); }
-        .card-standard { background: #FFFFFF; border: 1px solid #F1F5F9; border-radius: 24px; padding: 20px; }
+        .card-standard { background: #FFFFFF; border: 1px solid #F1F5F9; border-radius: 24px; padding: 20px; transition: all 0.2s ease; }
     </style>
 </head>
 <body>
@@ -58,63 +63,76 @@
             const [logs, setLogs] = useState(() => JSON.parse(localStorage.getItem('habitLogs')) || {});
 
             useEffect(() => {
-                const timer = setTimeout(() => setIsSplashing(false), 1800);
+                const timer = setTimeout(() => setIsSplashing(false), 2000);
                 localStorage.setItem('habits', JSON.stringify(habits));
                 localStorage.setItem('habitLogs', JSON.stringify(logs));
                 return () => clearTimeout(timer);
             }, [habits, logs]);
 
+            const today = new Date().toISOString().split('T')[0];
+
             const SplashScreen = () => (
                 <div className={`splash-container ${!isSplashing ? 'hide-splash' : ''}`}>
-                    <div className="splash-logo-container mb-6">
-                        <img src="./logo512.png" alt="Routiq Logo" className="w-full h-full object-contain drop-shadow-2xl" />
-                    </div>
-                    <h1 className="text-3xl font-bold tracking-tight text-slate-900">Routiq</h1>
-                    <p className="text-slate-400 text-[10px] font-bold uppercase tracking-[0.3em] mt-3">Precision Productivity</p>
+                    <img src="./logo512.png" alt="Routiq" className="splash-logo object-contain" />
+                    <h1 className="text-3xl font-bold tracking-tight text-slate-900 mt-4 italic">Routiq</h1>
+                    <div className="loading-bar-bg"><div className="loading-bar-fill"></div></div>
                 </div>
             );
 
             const Nav = () => (
-                <nav className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-slate-100 p-6 flex justify-around items-center z-50">
-                    <i onClick={() => setCurrentPage('home')} className={`fa-solid fa-house text-lg cursor-pointer ${currentPage === 'home' ? 'text-indigo-600' : 'text-slate-300'}`}></i>
+                <nav className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-slate-100 p-6 flex justify-around items-center z-50">
+                    <i onClick={() => setCurrentPage('home')} className={`fa-solid fa-house text-lg cursor-pointer transition-colors ${currentPage === 'home' ? 'text-indigo-600' : 'text-slate-300'}`}></i>
                     <div onClick={() => setCurrentPage('add')} className="w-12 h-12 coach-gradient rounded-2xl flex items-center justify-center text-white -mt-12 border-4 border-white shadow-xl cursor-pointer active:scale-90 transition-transform">
                         <i className="fa-solid fa-plus"></i>
                     </div>
-                    <i onClick={() => setCurrentPage('insights')} className={`fa-solid fa-chart-pie text-lg cursor-pointer ${currentPage === 'insights' ? 'text-indigo-600' : 'text-slate-300'}`}></i>
+                    <i onClick={() => setCurrentPage('insights')} className={`fa-solid fa-chart-pie text-lg cursor-pointer transition-colors ${currentPage === 'insights' ? 'text-indigo-600' : 'text-slate-300'}`}></i>
                 </nav>
             );
 
             return (
-                <div className="min-h-screen relative bg-slate-50 max-w-lg mx-auto shadow-2xl">
+                <div className="min-h-screen bg-slate-50 max-w-lg mx-auto shadow-2xl overflow-hidden relative">
                     <SplashScreen />
                     
                     {currentPage === 'home' && (
                         <div className="p-7 pb-28">
                             <header className="mb-8">
-                                <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Daily Routines</h1>
-                                <p className="text-slate-400 text-sm">Focus on what matters today.</p>
+                                <h1 className="text-2xl font-bold tracking-tight text-slate-800">My Routines</h1>
+                                <p className="text-slate-400 text-sm">Organize your daily habits.</p>
                             </header>
                             <div className="space-y-4">
-                                {habits.map(h => (
-                                    <div key={h.id} className="card-standard flex justify-between items-center group active:bg-slate-50 transition-colors">
-                                        <span className="font-bold text-slate-700">{h.name}</span>
-                                        <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
-                                            <i className="fa-solid fa-bolt-lightning text-sm"></i>
-                                        </div>
+                                {habits.length === 0 ? (
+                                    <div className="text-center py-20">
+                                        <i className="fa-solid fa-leaf text-slate-200 text-5xl mb-4"></i>
+                                        <p className="text-slate-400 font-medium text-sm px-10">Your routine is empty. Tap the + to start your Routiq journey.</p>
                                     </div>
-                                ))}
+                                ) : (
+                                    habits.map(h => (
+                                        <div key={h.id} className="card-standard flex justify-between items-center group active:scale-[0.98]">
+                                            <span className="font-bold text-slate-700">{h.name}</span>
+                                            <button onClick={() => {
+                                                const currentLogs = logs[today] || [];
+                                                const newLogs = currentLogs.includes(h.id) ? currentLogs.filter(id => id !== h.id) : [...currentLogs, h.id];
+                                                setLogs({...logs, [today]: newLogs});
+                                            }} className={`w-10 h-10 rounded-xl transition-all flex items-center justify-center ${logs[today]?.includes(h.id) ? 'bg-indigo-500 text-white' : 'bg-slate-100 text-transparent'}`}>
+                                                <i className="fa-solid fa-check"></i>
+                                            </button>
+                                        </div>
+                                    ))
+                                )}
                             </div>
                         </div>
                     )}
 
                     {currentPage === 'add' && (
-                        <div className="p-7">
-                            <h2 className="text-2xl font-bold mb-6">New Habit</h2>
-                            <input id="hInput" type="text" className="w-full p-5 rounded-2xl border border-slate-100 mb-4 focus:ring-2 focus:ring-indigo-500 outline-none transition-all" placeholder="Enter habit name..." />
-                            <button onClick={() => {
-                                const val = document.getElementById('hInput').value;
-                                if(val) { setHabits([...habits, {id: Date.now(), name: val}]); setCurrentPage('home'); }
-                            }} className="w-full coach-gradient text-white font-bold py-5 rounded-2xl shadow-lg shadow-indigo-100">Add to Routiq</button>
+                        <div className="p-7 animate-in slide-in-from-bottom-4 duration-500">
+                            <h2 className="text-2xl font-bold mb-6">New Ritual</h2>
+                            <div className="space-y-6">
+                                <input id="hInput" type="text" className="w-full p-5 rounded-2xl border border-slate-100 bg-white shadow-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all" placeholder="Enter habit name..." />
+                                <button onClick={() => {
+                                    const val = document.getElementById('hInput').value;
+                                    if(val) { setHabits([...habits, {id: Date.now(), name: val}]); setCurrentPage('home'); }
+                                }} className="w-full coach-gradient text-white font-bold py-5 rounded-2xl shadow-lg shadow-indigo-100">Add to Routiq</button>
+                            </div>
                         </div>
                     )}
 
