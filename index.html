@@ -40,8 +40,12 @@
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
         .calendar-day { aspect-ratio: 1; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; }
 
+        /* Picker Animations and Scroll Fix */
         .picker-panel { animation: slideIn 0.3s ease-out; }
         @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
         .month-picker-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
     </style>
@@ -185,11 +189,12 @@
                                         })}
                                     </div>
                                 </div>
-                                {/* THE "BACK TO TODAY" BUTTON */}
-                                <button onClick={() => { setViewDate(new Date()); setCurrentPage('home'); }} className="w-full mt-8 py-6 rounded-[32px] bg-black text-white font-black text-lg shadow-xl shadow-black/10 transition-transform active:scale-95 flex items-center justify-center gap-3">
-                                    <i className="fa-solid fa-calendar-check text-amber-400"></i>
-                                    Back to Today
-                                </button>
+                                {/* FIXED: BACK TO TODAY BUTTON */}
+                                <div className="mt-8 pb-10">
+                                    <button onClick={() => { setViewDate(new Date()); setCurrentPage('home'); }} className="w-full py-6 rounded-[32px] bg-black text-white font-black text-lg shadow-xl transition-transform active:scale-95">
+                                        Back to Today
+                                    </button>
+                                </div>
                             </div>
                         )}
 
@@ -236,25 +241,26 @@
                                 <input className="w-full p-6 rounded-3xl bg-white font-bold outline-none shadow-sm border border-transparent focus:border-black/5 transition-all" placeholder="Habit Name" value={form.name} onChange={e => setForm({...form, name: e.target.value})} />
                                 <textarea className="w-full p-6 rounded-3xl bg-white font-medium text-sm outline-none shadow-sm border border-transparent focus:border-black/5 transition-all" placeholder="Description" rows="2" value={form.description} onChange={e => setForm({...form, description: e.target.value})} />
                                 
+                                {/* FIXED: SCROLLABLE COLOR & ICON PICKERS */}
                                 <div className="flex items-center gap-4">
-                                    <div className="flex flex-col gap-2">
+                                    <div className="flex flex-col gap-2 max-w-[50%]">
                                         <p className="text-[10px] font-black uppercase tracking-widest ml-2 opacity-50">Theme Color</p>
-                                        <div className="flex items-center gap-4">
-                                            <button onClick={() => setPickers({color: !pickers.color, icon: false})} className="w-14 h-14 rounded-full border-4 border-white shadow-md transition-transform active:scale-90" style={{ backgroundColor: form.color }} />
+                                        <div className="flex items-center">
+                                            <button onClick={() => setPickers({color: !pickers.color, icon: false})} className="w-14 h-14 rounded-full border-4 border-white shadow-md z-10 shrink-0" style={{ backgroundColor: form.color }} />
                                             {pickers.color && (
-                                                <div className="flex gap-2 overflow-x-auto px-4 py-2 ml-2 bg-white/50 rounded-full picker-panel shadow-sm">
-                                                    {colorPalette.map(c => <button key={c} onClick={() => {setForm({...form, color: c}); setPickers({color: false})}} className="w-9 h-9 rounded-full shrink-0 hover:scale-110 transition-transform shadow-sm" style={{ backgroundColor: c }} />)}
+                                                <div className="flex gap-2 overflow-x-auto px-4 py-2 ml-2 bg-white/50 rounded-full picker-panel shadow-sm no-scrollbar whitespace-nowrap">
+                                                    {colorPalette.map(c => <button key={c} onClick={() => {setForm({...form, color: c}); setPickers({color: false})}} className="w-9 h-9 rounded-full shrink-0 shadow-sm" style={{ backgroundColor: c }} />)}
                                                 </div>
                                             )}
                                         </div>
                                     </div>
-                                    <div className="flex flex-col gap-2">
+                                    <div className="flex flex-col gap-2 max-w-[50%]">
                                         <p className="text-[10px] font-black uppercase tracking-widest ml-2 opacity-50">Select Icon</p>
-                                        <div className="flex items-center gap-4">
-                                            <button onClick={() => setPickers({icon: !pickers.icon, color: false})} className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center text-2xl shadow-sm z-10 border border-black/5 active:scale-90 transition-transform">{form.icon}</button>
+                                        <div className="flex items-center">
+                                            <button onClick={() => setPickers({icon: !pickers.icon, color: false})} className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center text-2xl shadow-sm z-10 border border-black/5 shrink-0">{form.icon}</button>
                                             {pickers.icon && (
-                                                <div className="flex gap-2 overflow-x-auto px-4 py-2 ml-2 bg-white/50 rounded-2xl picker-panel shadow-sm">
-                                                    {iconLibrary.map(i => <button key={i} onClick={() => {setForm({...form, icon: i}); setPickers({icon: false})}} className="w-11 h-11 shrink-0 bg-white rounded-xl flex items-center justify-center text-xl shadow-sm border border-black/5 hover:scale-110 transition-transform">{i}</button>)}
+                                                <div className="flex gap-2 overflow-x-auto px-4 py-2 ml-2 bg-white/50 rounded-2xl picker-panel shadow-sm no-scrollbar whitespace-nowrap">
+                                                    {iconLibrary.map(i => <button key={i} onClick={() => {setForm({...form, icon: i}); setPickers({icon: false})}} className="w-11 h-11 shrink-0 bg-white rounded-xl flex items-center justify-center text-xl shadow-sm border border-black/5">{i}</button>)}
                                                 </div>
                                             )}
                                         </div>
