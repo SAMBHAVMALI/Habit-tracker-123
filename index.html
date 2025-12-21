@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Routiq Legacy Master Pro v6</title>
+    <title>Routiq Master Pro Build</title>
     
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
@@ -12,73 +12,43 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        /* =========================================================
-            SECTION 2: CORE TYPOGRAPHY & DESIGN TOKENS
-            =========================================================
-        */
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
         
         :root {
             --logo-gold: #D4AF37;   
             --logo-black: #1A1A1A;  
             --logo-peach: #F5E6D3;  
-            --card-shadow-soft: 0 10px 40px rgba(0,0,0,0.04);
-            --card-shadow-medium: 0 15px 50px rgba(0,0,0,0.06);
-            --card-shadow-deep: 0 25px 70px rgba(0,0,0,0.12);
-            --transition-primary: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
 
-        /* =========================================================
-            SECTION 3: GLOBAL LAYOUT RESET
-            =========================================================
-        */
         body, html, #root { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
             background-color: var(--logo-peach) !important; 
             margin: 0; 
-            padding: 0;
             height: 100vh; 
             width: 100vw; 
             overflow: hidden;
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* =========================================================
-            SECTION 4: STRUCTURAL ARCHITECTURE
-            =========================================================
-        */
+        /* structural components */
         .app-shell { 
             height: 100vh; 
             display: flex; 
             flex-direction: column; 
             position: relative; 
-            max-width: 500px;
-            margin: 0 auto;
-            overflow: hidden;
-            background: transparent;
         }
         
         .content-area { 
             flex: 1; 
             display: flex; 
             flex-direction: column; 
-            padding: 28px 28px 220px 28px; 
+            padding: 28px 28px 140px 28px; 
             overflow-y: auto; 
             scrollbar-width: none;
-            -ms-overflow-style: none;
-            position: relative;
-            z-index: 10;
         }
-        
-        .content-area::-webkit-scrollbar { 
-            display: none; 
-        }
+        .content-area::-webkit-scrollbar { display: none; }
 
-        /* =========================================================
-            SECTION 5: COMPONENT VISUALS
-            =========================================================
-        */
+        /* Splash Sequence Logic */
         .overlay-screen { 
             position: fixed; 
             inset: 0; 
@@ -87,9 +57,8 @@
             align-items: center; 
             justify-content: center; 
             z-index: 9999; 
-            transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1); 
+            transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1); 
         }
-        
         .hide-overlay { 
             opacity: 0; 
             pointer-events: none; 
@@ -101,26 +70,72 @@
         
         .card-standard { 
             background: #FFFFFF; 
-            border-radius: 40px; 
-            padding: 30px; 
-            box-shadow: var(--card-shadow-soft); 
+            border-radius: 32px; 
+            padding: 24px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.04); 
             border: none; 
-            transition: var(--transition-primary);
-            position: relative;
         }
         
         .nav-text { 
             font-size: 9px; 
             font-weight: 800; 
-            margin-top: 8px; 
+            margin-top: 6px; 
             text-transform: uppercase; 
-            letter-spacing: 0.16em; 
+            letter-spacing: 0.12em; 
         }
 
-        /* =========================================================
-            SECTION 6: DATA ANALYSIS STYLING
-            =========================================================
-        */
+        /* empty state containers */
+        .centered-container { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            text-align: center; 
+        }
+        
+        /* calendar framework components */
+        .calendar-grid { 
+            display: grid; 
+            grid-template-columns: repeat(7, 1fr); 
+            gap: 8px; 
+        }
+        .calendar-day { 
+            aspect-ratio: 1; 
+            border-radius: 14px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 11px; 
+            font-weight: 800; 
+        }
+
+        /* advanced scrolling systems */
+        .scroll-wrapper { 
+            overflow-x: auto; 
+            width: 100%; 
+            -webkit-overflow-scrolling: touch; 
+            padding: 8px 0; 
+        }
+        .scroll-inner { 
+            display: flex; 
+            gap: 14px; 
+            width: max-content; 
+            padding-right: 30px; 
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* floating action button engine */
+        .fixed-bottom-btn { 
+            position: absolute; 
+            bottom: 110px; 
+            left: 28px; 
+            right: 28px; 
+            z-index: 40; 
+        }
+
+        /* data visualization components */
         .meter-svg { transform: rotate(-90deg); }
         .meter-bg { fill: none; stroke: #F8FAFC; stroke-width: 10; }
         .meter-progress { 
@@ -128,197 +143,57 @@
             stroke: var(--logo-gold); 
             stroke-width: 10; 
             stroke-linecap: round; 
-            transition: stroke-dashoffset 2.2s cubic-bezier(0.4, 0, 0.2, 1); 
+            transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1); 
         }
 
+        /* heatmap matrix engine */
         .heatmap-grid { 
             display: grid; 
             grid-template-columns: repeat(10, 1fr); 
-            gap: 8px; 
+            gap: 7px; 
         }
-        
         .heatmap-cell { 
             aspect-ratio: 1; 
-            border-radius: 10px; 
-            transition: transform 0.4s ease, background 0.6s ease; 
-            border: 2px solid rgba(0,0,0,0.02); 
+            border-radius: 7px; 
+            transition: transform 0.3s ease; 
+            border: 1.5px solid rgba(0,0,0,0.02); 
         }
+        .heatmap-cell:hover { transform: scale(1.1); z-index: 10; }
         
         .filter-chip { 
-            padding: 14px 26px; 
-            border-radius: 32px; 
+            padding: 10px 18px; 
+            border-radius: 24px; 
             font-size: 10px; 
             font-weight: 800; 
             text-transform: uppercase; 
             cursor: pointer; 
-            transition: all 0.6s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* =========================================================
-            SECTION 7: GRID BOXES & PROTECTORS
-            =========================================================
-        */
-        .month-picker-container { 
-            width: 100%; 
-            background: rgba(255,255,255,0.9); 
-            border-radius: 48px; 
-            padding: 32px; 
-            border: 2px solid white; 
-            box-shadow: inset 0 5px 25px rgba(0,0,0,0.02); 
-            overflow: hidden;
-            margin: 0 auto;
-        }
-        
+        /* month picker logic grid */
         .month-picker-grid { 
             display: grid; 
             grid-template-columns: repeat(7, 1fr); 
-            gap: 12px; 
-            width: 100%; 
+            gap: 7px; 
         }
 
-        .calendar-grid { 
-            display: grid; 
-            grid-template-columns: repeat(7, 1fr); 
-            gap: 12px; 
-        }
-        
-        .calendar-day { 
-            aspect-ratio: 1; 
-            border-radius: 20px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 13px; 
-            font-weight: 800; 
-            transition: all 0.5s ease;
-        }
-
-        /* =========================================================
-            SECTION 8: GLOBAL NAVIGATION BAR
-            =========================================================
-        */
-        .fixed-navbar { 
-            position: fixed; 
-            bottom: 0; 
-            left: 0; 
-            right: 0; 
-            background: rgba(255,255,255,0.98); 
-            backdrop-blur: 40px; 
-            padding: 30px 20px 55px 20px; 
-            display: flex; 
-            justify-content: space-around; 
-            align-items: center; 
-            z-index: 1000; 
-            border-top: 1px solid rgba(0,0,0,0.04); 
-            box-shadow: 0 -20px 60px rgba(0,0,0,0.04);
-        }
-
-        .btn-today-legacy {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 50px auto 160px auto;
-            padding: 22px 60px;
-            background: #1A1A1A;
-            color: #FFFFFF;
-            font-weight: 800;
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 0.25em;
-            border-radius: 100px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.35);
-            transition: var(--transition-bounce);
-            cursor: pointer;
-            border: none;
-            width: fit-content;
-            position: relative;
-            z-index: 100;
-        }
-        
-        .btn-today-legacy:active { transform: scale(0.88); }
-
-        @keyframes entranceEffect { 
-            from { opacity: 0; transform: translateY(40px) scale(0.9); } 
+        @keyframes fadeInScale { 
+            from { opacity: 0; transform: translateY(15px) scale(0.98); } 
             to { opacity: 1; transform: translateY(0) scale(1); } 
         }
-        
-        .animate-view { 
-            animation: entranceEffect 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards; 
+        .animate-fade { 
+            animation: fadeInScale 0.5s ease-out forwards; 
         }
-
-        .color-picker-item {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: 5px solid white;
-            flex-shrink: 0;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.12);
-            transition: all 0.4s ease;
-        }
-        .color-picker-item:hover { transform: scale(1.1); }
     </style>
 </head>
 <body>
     <div id="root"></div>
 
     <script type="text/babel">
-        // ---------------------------------------------------------
-        // SECTION 9: REACT CORE UTILITIES
-        // ---------------------------------------------------------
-        const { useState, useEffect, useMemo, Fragment, useCallback, useRef } = React;
+        const { useState, useEffect, useMemo, Fragment } = React;
 
-        // ---------------------------------------------------------
-        // SUB-COMPONENT: REUSABLE HEADER
-        // ---------------------------------------------------------
-        const AppHeader = ({ title, subtitle, onCalendarClick, onMenuClick, showMenu, onReset }) => {
-            return (
-                <header className="flex justify-between items-center mb-14 w-full relative z-[60]">
-                    <div className="animate-view">
-                        <h1 className="text-3xl font-black italic tracking-tighter text-black">{title}</h1>
-                        <p className="text-slate-500 text-[10px] font-extrabold uppercase tracking-[0.25em] mt-2">{subtitle}</p>
-                    </div>
-                    <div className="flex gap-5">
-                        {onCalendarClick && (
-                            <button 
-                                onClick={onCalendarClick} 
-                                className="w-13 h-13 flex items-center justify-center rounded-2xl bg-white border border-black/5 text-black shadow-sm active:scale-90 transition-all duration-500"
-                                style={{ width: '52px', height: '52px' }}
-                            >
-                                <i className="fa-solid fa-calendar-day text-lg"></i>
-                            </button>
-                        )}
-                        <button 
-                            onClick={onMenuClick} 
-                            className="w-13 h-13 flex items-center justify-center rounded-2xl bg-black text-white shadow-xl active:scale-90 transition-all duration-500"
-                            style={{ width: '52px', height: '52px' }}
-                        >
-                            <i className="fa-solid fa-ellipsis-vertical text-[--logo-gold] text-lg"></i>
-                        </button>
-                        
-                        {showMenu && (
-                            <div className="absolute right-0 top-18 w-64 bg-white border border-black/5 rounded-[40px] shadow-2xl z-[70] p-5 animate-view">
-                                <div className="p-4 mb-3 border-b border-slate-50">
-                                    <p className="text-[11px] font-black text-slate-300 uppercase tracking-widest text-center">App Management</p>
-                                </div>
-                                <button 
-                                    onClick={onReset} 
-                                    className="w-full px-6 py-5 text-left text-xs font-black text-rose-500 hover:bg-rose-50 flex items-center gap-5 rounded-3xl transition-all"
-                                >
-                                    <i className="fa-solid fa-trash-can opacity-70"></i>
-                                    <span>Clear All Data</span>
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                </header>
-            );
-        };
-
-        // ---------------------------------------------------------
-        // MASTER COMPONENT: ROUTIQ
-        // ---------------------------------------------------------
-        const RoutiqApp = () => {
-            // --- 1. CORE ARCHITECTURAL STATE ---
+        const App = () => {
+            // --- 1. CORE STATE ARCHITECTURE ---
             const [overlayStage, setOverlayStage] = useState('logo');
             const [currentPage, setCurrentPage] = useState('home');
             const [showMenu, setShowMenu] = useState(false);
@@ -327,31 +202,23 @@
             const [growthRange, setGrowthRange] = useState(30); 
             const [pickers, setPickers] = useState({ color: false, icon: false });
 
-            // --- 2. DATA ENGINES ---
+            // Persistence Management
             const [habits, setHabits] = useState(() => {
-                const storage = localStorage.getItem('habits');
-                if (storage) { 
-                    try { 
-                        const parsed = JSON.parse(storage);
-                        return Array.isArray(parsed) ? parsed : [];
-                    } catch(err) { return []; }
-                }
-                return [];
+                try {
+                    const savedHabits = localStorage.getItem('habits');
+                    return savedHabits ? JSON.parse(savedHabits) : [];
+                } catch (e) { return []; }
             });
             
             const [logs, setLogs] = useState(() => {
-                const storage = localStorage.getItem('habitLogs');
-                if (storage) { 
-                    try { 
-                        const parsed = JSON.parse(storage);
-                        return (parsed && typeof parsed === 'object') ? parsed : {};
-                    } catch(err) { return {}; }
-                }
-                return {};
+                try {
+                    const savedLogs = localStorage.getItem('habitLogs');
+                    return savedLogs ? JSON.parse(savedLogs) : {};
+                } catch (e) { return {}; }
             });
             
-            // --- 3. FORM DEFAULTS & REFS ---
-            const defaultFormState = {
+            // Default Data Structure
+            const defaultForm = {
                 name: '', 
                 description: '', 
                 color: '#1A1A1A', 
@@ -363,806 +230,637 @@
                 customCount: 1, 
                 customPeriod: 'Week'
             };
-            const [form, setForm] = useState(defaultFormState);
-            const contentRef = useRef(null);
 
-            // --- 4. ASSET DICTIONARIES ---
-            const splashQuotes = [
+            const [form, setForm] = useState(defaultForm);
+
+            // UI Asset Libraries
+            const quotes = [
                 "Consistency is your signature.", 
                 "Discipline equals freedom.", 
                 "Quality is a habit.",
                 "Small steps lead to big results.",
-                "The secret is in your routine.",
-                "Discipline is choosing between what you want now and what you want most."
+                "The secret is in your routine."
             ];
-            const [activeQuote] = useState(() => {
-                const randIndex = Math.floor(Math.random() * splashQuotes.length);
-                return splashQuotes[randIndex];
-            });
+            const [activeQuote] = useState(() => quotes[Math.floor(Math.random() * quotes.length)]);
 
-            const paletteColors = [
-                '#1A1A1A', '#D4AF37', '#6366F1', '#EC4899', 
-                '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6', 
-                '#FF6B6B', '#4ECDC4', '#A8E6CF', '#FFD3B6',
-                '#FFAAA5', '#88D8B0', '#778BEB', '#F7D794'
-            ];
-            const libraryIcons = [
-                '✨', '🏃‍♂️', '💧', '📚', '🧘‍♂️', '🍎', '💪', '🧠', 
-                '☀️', '💼', '🎨', '🔥', '🧗', '🔋', '🧘', '🛌', 
-                '🚶', '🚴', '🥗', '🥛', '🎧', '⚡', '⏳', '🏆',
-                '🧿', '🧬', '🔭', '🕯️', '🪴', '🗝️', '🎬', '🧩', '🎯'
-            ];
+            const colorPalette = ['#1A1A1A', '#D4AF37', '#6366F1', '#EC4899', '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6', '#FF6B6B', '#4ECDC4', '#A8E6CF', '#FFD3B6', '#FFAAA5', '#88D8B0'];
+            const iconLibrary = ['✨', '🏃‍♂️', '💧', '📚', '🧘‍♂️', '🍎', '💪', '🧠', '☀️', '💼', '🎨', '🔥', '🧗', '🔋', '🧘', '🛌', '🚶', '🚴', '🥗', '🥛', '🎧', '⚡'];
 
-            // --- 5. SYSTEM PERSISTENCE & LIFECYCLE ---
+            // --- 2. LIFECYCLE & SYNC ---
             useEffect(() => {
-                // Splash Logic
-                const stage1 = setTimeout(() => { setOverlayStage('quote'); }, 1600);
-                const stage2 = setTimeout(() => { setOverlayStage('none'); }, 4400);
-                
-                return () => { 
-                    clearTimeout(stage1); 
-                    clearTimeout(stage2); 
-                };
+                const timer1 = setTimeout(() => setOverlayStage('quote'), 1400);
+                const timer2 = setTimeout(() => setOverlayStage('none'), 3800);
+                return () => { clearTimeout(timer1); clearTimeout(timer2); };
             }, []);
 
             useEffect(() => {
-                // Auto-save logic
-                const hString = JSON.stringify(habits);
-                const lString = JSON.stringify(logs);
-                localStorage.setItem('habits', hString);
-                localStorage.setItem('habitLogs', lString);
+                localStorage.setItem('habits', JSON.stringify(habits));
+                localStorage.setItem('habitLogs', JSON.stringify(logs));
             }, [habits, logs]);
 
             const todayStr = new Date().toISOString().split('T')[0];
 
-            // --- 6. STATS COMPUTATION ENGINE (MAX PRECISION) ---
-            const analytics = useMemo(() => {
-                const totalH = habits.length;
-                const doneToday = (logs[todayStr] || []).length;
+            // --- 3. ANALYTICS CALCULATION (Explicit Decimal Handling & Flipped Heatmap) ---
+            const stats = useMemo(() => {
+                const totalRituals = habits.length;
+                const completedToday = (logs[todayStr] || []).length;
                 
-                // Win Rate Logic
-                let winRateFinal;
-                if (totalH === 0) {
-                    winRateFormatted = "0.00";
-                } else {
-                    const ratioValue = doneToday / totalH;
-                    winRateFormatted = (ratioValue * 100).toFixed(2);
-                }
+                // Win Rate with 2-Decimal Precision
+                const winRateString = totalRituals === 0 ? "0.00" : ((completedToday / totalRituals) * 100).toFixed(2);
                 
-                // Historical Accumulation logic
-                let hitSum = 0;
-                let potentialCheckSum = totalH * growthRange;
-                const heatmapMatrixArray = [];
+                // Consistency Analysis
+                let rangeChecksCount = 0;
+                let rangePossibilities = totalRituals * growthRange;
+                const heatmapDataArray = [];
 
-                // CORRECTED HEATMAP LOOP: Forward reading (Oldest date to Today)
-                // 
-                for (let i = 0; i <= growthRange; i++) {
-                    const tempDateObject = new Date();
-                    const dayOffsetValue = growthRange - i;
-                    tempDateObject.setDate(tempDateObject.getDate() - dayOffsetValue);
+                // REVERSED LOOP ENGINE: Oldest (Start of range) to Newest (Today)
+                // Ensures correct top-left to bottom-right visualization
+                for (let i = growthRange; i >= 0; i--) {
+                    const targetDate = new Date();
+                    targetDate.setDate(targetDate.getDate() - i);
+                    const dsKey = targetDate.toISOString().split('T')[0];
                     
-                    const dateStringKey = tempDateObject.toISOString().split('T')[0];
-                    const countOnThatDay = (logs[dateStringKey] || []).length;
+                    const dailyChecks = (logs[dsKey] || []).length;
+                    rangeChecksCount += dailyChecks;
                     
-                    hitSum += countOnThatDay;
-                    
-                    let dayPercentageRatio;
-                    if (totalH === 0) {
-                        dayPercentageRatio = 0;
-                    } else {
-                        dayPercentageRatio = countOnThatDay / totalH;
-                    }
-
-                    heatmapMatrixArray.push({ 
-                        date: dateStringKey, 
-                        pct: dayPercentageRatio 
+                    heatmapDataArray.push({ 
+                        date: dsKey, 
+                        pct: totalRituals === 0 ? 0 : dailyChecks / totalRituals 
                     });
                 }
 
-                let masteryScoreFinal;
-                if (potentialCheckSum === 0) {
-                    masteryScoreFinal = "0.00";
-                } else {
-                    const masteryRatioValue = hitSum / potentialCheckSum;
-                    masteryScoreFinal = (masteryRatioValue * 100).toFixed(2);
-                }
-
+                const masteryLevelString = rangePossibilities === 0 ? "0.00" : ((rangeChecksCount / rangePossibilities) * 100).toFixed(2);
+                
                 return { 
-                    totalCount: totalH, 
-                    doneCount: doneToday, 
-                    winRate: winRateFormatted, 
-                    mastery: masteryScoreFinal, 
-                    heatmap: heatmapMatrixArray 
+                    totalCount: totalRituals, 
+                    doneCount: completedToday, 
+                    winRate: winRateString, 
+                    mastery: masteryLevelString, 
+                    heatmap: heatmapDataArray 
                 };
             }, [habits, logs, todayStr, growthRange]);
 
-            // --- 7. ACTION REPOSITORY ---
-            
-            // FIXED: State-Safe Toggle for Ritual Check
-            const onToggleRitualCheck = (habitID) => {
-                setLogs((prevLogsState) => {
-                    const existingTodayEntries = prevLogsState[todayStr] || [];
-                    const isCheckActive = existingTodayEntries.includes(habitID);
-                    
-                    let nextTodayEntries;
-                    if (isCheckActive) {
-                        nextTodayEntries = existingTodayEntries.filter(id => id !== habitID);
-                    } else {
-                        nextTodayEntries = [...existingTodayEntries, habitID];
-                    }
-                    
-                    const newLogStateObject = {
-                        ...prevLogsState,
-                        [todayStr]: nextTodayEntries
-                    };
-                    return newLogStateObject;
-                });
-            };
-
-            const onSaveHabitAction = () => {
-                const checkNameInput = form.name;
-                if (!checkNameInput || checkNameInput.trim() === "") {
-                    return;
-                }
+            // --- 4. SYSTEM HANDLERS ---
+            const processHabitSave = () => {
+                if(!form.name.trim()) return;
                 
                 if (editingId) {
-                    const updatedRitualList = habits.map((item) => {
-                        if (item.id === editingId) {
-                            const newObj = { ...form, id: editingId };
-                            return newObj;
-                        }
-                        return item;
-                    });
-                    setHabits(updatedRitualList);
+                    const updatedHabits = habits.map(h => h.id === editingId ? { ...form, id: editingId } : h);
+                    setHabits(updatedHabits);
                     setEditingId(null);
                 } else {
-                    const ritualNewID = Date.now();
-                    const ritualNewObject = { ...form, id: ritualNewID };
-                    setHabits([...habits, ritualNewObject]);
+                    const newHabit = { ...form, id: Date.now() };
+                    setHabits([...habits, newHabit]);
                 }
                 
-                setForm(defaultFormState);
+                setForm(defaultForm);
                 setPickers({ color: false, icon: false });
                 setCurrentPage('habits');
             };
 
-            const onRemoveRitualAction = (id) => {
-                const userChoice = confirm("Warning: Deleting this ritual removes it from your current list. Historical data remains for analytics.");
-                if (userChoice) {
-                    const filteredList = habits.filter(h => h.id !== id);
-                    setHabits(filteredList);
+            const toggleHabitAction = (id) => {
+                const currentDayList = logs[todayStr] || [];
+                let newList;
+                if (currentDayList.includes(id)) {
+                    newList = currentDayList.filter(item => item !== id);
+                } else {
+                    newList = [...currentDayList, id];
                 }
+                setLogs({ ...logs, [todayStr]: newList });
             };
 
-            const onEditRitualAction = (ritualData) => {
-                const ritualDeepClone = JSON.parse(JSON.stringify(ritualData));
-                setForm(ritualDeepClone);
-                setEditingId(ritualData.id);
+            const triggerEditMode = (habit) => {
+                setForm(habit);
+                setEditingId(habit.id);
                 setCurrentPage('add');
             };
 
-            const onGlobalReset = () => {
-                if (confirm("FACTORY RESET: Wipe all habits and historical records?")) {
-                    localStorage.clear();
-                    window.location.reload();
+            const triggerDelete = (id) => {
+                if(confirm("Confirm: Are you sure you want to delete this ritual? This cannot be undone.")) {
+                    const remainingHabits = habits.filter(h => h.id !== id);
+                    setHabits(remainingHabits);
                 }
             };
 
-            // --- 8. PAGE RENDERER MODULES (LONG-FORM) ---
-            
-            const PageHome = () => (
-                <div className="flex-1 flex flex-col gap-12 animate-view">
-                    <AppHeader 
-                        title="Routiq" 
-                        subtitle="Daily Discipline" 
-                        onCalendarClick={() => setCurrentPage('calendar_full')}
-                        onMenuClick={() => setShowMenu(!showMenu)}
-                        showMenu={showMenu}
-                        onReset={onGlobalReset}
-                    />
-                    
-                    {habits.length > 0 && (
-                        <div className="grid grid-cols-2 gap-6">
-                            <div className="card-standard text-center py-12 relative overflow-hidden">
-                                <div className="absolute top-0 right-0 w-20 h-20 bg-slate-50/50 rounded-bl-full"></div>
-                                <p className="text-[11px] font-black uppercase text-slate-400 tracking-[0.25em] mb-4">Rituals Done</p>
-                                <h2 className="text-5xl font-black text-black tracking-tighter">{analytics.doneCount}/{analytics.totalCount}</h2>
-                            </div>
-                            <div className="card-standard text-center py-12 relative overflow-hidden flex flex-col items-center justify-center">
-                                <div className="absolute top-0 left-0 w-20 h-20 bg-slate-50/50 rounded-br-full"></div>
-                                <p className="text-[11px] font-black uppercase text-slate-400 tracking-[0.25em] mb-4">Daily Win</p>
-                                <div className="flex flex-nowrap shrink-0">
-                                    <h2 className="text-xl sm:text-2xl font-black text-black leading-tight whitespace-nowrap">
-                                        {analytics.winRate}%
-                                    </h2>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                    
-                    <div className="space-y-8">
-                        {habits.length > 0 ? (
-                            <Fragment>
-                                <div className="flex justify-between items-center px-6">
-                                    <p className="text-[13px] font-black uppercase text-slate-400 tracking-[0.4em]">Current Path</p>
-                                    <span className="text-[11px] font-bold text-slate-300 italic uppercase">{todayStr}</span>
-                                </div>
-                                {habits.map(ritualItem => {
-                                    const ritualCompletionStatus = (logs[todayStr] || []).includes(ritualItem.id);
-                                    return (
-                                        <div 
-                                            key={ritualItem.id} 
-                                            className="card-standard flex justify-between items-center transition-all duration-700 hover:shadow-2xl active:scale-[0.96] border-l-[14px]" 
-                                            style={{ borderLeftColor: ritualItem.color }}
-                                        >
-                                            <div className="flex items-center gap-8">
-                                                <div className="text-5xl filter drop-shadow-lg transition-all duration-700 hover:rotate-12">{ritualItem.icon}</div>
-                                                <div className="flex flex-col">
-                                                    <span className={`font-black text-2xl leading-tight transition-all duration-700 ${ritualCompletionStatus ? 'text-slate-300 line-through italic' : 'text-black'}`}>
-                                                        {ritualItem.name}
-                                                    </span>
-                                                    <span className="text-[11px] font-black uppercase text-amber-500 tracking-[0.3em] mt-3">
-                                                        {ritualItem.category}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <button 
-                                                onClick={() => onToggleRitualCheck(ritualItem.id)} 
-                                                className={`w-20 h-20 rounded-[32px] flex items-center justify-center transition-all duration-700 ${ritualCompletionStatus ? 'bg-black text-amber-400 shadow-2xl rotate-[360deg]' : 'bg-slate-50 border border-slate-100 text-slate-200'}`}
-                                                style={{ width: '82px', height: '82px' }}
-                                            >
-                                                <i className={`fa-solid ${ritualCompletionStatus ? 'fa-check-double' : 'fa-check'} text-4xl`}></i>
-                                            </button>
-                                        </div>
-                                    );
-                                })}
-                            </Fragment>
-                        ) : (
-                            <div className="centered-container opacity-20 py-48">
-                                <i className="fa-solid fa-feather-pointed text-[120px] mb-14 text-black animate-bounce"></i>
-                                <p className="font-black uppercase text-center leading-loose tracking-[1em] text-[22px] text-black">
-                                    Forge Rituals
-                                </p>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            );
-
-            const PageGrowth = () => (
-                <div className="animate-view space-y-16 pb-16">
-                    <AppHeader 
-                        title="Growth" 
-                        subtitle="Quantitative Mastery" 
-                        onMenuClick={() => setShowMenu(!showMenu)}
-                        showMenu={showMenu}
-                        onReset={onGlobalReset}
-                    />
-                    
-                    <div className="animate-view">
-                        <h2 className="text-4xl font-black italic text-black leading-none tracking-tighter">Mastery Hub</h2>
-                        <p className="text-slate-400 text-[11px] font-bold mt-6 uppercase tracking-[0.4em]">Visualizing Your Development</p>
-                    </div>
-                    
-                    <div className="scroll-wrapper no-scrollbar px-2">
-                        <div className="scroll-inner gap-6">
-                            {[
-                                {label:'7 Days', days:7}, 
-                                {label:'1 Month', days:30}, 
-                                {label:'3 Months', days:90}, 
-                                {label:'6 Months', days:180}, 
-                                {label:'9 Months', days:270}, 
-                                {label:'12 Months', days:365}
-                            ].map(rangeOption => (
-                                <button 
-                                    key={rangeOption.label} 
-                                    onClick={() => setGrowthRange(rangeOption.days)} 
-                                    className={`filter-chip ${growthRange === rangeOption.days ? 'bg-black text-white shadow-2xl scale-110' : 'bg-white text-slate-400 border border-black/5 hover:border-black/20'}`}
-                                    style={growthRange === rangeOption.days ? {background: '#1A1A1A', color: 'white'} : {}}
-                                >
-                                    {rangeOption.label}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* GROWTH MASTERY CIRCLE */}
-                    <div className="card-standard flex flex-col items-center py-24 relative overflow-hidden">
-                        <div className="absolute top-0 left-0 w-full h-3 bg-slate-50"></div>
-                        <p className="text-[12px] font-black uppercase tracking-[0.6em] text-slate-300 mb-20 text-center">Aggregate Discipline Score</p>
-                        <div className="relative w-64 h-64 flex items-center justify-center">
-                            <svg className="meter-svg w-full h-full" viewBox="0 0 100 100">
-                                <circle className="meter-bg" cx="50" cy="50" r="44" />
-                                <circle 
-                                    className="meter-progress" 
-                                    cx="50" cy="50" r="44" 
-                                    style={{ 
-                                        strokeDasharray: '276.5', 
-                                        strokeDashoffset: 276.5 - (276.5 * parseFloat(analytics.mastery)) / 100 
-                                    }} 
-                                />
-                            </svg>
-                            <div className="absolute flex flex-col items-center animate-view">
-                                <span className="text-6xl font-black text-black leading-none tracking-tighter">{analytics.mastery}%</span>
-                                <span className="text-[12px] font-black uppercase text-amber-500 mt-6 tracking-[0.3em]">Mastery</span>
-                            </div>
-                        </div>
-                        <div className="mt-16 w-12 h-1.5 bg-slate-50 rounded-full"></div>
-                    </div>
-
-                    {/* CONSISTENCY MATRIX ENGINE */}
-                    <div className="card-standard">
-                        <div className="flex justify-between items-center mb-16">
-                            <p className="text-[11px] font-black uppercase tracking-[0.4em] text-slate-400 leading-none">Consistency Matrix</p>
-                            <span className="bg-slate-50 px-6 py-2 rounded-full text-[10px] font-black text-slate-400 uppercase tracking-tighter shadow-inner">
-                                {growthRange} Data Points
-                            </span>
-                        </div>
-                        <div className={`heatmap-grid ${growthRange > 100 ? 'grid-cols-10' : 'grid-cols-7'}`}>
-                            {analytics.heatmap.map((matrixPoint, matrixIdx) => {
-                                let pointColorValue = '#F8FAFC';
-                                if (matrixPoint.pct > 0) pointColorValue = '#FFF4CC';
-                                if (matrixPoint.pct > 0.5) pointColorValue = '#D4AF37';
-                                if (matrixPoint.pct === 1) pointColorValue = '#1A1A1A';
-                                return (
-                                    <div 
-                                        key={matrixIdx} 
-                                        className="heatmap-cell shadow-sm transition-all duration-500 hover:scale-150 active:scale-90" 
-                                        style={{ backgroundColor: pointColorValue }} 
-                                        title={matrixPoint.date} 
-                                    />
-                                );
-                            })}
-                        </div>
-                        <div className="flex justify-between mt-14 px-8">
-                            <div className="flex items-center gap-4">
-                                <div className="w-4 h-4 rounded-full bg-slate-50 shadow-inner"></div>
-                                <span className="text-[12px] font-black text-slate-300 uppercase tracking-[0.2em]">Start</span>
-                            </div>
-                            <div className="flex items-center gap-4">
-                                <span className="text-[12px] font-black text-slate-300 uppercase tracking-[0.2em]">Today</span>
-                                <div className="w-4 h-4 rounded-full bg-black shadow-lg"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            );
-
-            const PageRituals = () => (
-                <div className="flex-1 flex flex-col animate-view">
-                    <AppHeader 
-                        title="Rituals" 
-                        subtitle="Library Management" 
-                        onMenuClick={() => setShowMenu(!showMenu)}
-                        showMenu={showMenu}
-                        onReset={onGlobalReset}
-                    />
-                    <h2 className="text-4xl font-black italic text-black leading-none mb-16 tracking-tight">Active Rituals</h2>
-                    
-                    {habits.length > 0 ? (
-                        <div className="space-y-12">
-                            {habits.map(habitObject => (
-                                <div 
-                                    key={habitObject.id} 
-                                    className="card-standard relative overflow-hidden border-t-[14px]" 
-                                    style={{ borderTopColor: habitObject.color }}
-                                >
-                                    <div className="flex justify-between items-start mb-10">
-                                        <div className="flex items-center gap-8">
-                                            <div className="w-22 h-22 rounded-[36px] bg-slate-50 flex items-center justify-center text-5xl shadow-inner border border-black/5" style={{ width: '88px', height: '88px' }}>
-                                                {habitObject.icon}
-                                            </div>
-                                            <div className="flex flex-col">
-                                                <h3 className="font-black text-3xl text-black leading-none tracking-tight">{habitObject.name}</h3>
-                                                <p className="text-[13px] font-black uppercase text-amber-500 tracking-[0.3em] mt-5">{habitObject.category}</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex gap-5">
-                                            <button 
-                                                onClick={() => onEditRitualAction(habitObject)} 
-                                                className="w-14 h-14 rounded-3xl bg-slate-50 text-slate-400 hover:text-black transition-all duration-500 flex items-center justify-center shadow-md hover:shadow-xl active:scale-75"
-                                            >
-                                                <i className="fa-solid fa-pen-nib text-xl"></i>
-                                            </button>
-                                            <button 
-                                                onClick={() => onRemoveRitualAction(habitObject.id)} 
-                                                className="w-14 h-14 rounded-3xl bg-rose-50 text-rose-400 hover:bg-rose-500 hover:text-white transition-all duration-500 flex items-center justify-center shadow-md hover:shadow-xl active:scale-75"
-                                            >
-                                                <i className="fa-solid fa-trash-can text-xl"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div className="bg-slate-50/80 p-9 rounded-[44px] border border-black/5">
-                                        <div className="flex items-center gap-5 mb-5">
-                                            <i className="fa-solid fa-clock-rotate-left text-slate-300 text-lg"></i>
-                                            <p className="text-[12px] font-black uppercase text-slate-500 tracking-[0.2em]">
-                                                Cadence: {
-                                                    habitObject.frequency === 'Specific Days of Week' ? habitObject.weekDays.join(', ') : 
-                                                    habitObject.frequency === 'Specific Days of Month' ? `Scheduled on: ${habitObject.monthDays.join(', ')}` : 
-                                                    habitObject.frequency === 'Customise Days' ? `${habitObject.customCount} repetitions per ${habitObject.customPeriod}` : habitObject.frequency
-                                                }
-                                            </p>
-                                        </div>
-                                        {habitObject.description && (
-                                            <p className="text-slate-500 text-lg mt-8 font-bold leading-relaxed italic border-l-[8px] border-slate-200 pl-8 py-3">
-                                                "{habitObject.description}"
-                                            </p>
-                                        )}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="centered-container opacity-20 py-48">
-                            <i className="fa-solid fa-seedling text-[130px] mb-14 text-black animate-pulse"></i>
-                            <p className="font-black uppercase tracking-[1em] text-[22px] text-black">Pure Mind</p>
-                        </div>
-                    )}
-                </div>
-            );
-
-            const PageForge = () => (
-                <div className="animate-view space-y-16 pb-32">
-                    <div className="mb-10">
-                        <h2 className="text-5xl font-black italic text-black leading-tight tracking-tighter">
-                            {editingId ? 'Modify Ritual' : 'Forge Ritual'}
-                        </h2>
-                        <p className="text-slate-400 text-[11px] font-black mt-5 uppercase tracking-[0.4em]">Architecting Discipline</p>
-                    </div>
-                    
-                    <div className="space-y-10">
-                        <div className="space-y-5">
-                            <p className="text-[13px] font-black uppercase tracking-[0.4em] ml-10 text-slate-400">Habit Name</p>
-                            <input 
-                                className="w-full p-11 rounded-[56px] bg-white font-black text-2xl outline-none shadow-sm text-black placeholder:text-slate-100 border-4 border-transparent focus:border-amber-400/20 transition-all duration-500" 
-                                placeholder="Ritual Name..." 
-                                value={form.name} 
-                                onChange={e => setForm({...form, name: e.target.value})} 
-                            />
-                        </div>
-                        
-                        <div className="space-y-5">
-                            <p className="text-[13px] font-black uppercase tracking-[0.4em] ml-10 text-slate-400">Description</p>
-                            <textarea 
-                                className="w-full p-11 rounded-[56px] bg-white font-bold text-lg outline-none shadow-sm text-black placeholder:text-slate-100 border-4 border-transparent focus:border-amber-400/20 transition-all duration-500" 
-                                placeholder="Purpose of this habit..." 
-                                rows="6" 
-                                value={form.description} 
-                                onChange={e => setForm({...form, description: e.target.value})} 
-                            />
-                        </div>
-                    </div>
-                    
-                    <div className="flex flex-col gap-16">
-                        {/* COLOR SELECTION SYSTEM */}
-                        <div className="flex flex-col gap-6">
-                            <p className="text-[13px] font-black uppercase tracking-[0.4em] ml-12 text-slate-400">Theme Palette</p>
-                            <div className="flex items-center relative z-[200]">
-                                <button 
-                                    onClick={() => setPickers({color: !pickers.color, icon: false})} 
-                                    className="w-28 h-28 rounded-full border-[16px] border-white shadow-2xl z-10 shrink-0 transition-transform active:scale-90" 
-                                    style={{ backgroundColor: form.color, width: '112px', height: '112px' }} 
-                                />
-                                {pickers.color && (
-                                    <div className="scroll-wrapper no-scrollbar ml-6 bg-white/90 p-5 rounded-full animate-view shadow-2xl border-4 border-white">
-                                        <div className="scroll-inner px-10">
-                                            {paletteColors.map(hexStringValue => (
-                                                <button 
-                                                    key={hexStringValue} 
-                                                    onClick={() => {setForm({...form, color: hexStringValue}); setPickers({color: false})}} 
-                                                    className="color-picker-item border-[8px] border-white hover:scale-125 transition-transform active:scale-75 shadow-lg" 
-                                                    style={{ backgroundColor: hexStringValue }} 
-                                                />
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* ICON SELECTION SYSTEM */}
-                        <div className="flex flex-col gap-6">
-                            <p className="text-[13px] font-black uppercase tracking-[0.4em] ml-12 text-slate-400">Visual Symbol</p>
-                            <div className="flex items-center relative z-[180]">
-                                <button 
-                                    onClick={() => setPickers({icon: !pickers.icon, color: false})} 
-                                    className="w-28 h-28 rounded-[48px] bg-white flex items-center justify-center text-6xl shadow-2xl z-10 border border-black/5 shrink-0 text-black transition-transform active:scale-90"
-                                    style={{ width: '112px', height: '112px' }}
-                                >
-                                    {form.icon}
-                                </button>
-                                {pickers.icon && (
-                                    <div className="scroll-wrapper no-scrollbar ml-6 bg-white/90 p-6 rounded-[56px] animate-view shadow-2xl border-4 border-white">
-                                        <div className="scroll-inner px-10">
-                                            {libraryIcons.map(symbolStringChar => (
-                                                <button 
-                                                    key={symbolStringChar} 
-                                                    onClick={() => {setForm({...form, icon: symbolStringChar}); setPickers({icon: false})}} 
-                                                    className="w-20 h-20 rounded-3xl bg-white flex items-center justify-center text-4xl shrink-0 border border-black/5 shadow-md transition-all duration-500 hover:scale-125 active:scale-75"
-                                                    style={{ width: '80px', height: '80px' }}
-                                                >
-                                                    {symbolStringChar}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* SELECTOR GRID */}
-                    <div className="grid grid-cols-2 gap-10 mt-10">
-                        <div className="space-y-5">
-                            <p className="text-[12px] font-black uppercase text-slate-400 ml-10 tracking-[0.4em]">Category</p>
-                            <div className="relative">
-                                <select 
-                                    className="w-full p-11 rounded-[56px] bg-white font-black text-sm shadow-sm outline-none appearance-none text-black border-4 border-transparent focus:border-black/5 cursor-pointer" 
-                                    value={form.category} 
-                                    onChange={e => setForm({...form, category: e.target.value})}
-                                >
-                                    <option value="Category" disabled>Type</option>
-                                    <option>Body</option><option>Mind</option><option>Work</option><option>Growth</option><option>Social</option><option>Finance</option>
-                                </select>
-                                <i className="fa-solid fa-angle-down absolute right-12 top-1/2 -translate-y-1/2 text-slate-300 text-xl"></i>
-                            </div>
-                        </div>
-                        <div className="space-y-5">
-                            <p className="text-[12px] font-black uppercase text-slate-400 ml-10 tracking-[0.4em]">Frequency</p>
-                            <div className="relative">
-                                <select 
-                                    className="w-full p-11 rounded-[56px] bg-white font-black text-sm shadow-sm outline-none appearance-none text-black border-4 border-transparent focus:border-black/5 cursor-pointer" 
-                                    value={form.frequency} 
-                                    onChange={e => setForm({...form, frequency: e.target.value})}
-                                >
-                                    <option value="Frequency" disabled>Cadence</option>
-                                    <option>Daily</option>
-                                    <option>Specific Days of Week</option>
-                                    <option>Specific Days of Month</option>
-                                    <option>Customise Days</option>
-                                </select>
-                                <i className="fa-solid fa-repeat absolute right-12 top-1/2 -translate-y-1/2 text-slate-300 text-xl"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* FREQUENCY SUB-ENGINES */}
-                    {form.frequency === 'Specific Days of Week' && (
-                        <div className="flex justify-between gap-4 animate-view p-5 bg-white/60 rounded-[60px] shadow-inner border-2 border-white">
-                            {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(dayTitleString => {
-                                const isDayActive = form.weekDays.includes(dayTitleString);
-                                return (
-                                    <button 
-                                        key={dayTitleString} 
-                                        onClick={() => {
-                                            const updatedWeekArray = isDayActive ? form.weekDays.filter(d => d !== dayTitleString) : [...form.weekDays, dayTitleString];
-                                            setForm({...form, weekDays: updatedWeekArray});
-                                        }} 
-                                        className={`w-18 h-18 rounded-[32px] text-[14px] font-black transition-all duration-700 ${isDayActive ? 'bg-black text-white shadow-2xl scale-110' : 'bg-white text-slate-300'}`}
-                                        style={{ width: '64px', height: '64px' }}
-                                    >
-                                        {dayTitleString[0]}
-                                    </button>
-                                );
-                            })}
-                        </div>
-                    )}
-
-                    {form.frequency === 'Specific Days of Month' && (
-                        <div className="month-picker-container animate-view shadow-2xl">
-                            <div className="month-picker-grid">
-                                {[...Array(31)].map((_, dateIdxValue) => {
-                                    const dateNumberValue = dateIdxValue + 1;
-                                    const isDateSelectedValue = form.monthDays.includes(dateNumberValue);
-                                    return (
-                                        <button 
-                                            key={dateNumberValue} 
-                                            onClick={() => {
-                                                const updatedMonthArrayValue = isDateSelectedValue ? form.monthDays.filter(val => val !== dateNumberValue) : [...form.monthDays, dateNumberValue];
-                                                setForm({...form, monthDays: updatedMonthArrayValue});
-                                            }} 
-                                            className={`w-12 h-12 rounded-2xl text-[14px] font-black transition-all duration-400 ${isDateSelectedValue ? 'bg-black text-white shadow-2xl scale-110' : 'bg-white text-slate-300 border border-black/5 hover:border-black/20'}`}
-                                            style={{ width: '48px', height: '48px' }}
-                                        >
-                                            {dateNumberValue}
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    )}
-
-                    {form.frequency === 'Customise Days' && (
-                        <div className="flex items-center gap-12 bg-white/90 p-14 rounded-[64px] animate-view shadow-2xl border-4 border-white">
-                            <div className="flex flex-col">
-                                <p className="text-[12px] font-black text-slate-300 uppercase mb-6 ml-4 text-center tracking-widest">Intensity</p>
-                                <input 
-                                    type="number" 
-                                    className="w-32 font-black text-6xl text-center outline-none border-b-8 border-amber-400 bg-transparent text-black" 
-                                    value={form.customCount} 
-                                    onChange={e => setForm({...form, customCount: e.target.value})} 
-                                />
-                            </div>
-                            <div className="flex flex-col flex-1">
-                                <p className="font-black text-[12px] text-slate-300 uppercase tracking-[0.4em] mb-6">Time Frame</p>
-                                <select 
-                                    className="font-black text-4xl outline-none bg-transparent text-black cursor-pointer" 
-                                    value={form.customPeriod} 
-                                    onChange={e => setForm({...form, customPeriod: e.target.value})}
-                                >
-                                    <option>Week</option>
-                                    <option>Month</option>
-                                </select>
-                            </div>
-                        </div>
-                    )}
-
-                    <button 
-                        onClick={onSaveHabitAction} 
-                        className="w-full py-12 rounded-[64px] logo-gradient text-white font-black text-3xl shadow-[0_30px_70px_rgba(0,0,0,0.35)] active:scale-95 transition-all duration-700 flex items-center justify-center gap-8 group overflow-hidden relative"
-                    >
-                        <i className="fa-solid fa-bolt-lightning text-amber-400 text-4xl group-hover:rotate-12 transition-transform duration-700"></i>
-                        <span>{editingId ? 'Update Ritual' : 'Forge Ritual'}</span>
-                    </button>
-                    
-                    {editingId && (
-                        <button 
-                            onClick={() => { setEditingId(null); setForm(defaultFormState); setCurrentPage('habits'); }} 
-                            className="w-full text-slate-400 font-black text-[13px] py-8 hover:text-black transition-colors tracking-[0.5em] uppercase"
-                        >
-                            Discard Modifications
-                        </button>
-                    )}
-                </div>
-            );
-
-            const PageCalendar = () => (
-                <div className="animate-view flex flex-col h-full relative">
-                    <div className="flex justify-between items-end mb-14 px-8">
+            // --- 5. COMPONENT: NAVIGATIONAL HEADER ---
+            const DynamicHeader = () => {
+                return (
+                    <header className="flex justify-between items-center mb-10 w-full relative z-[60]">
                         <div>
-                            <h2 className="text-6xl font-black italic text-black leading-tight tracking-tighter">
-                                {viewDate.toLocaleString('default', { month: 'long' })}
-                            </h2>
-                            <p className="text-slate-400 text-[13px] font-black uppercase tracking-[0.5em] mt-5">History Archives • {viewDate.getFullYear()}</p>
+                            <h1 className="text-3xl font-black italic tracking-tighter text-black">Routiq</h1>
+                            <p className="text-slate-500 text-[10px] font-extrabold uppercase tracking-[0.2em] mt-1">Discipline Engine</p>
                         </div>
-                        <div className="flex gap-6">
-                            <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1))} className="w-16 h-16 bg-white rounded-3xl border-2 border-black/5 text-black flex items-center justify-center active:scale-90 transition-all duration-500 shadow-sm"><i className="fa-solid fa-chevron-left text-2xl"></i></button>
-                            <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1))} className="w-16 h-16 bg-white rounded-3xl border-2 border-black/5 text-black flex items-center justify-center active:scale-90 transition-all duration-500 shadow-sm"><i className="fa-solid fa-chevron-right text-2xl"></i></button>
-                        </div>
-                    </div>
-                    
-                    <div className="bg-white p-14 rounded-[80px] border border-black/5 shadow-2xl relative z-10">
-                        <div className="calendar-grid">
-                            {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(dayHeaderName => (
-                                <div key={dayHeaderName} className="text-center text-[12px] font-black text-slate-200 mb-12 uppercase tracking-[0.2em]">{dayHeaderName}</div>
-                            ))}
+                        <div className="flex gap-4 relative">
+                            <button 
+                                onClick={() => setCurrentPage('calendar_full')} 
+                                className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white border border-black/5 text-black shadow-sm active:scale-90 transition-all duration-300"
+                            >
+                                <i className="fa-solid fa-calendar-day"></i>
+                            </button>
+                            <button 
+                                onClick={() => setShowMenu(!showMenu)} 
+                                className="w-12 h-12 flex items-center justify-center rounded-2xl bg-black text-white shadow-xl active:scale-90 transition-all duration-300"
+                            >
+                                <i className="fa-solid fa-ellipsis-vertical text-[--logo-gold]"></i>
+                            </button>
                             
-                            {[...Array(new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay())].map((_, spaceIdx) => (
-                                <div key={`calendar-space-${spaceIdx}`}></div>
-                            ))}
-                            
-                            {[...Array(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate())].map((_, dateValueIdx) => {
-                                const dayLoopValue = dateValueIdx + 1;
-                                const dsKeyStringValue = `${viewDate.getFullYear()}-${String(viewDate.getMonth() + 1).padStart(2, '0')}-${String(dayLoopValue).padStart(2, '0')}`;
-                                const checksOnThatDate = (logs[dsKeyStringValue] || []).length;
-                                const scoreOnThatDate = habits.length > 0 ? (checksOnThatDate / habits.length) * 100 : 0;
-                                
-                                let cellStyleClassName = 'bg-slate-50 text-slate-300';
-                                if (scoreOnThatDate > 0) cellStyleClassName = 'bg-amber-100 text-amber-700 font-black shadow-inner';
-                                if (scoreOnThatDate === 100) cellStyleClassName = 'bg-black text-amber-400 shadow-2xl scale-110 z-10 font-black';
-                                
-                                return (
-                                    <div key={dayLoopValue} className={`calendar-day transition-all duration-1000 ${cellStyleClassName}`}>
-                                        {dayLoopValue}
-                                    </div>
-                                );
-                            })}
+                            {showMenu && (
+                                <div className="absolute right-0 top-16 w-56 bg-white border border-black/5 rounded-[32px] shadow-2xl z-[70] p-3 animate-fade overflow-hidden">
+                                    <button 
+                                        onClick={() => { localStorage.clear(); window.location.reload(); }} 
+                                        className="w-full px-5 py-4 text-left text-xs font-black text-rose-500 hover:bg-rose-50 flex items-center gap-4 rounded-2xl transition-all"
+                                    >
+                                        <i className="fa-solid fa-trash-can opacity-50"></i>
+                                        <span>Factory Reset App</span>
+                                    </button>
+                                </div>
+                            )}
                         </div>
-                    </div>
-                    
-                    {/* FIXED: TODAYS BUTTON PLACEMENT */}
-                    <div className="flex justify-center items-center py-20 relative z-20">
-                        <button 
-                            onClick={() => { setViewDate(new Date()); setCurrentPage('home'); }} 
-                            className="btn-today-legacy animate-view"
-                        >
-                            Return to Today
-                        </button>
-                    </div>
-                </div>
-            );
+                    </header>
+                );
+            };
 
-            // =========================================================
-            // VII. NAVIGATION INTERFACE (FIXED TAB BUTTONS)
-            // =========================================================
-            const MainNavbar = () => (
-                <nav className="fixed-navbar">
-                    <button 
-                        onClick={() => { setEditingId(null); setForm(defaultFormState); setCurrentPage('home'); }} 
-                        className={`flex flex-col items-center w-18 transition-all duration-700 ${currentPage === 'home' ? 'text-black scale-125 rotate-3' : 'text-slate-300 hover:text-slate-500'}`}
-                    >
-                        <i className="fa-solid fa-house-chimney text-3xl"></i>
-                        <span className="nav-text">Home</span>
-                    </button>
-                    
-                    <button 
-                        onClick={() => { setEditingId(null); setForm(defaultFormState); setCurrentPage('habits'); }} 
-                        className={`flex flex-col items-center w-18 transition-all duration-700 ${currentPage === 'habits' ? 'text-black scale-125 -rotate-3' : 'text-slate-300 hover:text-slate-500'}`}
-                    >
-                        <i className="fa-solid fa-dna text-3xl"></i>
-                        <span className="nav-text">Rituals</span>
-                    </button>
-                    
-                    <button 
-                        onClick={() => { setForm(defaultFormState); setEditingId(null); setCurrentPage('add'); }} 
-                        className="w-22 h-22 logo-gradient rounded-[44px] flex items-center justify-center text-white -mt-28 border-[12px] border-white shadow-2xl active:scale-90 transition-all duration-1000 hover:rotate-180"
-                        style={{ width: '92px', height: '92px' }}
-                    >
-                        <i className="fa-solid fa-plus text-4xl text-amber-400"></i>
-                    </button>
-                    
-                    <button 
-                        onClick={() => { setEditingId(null); setCurrentPage('growth'); }} 
-                        className={`flex flex-col items-center w-18 transition-all duration-700 ${currentPage === 'growth' ? 'text-black scale-125 rotate-3' : 'text-slate-300 hover:text-slate-500'}`}
-                    >
-                        <i className="fa-solid fa-chart-pie text-3xl"></i>
-                        <span className="nav-text">Growth</span>
-                    </button>
-                    
-                    <button 
-                        onClick={() => { setEditingId(null); setCurrentPage('coach'); }} 
-                        className={`flex flex-col items-center w-18 transition-all duration-700 ${currentPage === 'coach' ? 'text-black scale-125 -rotate-3' : 'text-slate-300 hover:text-slate-500'}`}
-                    >
-                        <i className="fa-solid fa-wand-magic-sparkles text-3xl"></i>
-                        <span className="nav-text">Coach</span>
-                    </button>
-                </nav>
-            );
-
-            // --- 9. MASTER ROUTING SWITCH ---
+            // --- 6. MAIN RENDER LOGIC ---
             return (
-                <div className="app-shell">
+                <div className="app-shell max-w-lg mx-auto">
+                    
+                    {/* SYSTEM OVERLAY / SPLASH */}
                     <div className={`overlay-screen ${overlayStage === 'none' ? 'hide-overlay' : ''}`}>
-                        <div className="flex flex-col items-center animate-view text-center px-12">
+                        <div className="flex flex-col items-center animate-fade text-center px-10">
                             {overlayStage === 'logo' ? (
                                 <Fragment>
-                                    <div className="w-44 h-44 mb-14 p-10 bg-white rounded-[64px] shadow-2xl flex items-center justify-center border-2 border-black/5">
-                                        <img src="./logo512.png" alt="Icon" className="w-full h-full object-contain" />
+                                    <div className="w-36 h-36 mb-8 p-5 bg-white rounded-[40px] shadow-2xl flex items-center justify-center border border-black/5">
+                                        <img src="./logo512.png" alt="Routiq Logo" className="w-full h-full object-contain" />
                                     </div>
-                                    <h1 className="text-6xl font-black text-black italic tracking-tighter">Routiq</h1>
-                                    <div className="mt-10 w-20 h-2 bg-amber-400 rounded-full animate-pulse"></div>
+                                    <h1 className="text-4xl font-black text-black italic tracking-tighter">Routiq</h1>
+                                    <div className="mt-4 w-12 h-1 bg-amber-400 rounded-full"></div>
                                 </Fragment>
                             ) : (
                                 <Fragment>
-                                    <i className="fa-solid fa-quote-left text-amber-200 text-8xl mb-14"></i>
-                                    <p className="text-4xl font-black italic text-black leading-tight">"{activeQuote}"</p>
-                                    <div className="mt-20 flex gap-5">
-                                        <div className="w-3 h-3 rounded-full bg-slate-100"></div>
-                                        <div className="w-3 h-3 rounded-full bg-slate-200"></div>
-                                        <div className="w-3 h-3 rounded-full bg-slate-100"></div>
-                                    </div>
+                                    <i className="fa-solid fa-quote-left text-amber-200 text-4xl mb-6"></i>
+                                    <p className="text-2xl font-black italic text-black leading-tight">"{activeQuote}"</p>
                                 </Fragment>
                             )}
                         </div>
                     </div>
 
-                    <div className="content-area" ref={contentRef}>
-                        {currentPage === 'home' && <PageHome />}
-                        {currentPage === 'growth' && <PageGrowth />}
-                        {currentPage === 'habits' && <PageRituals />}
-                        {currentPage === 'add' && <PageForge />}
-                        {currentPage === 'calendar_full' && <PageCalendar />}
+                    <div className="content-area">
+                        {(currentPage === 'home' || currentPage === 'habits' || currentPage === 'growth') && <DynamicHeader />}
+
+                        {/* --- DASHBOARD: HOME --- */}
+                        {currentPage === 'home' && (
+                            <div className="flex-1 flex flex-col gap-8 animate-fade">
+                                {habits.length > 0 && (
+                                    <div className="grid grid-cols-2 gap-5">
+                                        <div className="card-standard text-center py-8 border-b-4 border-black/5">
+                                            <p className="text-[10px] font-extrabold uppercase text-slate-400 tracking-widest mb-2">Rituals Done</p>
+                                            <h2 className="text-3xl font-black text-black">{stats.doneCount}/{stats.totalCount}</h2>
+                                        </div>
+                                        <div className="card-standard text-center py-8 border-b-4 border-black/5">
+                                            <p className="text-[10px] font-extrabold uppercase text-slate-400 tracking-widest mb-2">Daily Score</p>
+                                            <h2 className="text-3xl font-black text-black">{stats.winRate}%</h2>
+                                        </div>
+                                    </div>
+                                )}
+                                
+                                {habits.length > 0 ? (
+                                    <div className="space-y-5">
+                                        <p className="text-[11px] font-black uppercase text-slate-400 tracking-[0.2em] ml-2">Due Today</p>
+                                        {habits.map(h => {
+                                            const ritualDone = (logs[todayStr] || []).includes(h.id);
+                                            return (
+                                                <div key={h.id} className="card-standard flex justify-between items-center transition-all duration-300 active:scale-[0.97]" style={{ borderLeft: `8px solid ${h.color}` }}>
+                                                    <div className="flex items-center gap-5">
+                                                        <div className="text-3xl grayscale-[0.5]">{h.icon}</div>
+                                                        <div className="flex flex-col">
+                                                            <span className={`font-bold text-lg leading-tight ${ritualDone ? 'text-slate-300 line-through' : 'text-black'}`}>{h.name}</span>
+                                                            <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest mt-1">{h.category}</span>
+                                                        </div>
+                                                    </div>
+                                                    <button 
+                                                        onClick={() => toggleHabitAction(h.id)} 
+                                                        className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 ${ritualDone ? 'bg-black text-amber-400 shadow-2xl rotate-[360deg]' : 'bg-slate-50 border border-slate-100 text-slate-200'}`}
+                                                    >
+                                                        <i className={`fa-solid ${ritualDone ? 'fa-check-double' : 'fa-check'} text-xl`}></i>
+                                                    </button>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                ) : (
+                                    <div className="centered-container opacity-20 py-20">
+                                        <i className="fa-solid fa-feather-pointed text-8xl mb-6 text-black"></i>
+                                        <p className="font-black uppercase tracking-[0.5em] text-[14px] text-black">Forge Rituals</p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* --- ANALYTICS: GROWTH --- */}
+                        {currentPage === 'growth' && (
+                            <div className="animate-fade space-y-10 pb-10">
+                                <div>
+                                    <h2 className="text-2xl font-black italic text-black leading-none">Mastery Hub</h2>
+                                    <p className="text-slate-400 text-xs font-bold mt-2 uppercase tracking-widest">Time-Based Progress</p>
+                                </div>
+                                
+                                <div className="scroll-wrapper no-scrollbar">
+                                    <div className="scroll-inner gap-3">
+                                        {[
+                                            {label:'7 Days', days:7}, 
+                                            {label:'1 Month', days:30}, 
+                                            {label:'3 Months', days:90}, 
+                                            {label:'6 Months', days:180}, 
+                                            {label:'9 Months', days:270}, 
+                                            {label:'12 Months', days:365}
+                                        ].map(range => (
+                                            <button 
+                                                key={range.label} 
+                                                onClick={() => setGrowthRange(range.days)} 
+                                                className={`filter-chip ${growthRange === range.days ? 'bg-black text-white shadow-xl scale-105' : 'bg-white text-slate-400 border border-black/5 hover:border-black/20'}`}
+                                            >
+                                                {range.label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* MASTER CIRCULAR GAUGE */}
+                                <div className="card-standard flex flex-col items-center py-12 relative overflow-hidden">
+                                    <div className="absolute top-0 left-0 w-full h-1 bg-slate-50"></div>
+                                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-300 mb-10">Strength Index</p>
+                                    <div className="relative w-48 h-48 flex items-center justify-center">
+                                        <svg className="meter-svg w-full h-full" viewBox="0 0 100 100">
+                                            <circle className="meter-bg" cx="50" cy="50" r="42" />
+                                            <circle 
+                                                className="meter-progress" 
+                                                cx="50" cy="50" r="42" 
+                                                style={{ strokeDasharray: '263.9', strokeDashoffset: 263.9 - (263.9 * parseFloat(stats.mastery)) / 100 }} 
+                                            />
+                                        </svg>
+                                        <div className="absolute flex flex-col items-center animate-fade">
+                                            <span className="text-4xl font-black text-black leading-none">{stats.mastery}%</span>
+                                            <span className="text-[9px] font-black uppercase text-amber-500 mt-2 tracking-widest">Mastery</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* MATRIX GRID (Oldest -> Newest) */}
+                                <div className="card-standard">
+                                    <div className="flex justify-between items-center mb-8">
+                                        <p className="text-xs font-black uppercase tracking-widest text-slate-400">Consistency Matrix</p>
+                                        <span className="bg-slate-50 px-3 py-1 rounded-full text-[9px] font-black text-slate-400 uppercase tracking-tighter">{growthRange} Days Tracking</span>
+                                    </div>
+                                    <div className={`heatmap-grid ${growthRange > 100 ? 'grid-cols-10' : 'grid-cols-7'}`}>
+                                        {stats.heatmap.map((cell, idx) => {
+                                            let intensity = '#F8FAFC';
+                                            if (cell.pct > 0) intensity = '#FFF4CC';
+                                            if (cell.pct > 0.5) intensity = '#D4AF37';
+                                            if (cell.pct === 1) intensity = '#1A1A1A';
+                                            return (
+                                                <div 
+                                                    key={idx} 
+                                                    className="heatmap-cell shadow-sm" 
+                                                    style={{ backgroundColor: intensity }} 
+                                                />
+                                            );
+                                        })}
+                                    </div>
+                                    <div className="flex justify-between mt-6 px-1">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-2 h-2 rounded-full bg-slate-100"></div>
+                                            <span className="text-[9px] font-black text-slate-300 uppercase tracking-tighter">Start</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-[9px] font-black text-slate-300 uppercase tracking-tighter">Present</span>
+                                            <div className="w-2 h-2 rounded-full bg-black"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* --- LIBRARY: RITUALS --- */}
+                        {currentPage === 'habits' && (
+                            <div className="flex-1 flex flex-col animate-fade">
+                                <div className="mb-10">
+                                    <h2 className="text-2xl font-black italic text-black">Active Rituals</h2>
+                                    <p className="text-slate-400 text-xs font-bold mt-2 uppercase tracking-widest">Library Management</p>
+                                </div>
+                                
+                                {habits.length > 0 ? (
+                                    <div className="space-y-6">
+                                        {habits.map(h => (
+                                            <div key={h.id} className="card-standard relative overflow-hidden" style={{ borderTop: `6px solid ${h.color}` }}>
+                                                <div className="flex justify-between items-start mb-4">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="w-14 h-14 rounded-2xl bg-slate-50 flex items-center justify-center text-3xl shadow-inner border border-black/5">{h.icon}</div>
+                                                        <div className="flex flex-col">
+                                                            <h3 className="font-black text-xl text-black leading-tight">{h.name}</h3>
+                                                            <p className="text-[10px] font-black uppercase text-amber-500 tracking-[0.15em] mt-1">{h.category}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex gap-2">
+                                                        <button onClick={() => triggerEditMode(h)} className="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 hover:text-black hover:bg-slate-100 transition-all flex items-center justify-center"><i className="fa-solid fa-pen-nib"></i></button>
+                                                        <button onClick={() => triggerDelete(h.id)} className="w-10 h-10 rounded-xl bg-rose-50 text-rose-400 hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center"><i className="fa-solid fa-trash-can"></i></button>
+                                                    </div>
+                                                </div>
+                                                <div className="bg-slate-50/50 p-4 rounded-2xl">
+                                                    <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest flex items-center gap-2">
+                                                        <i className="fa-solid fa-repeat text-slate-300"></i>
+                                                        {
+                                                            h.frequency === 'Specific Days of Week' ? h.weekDays.join(', ') : 
+                                                            h.frequency === 'Specific Days of Month' ? `Scheduled: ${h.monthDays.join(', ')}` : 
+                                                            h.frequency === 'Customise Days' ? `${h.customCount} times per ${h.customPeriod}` : h.frequency
+                                                        }
+                                                    </p>
+                                                    {h.description && (
+                                                        <p className="text-slate-500 text-sm mt-3 font-semibold leading-relaxed italic border-l-2 border-slate-200 pl-3">
+                                                            "{h.description}"
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="centered-container opacity-20 py-20">
+                                        <i className="fa-solid fa-leaf text-8xl mb-6 text-black"></i>
+                                        <p className="font-black uppercase tracking-[0.5em] text-[14px] text-black">Pure Mind</p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* --- ENGINE: ADD / EDIT RITUAL --- */}
+                        {currentPage === 'add' && (
+                            <div className="animate-fade space-y-8 pb-20">
+                                <div className="mb-4">
+                                    <h2 className="text-2xl font-black italic text-black">{editingId ? 'Modify Ritual' : 'Forge Ritual'}</h2>
+                                    <p className="text-slate-400 text-xs font-bold mt-2 uppercase tracking-widest">Define Your Discipline</p>
+                                </div>
+                                
+                                <div className="space-y-4">
+                                    <input 
+                                        className="w-full p-7 rounded-[32px] bg-white font-black text-lg outline-none shadow-sm text-black placeholder:text-slate-200 border border-transparent focus:border-black/5 transition-all" 
+                                        placeholder="Ritual Name" 
+                                        value={form.name} 
+                                        onChange={e => setForm({...form, name: e.target.value})} 
+                                    />
+                                    
+                                    <textarea 
+                                        className="w-full p-7 rounded-[32px] bg-white font-bold text-sm outline-none shadow-sm text-black placeholder:text-slate-200 border border-transparent focus:border-black/5 transition-all" 
+                                        placeholder="Why is this important? (Optional)" 
+                                        rows="3" 
+                                        value={form.description} 
+                                        onChange={e => setForm({...form, description: e.target.value})} 
+                                    />
+                                </div>
+                                
+                                <div className="flex flex-col gap-8">
+                                    {/* DYNAMIC COLOR PICKER */}
+                                    <div className="flex flex-col gap-3">
+                                        <p className="text-[10px] font-black uppercase tracking-[0.2em] ml-4 text-slate-400">Signature Color</p>
+                                        <div className="flex items-center">
+                                            <button onClick={() => setPickers({color: !pickers.color, icon: false})} className="w-16 h-16 rounded-full border-8 border-white shadow-2xl z-10 shrink-0 transition-transform active:scale-90" style={{ backgroundColor: form.color }} />
+                                            {pickers.color && (
+                                                <div className="scroll-wrapper no-scrollbar ml-3 bg-white/60 p-2 rounded-full animate-fade">
+                                                    <div className="scroll-inner px-4">
+                                                        {colorPalette.map(colorCode => (
+                                                            <button 
+                                                                key={colorCode} 
+                                                                onClick={() => {setForm({...form, color: colorCode}); setPickers({color: false})}} 
+                                                                className="w-11 h-11 rounded-full shrink-0 shadow-md transition-transform active:scale-75 hover:scale-110" 
+                                                                style={{ backgroundColor: colorCode }} 
+                                                            />
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* DYNAMIC ICON PICKER */}
+                                    <div className="flex flex-col gap-3">
+                                        <p className="text-[10px] font-black uppercase tracking-[0.2em] ml-4 text-slate-400">Ritual Symbol</p>
+                                        <div className="flex items-center">
+                                            <button 
+                                                onClick={() => setPickers({icon: !pickers.icon, color: false})} 
+                                                className="w-16 h-16 rounded-[24px] bg-white flex items-center justify-center text-3xl shadow-xl z-10 border border-black/5 shrink-0 text-black transition-transform active:scale-90"
+                                            >
+                                                {form.icon}
+                                            </button>
+                                            {pickers.icon && (
+                                                <div className="scroll-wrapper no-scrollbar ml-3 bg-white/60 p-2 rounded-[28px] animate-fade">
+                                                    <div className="scroll-inner px-4">
+                                                        {iconLibrary.map(sym => (
+                                                            <button 
+                                                                key={sym} 
+                                                                onClick={() => {setForm({...form, icon: sym}); setPickers({icon: false})}} 
+                                                                className="w-13 h-13 rounded-2xl bg-white flex items-center justify-center text-xl shrink-0 border border-black/5 shadow-sm transition-transform active:scale-75 hover:scale-110"
+                                                            >
+                                                                {sym}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* DROPDOWN CATEGORY/FREQUENCY BOXES */}
+                                <div className="grid grid-cols-2 gap-5 mt-4">
+                                    <div className="space-y-2">
+                                        <p className="text-[9px] font-black uppercase text-slate-400 ml-4 tracking-widest">Type</p>
+                                        <select 
+                                            className="w-full p-6 rounded-[28px] bg-white font-black text-xs shadow-sm outline-none appearance-none text-black border border-transparent focus:border-black/5" 
+                                            value={form.category} 
+                                            onChange={e => setForm({...form, category: e.target.value})}
+                                        >
+                                            <option value="Category" disabled>Category</option>
+                                            <option>Body</option><option>Mind</option><option>Work</option><option>Growth</option><option>Finance</option><option>Social</option>
+                                        </select>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <p className="text-[9px] font-black uppercase text-slate-400 ml-4 tracking-widest">Schedule</p>
+                                        <select 
+                                            className="w-full p-6 rounded-[28px] bg-white font-black text-xs shadow-sm outline-none appearance-none text-black border border-transparent focus:border-black/5" 
+                                            value={form.frequency} 
+                                            onChange={e => setForm({...form, frequency: e.target.value})}
+                                        >
+                                            <option value="Frequency" disabled>Frequency</option>
+                                            <option>Daily</option>
+                                            <option>Specific Days of Week</option>
+                                            <option>Specific Days of Month</option>
+                                            <option>Customise Days</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                {/* CONDITIONAL MODULE: WEEKDAYS */}
+                                {form.frequency === 'Specific Days of Week' && (
+                                    <div className="flex justify-between gap-2 animate-fade p-2 bg-white rounded-[32px] shadow-sm">
+                                        {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(day => {
+                                            const isSelected = form.weekDays.includes(day);
+                                            return (
+                                                <button 
+                                                    key={day} 
+                                                    onClick={() => {
+                                                        const current = isSelected ? form.weekDays.filter(d => d !== day) : [...form.weekDays, day];
+                                                        setForm({...form, weekDays: current});
+                                                    }} 
+                                                    className={`w-12 h-12 rounded-2xl text-[10px] font-black transition-all duration-300 ${isSelected ? 'bg-black text-white shadow-xl scale-110' : 'bg-slate-50 text-slate-300'}`}
+                                                >
+                                                    {day[0]}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+
+                                {/* CONDITIONAL MODULE: MONTH DATES (1-31) */}
+                                {form.frequency === 'Specific Days of Month' && (
+                                    <div className="month-picker-grid bg-white p-7 rounded-[40px] animate-fade shadow-sm border border-black/5">
+                                        {[...Array(31)].map((_, i) => {
+                                            const dNum = i + 1;
+                                            const isSel = form.monthDays.includes(dNum);
+                                            return (
+                                                <button 
+                                                    key={dNum} 
+                                                    onClick={() => {
+                                                        const current = isSel ? form.monthDays.filter(d => d !== dNum) : [...form.monthDays, dNum];
+                                                        setForm({...form, monthDays: current});
+                                                    }} 
+                                                    className={`w-10 h-10 rounded-xl text-[10px] font-black transition-all duration-300 ${isSel ? 'bg-black text-white shadow-lg' : 'bg-slate-50 text-slate-300'}`}
+                                                >
+                                                    {dNum}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+
+                                {/* CONDITIONAL MODULE: CUSTOM REPETITION */}
+                                {form.frequency === 'Customise Days' && (
+                                    <div className="flex items-center gap-6 bg-white p-8 rounded-[40px] animate-fade shadow-sm border border-black/5">
+                                        <div className="flex flex-col">
+                                            <input 
+                                                type="number" 
+                                                className="w-20 font-black text-3xl text-center outline-none border-b-4 border-amber-400 bg-transparent text-black" 
+                                                value={form.customCount} 
+                                                onChange={e => setForm({...form, customCount: e.target.value})} 
+                                            />
+                                        </div>
+                                        <div className="flex flex-col flex-1">
+                                            <span className="font-black text-[10px] opacity-30 uppercase tracking-[0.2em] mb-2">Repetitions per</span>
+                                            <select 
+                                                className="font-black text-lg outline-none bg-transparent text-black" 
+                                                value={form.customPeriod} 
+                                                onChange={e => setForm({...form, customPeriod: e.target.value})}
+                                            >
+                                                <option>Week</option>
+                                                <option>Month</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                )}
+
+                                <button 
+                                    onClick={processHabitSave} 
+                                    className="w-full py-8 rounded-[40px] logo-gradient text-white font-black text-xl shadow-2xl active:scale-95 transition-all duration-300 flex items-center justify-center gap-4"
+                                >
+                                    <i className="fa-solid fa-bolt text-amber-400"></i>
+                                    {editingId ? 'Update Discipline' : 'Forge Ritual'}
+                                </button>
+                                
+                                {editingId && (
+                                    <button 
+                                        onClick={() => { setEditingId(null); setForm(defaultForm); setCurrentPage('habits'); }} 
+                                        className="w-full text-slate-400 font-bold text-sm py-2 hover:text-black transition-colors"
+                                    >
+                                        Discard Changes
+                                    </button>
+                                )}
+                            </div>
+                        )}
+
+                        {/* --- CALENDAR: FULL VIEW --- */}
+                        {currentPage === 'calendar_full' && (
+                            <div className="animate-fade flex flex-col h-full relative">
+                                <div className="flex justify-between items-center mb-10">
+                                    <div>
+                                        <h2 className="text-3xl font-black italic text-black leading-tight">{viewDate.toLocaleString('default', { month: 'long' })}</h2>
+                                        <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">{viewDate.getFullYear()}</p>
+                                    </div>
+                                    <div className="flex gap-3">
+                                        <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1))} className="w-12 h-12 bg-white rounded-2xl shadow-sm border border-black/5 text-black hover:bg-slate-50 transition-all"><i className="fa-solid fa-chevron-left"></i></button>
+                                        <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1))} className="w-12 h-12 bg-white rounded-2xl shadow-sm border border-black/5 text-black hover:bg-slate-50 transition-all"><i className="fa-solid fa-chevron-right"></i></button>
+                                    </div>
+                                </div>
+                                
+                                <div className="bg-white p-8 rounded-[48px] border border-black/5 shadow-2xl mb-24">
+                                    <div className="calendar-grid">
+                                        {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(dName => <div key={dName} className="text-center text-[10px] font-black text-slate-200 mb-6 uppercase tracking-tighter">{dName}</div>)}
+                                        {[...Array(new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay())].map((_, i) => <div key={`empty-${i}`}></div>)}
+                                        {[...Array(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate())].map((_, i) => {
+                                            const dayNum = i + 1;
+                                            const dsString = `${viewDate.getFullYear()}-${String(viewDate.getMonth() + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
+                                            const dayCount = (logs[dsString] || []).length;
+                                            const dayPct = habits.length > 0 ? (dayCount / habits.length) * 100 : 0;
+                                            
+                                            let bgStatus = 'bg-slate-50 text-slate-300';
+                                            if (dayPct > 0) bgStatus = 'bg-amber-100 text-amber-700';
+                                            if (dayPct === 100) bgStatus = 'bg-black text-amber-400 shadow-xl scale-105 z-10';
+                                            
+                                            return <div key={dayNum} className={`calendar-day transition-all duration-500 ${bgStatus}`}>{dayNum}</div>
+                                        })}
+                                    </div>
+                                </div>
+                                
+                                <div className="fixed-bottom-btn">
+                                    <button 
+                                        onClick={() => { setViewDate(new Date()); setCurrentPage('home'); }} 
+                                        className="w-full py-7 rounded-[40px] bg-black text-white font-black text-lg shadow-2xl shadow-black/40 active:scale-95 transition-all"
+                                    >
+                                        Return to Today
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
-                    <MainNavbar />
+                    {/* PERMANENT NAV ENGINE */}
+                    <nav className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl px-2 py-10 flex justify-around items-center z-50 border-t border-black/5 shadow-[0_-10px_40px_rgba(0,0,0,0.03)]">
+                        <button onClick={() => { setEditingId(null); setForm(defaultForm); setCurrentPage('home'); }} className={`flex flex-col items-center w-14 transition-all duration-300 ${currentPage === 'home' ? 'text-black scale-110' : 'text-slate-300'}`}>
+                            <i className="fa-solid fa-house-chimney text-xl"></i>
+                            <span className="nav-text">Home</span>
+                        </button>
+                        <button onClick={() => { setEditingId(null); setForm(defaultForm); setCurrentPage('habits'); }} className={`flex flex-col items-center w-14 transition-all duration-300 ${currentPage === 'habits' ? 'text-black scale-110' : 'text-slate-300'}`}>
+                            <i className="fa-solid fa-dna text-xl"></i>
+                            <span className="nav-text">Rituals</span>
+                        </button>
+                        <button 
+                            onClick={() => { setForm(defaultForm); setEditingId(null); setCurrentPage('add'); }} 
+                            className="w-16 h-16 logo-gradient rounded-[28px] flex items-center justify-center text-white -mt-20 border-8 border-white shadow-2xl active:scale-90 transition-all duration-500 hover:rotate-90"
+                        >
+                            <i className="fa-solid fa-plus text-2xl text-amber-400"></i>
+                        </button>
+                        <button onClick={() => { setEditingId(null); setCurrentPage('growth'); }} className={`flex flex-col items-center w-14 transition-all duration-300 ${currentPage === 'growth' ? 'text-black scale-110' : 'text-slate-300'}`}>
+                            <i className="fa-solid fa-chart-pie text-xl"></i>
+                            <span className="nav-text">Growth</span>
+                        </button>
+                        <button onClick={() => { setEditingId(null); setCurrentPage('coach'); }} className={`flex flex-col items-center w-14 transition-all duration-300 ${currentPage === 'coach' ? 'text-black scale-110' : 'text-slate-300'}`}>
+                            <i className="fa-solid fa-wand-magic-sparkles text-xl"></i>
+                            <span className="nav-text">Coach</span>
+                        </button>
+                    </nav>
                 </div>
             );
         };
 
-        // --- 10. BOOTSTRAP ---
-        const rootElementInstance = document.getElementById('root');
-        const reactRootInstance = ReactDOM.createRoot(rootElementInstance);
-        reactRootInstance.render(<RoutiqApp />);
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
     </script>
 </body>
 </html>
