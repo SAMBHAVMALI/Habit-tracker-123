@@ -39,7 +39,6 @@
         }
         .content-area::-webkit-scrollbar { display: none; }
 
-        /* Restored Smooth Splash Animations */
         .overlay-screen { 
             position: fixed; inset: 0; background: #FFFFFF; 
             display: flex; align-items: center; justify-content: center; 
@@ -56,7 +55,7 @@
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
         .calendar-day { aspect-ratio: 1; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; }
 
-        /* THE SCROLL FIX: Force inner width to trigger overflow */
+        /* Scroll Fix for Pickers */
         .scroll-wrapper {
             overflow-x: auto;
             width: 100%;
@@ -66,13 +65,12 @@
         .scroll-inner {
             display: flex;
             gap: 12px;
-            width: max-content; /* THIS FORCES THE SCROLL */
+            width: max-content;
             padding-right: 20px;
         }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* Fixed Button at bottom of Calendar */
         .fixed-bottom-btn {
             position: absolute;
             bottom: 100px;
@@ -101,13 +99,16 @@
             const [habits, setHabits] = useState(() => JSON.parse(localStorage.getItem('habits')) || []);
             const [logs, setLogs] = useState(() => JSON.parse(localStorage.getItem('habitLogs')) || {});
             
-            const [form, setForm] = useState({
+            // Initial/Default State
+            const defaultForm = {
                 name: '', description: '', color: '#1A1A1A', icon: '✨', 
                 category: 'Category', frequency: 'Frequency', weekDays: [], monthDays: [],
                 customCount: 1, customPeriod: 'Week'
-            });
+            };
 
-            const quotes = ["Consistency is your signature.", "Small habits lead to big changes.", "The secret is in the routine."];
+            const [form, setForm] = useState(defaultForm);
+
+            const quotes = ["Consistency is your signature.", "Small habits lead to big changes.", "Quality is a habit."];
             const [activeQuote] = useState(() => quotes[Math.floor(Math.random() * quotes.length)]);
 
             const colorPalette = ['#1A1A1A', '#D4AF37', '#6366F1', '#EC4899', '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6', '#FF6B6B', '#4ECDC4', '#A8E6CF', '#FFD3B6', '#FFAAA5', '#88D8B0'];
@@ -125,6 +126,15 @@
             }, [habits, logs]);
 
             const todayStr = new Date().toISOString().split('T')[0];
+
+            // FIXED: Reset function
+            const handleConfirmRitual = () => {
+                if(!form.name) return;
+                setHabits([...habits, {...form, id: Date.now()}]);
+                setForm(defaultForm); // This wipes the previous details
+                setPickers({ color: false, icon: false });
+                setCurrentPage('home');
+            };
 
             const Header = () => (
                 <header className="flex justify-between items-center mb-10 w-full relative z-[60]">
@@ -175,7 +185,7 @@
                                         {habits.map(h => {
                                             const isDone = (logs[todayStr] || []).includes(h.id);
                                             return (
-                                                <div key={h.id} className="card-standard flex justify-between items-center" style={{ borderLeft: `6px solid ${h.color}` }}>
+                                                <div key={h.id} className="card-standard flex justify-between items-center transition-all active:scale-[0.98]" style={{ borderLeft: `6px solid ${h.color}` }}>
                                                     <div className="flex items-center gap-4">
                                                         <span className="text-2xl">{h.icon}</span>
                                                         <span className={`font-bold text-lg ${isDone ? 'text-slate-300 line-through' : ''}`}>{h.name}</span>
@@ -203,8 +213,8 @@
                                 <div className="flex justify-between items-center mb-8">
                                     <h2 className="text-2xl font-black italic">{viewDate.toLocaleString('default', { month: 'long' })} {viewDate.getFullYear()}</h2>
                                     <div className="flex gap-2">
-                                        <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1))} className="w-10 h-10 bg-white rounded-xl shadow-sm"><i className="fa-solid fa-chevron-left"></i></button>
-                                        <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1))} className="w-10 h-10 bg-white rounded-xl shadow-sm"><i className="fa-solid fa-chevron-right"></i></button>
+                                        <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1))} className="w-10 h-10 bg-white rounded-xl shadow-sm border border-black/5"><i className="fa-solid fa-chevron-left"></i></button>
+                                        <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1))} className="w-10 h-10 bg-white rounded-xl shadow-sm border border-black/5"><i className="fa-solid fa-chevron-right"></i></button>
                                     </div>
                                 </div>
                                 <div className="bg-white p-6 rounded-[32px] border border-black/5 shadow-sm mb-20">
@@ -223,7 +233,6 @@
                                         })}
                                     </div>
                                 </div>
-                                {/* FIXED: BACK TO TODAY IS NOW FIXED POSITION TO BE ALWAYS VISIBLE */}
                                 <div className="fixed-bottom-btn">
                                     <button onClick={() => { setViewDate(new Date()); setCurrentPage('home'); }} className="w-full py-6 rounded-[32px] bg-black text-white font-black text-lg shadow-xl shadow-black/20">
                                         Back to Today
@@ -244,7 +253,7 @@
                                                         <span className="text-2xl">{h.icon}</span>
                                                         <h3 className="font-bold text-lg">{h.name}</h3>
                                                     </div>
-                                                    <button onClick={() => setHabits(habits.filter(x => x.id !== h.id))} className="text-rose-500"><i className="fa-solid fa-trash-can"></i></button>
+                                                    <button onClick={() => setHabits(habits.filter(x => x.id !== h.id))} className="text-rose-500 transition-colors p-2 rounded-lg"><i className="fa-solid fa-trash-can"></i></button>
                                                 </div>
                                                 <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">
                                                     {h.category} • {
@@ -273,7 +282,6 @@
                                 <input className="w-full p-6 rounded-3xl bg-white font-bold outline-none shadow-sm" placeholder="Habit Name" value={form.name} onChange={e => setForm({...form, name: e.target.value})} />
                                 <textarea className="w-full p-6 rounded-3xl bg-white font-medium text-sm outline-none shadow-sm" placeholder="Description" rows="2" value={form.description} onChange={e => setForm({...form, description: e.target.value})} />
                                 
-                                {/* FIXED: HORIZONTAL SCROLLING FOR PICKERS */}
                                 <div className="flex flex-col gap-6">
                                     <div className="flex flex-col gap-2">
                                         <p className="text-[10px] font-black uppercase tracking-widest ml-2 opacity-50">Theme Color</p>
@@ -306,10 +314,10 @@
 
                                 <div className="grid grid-cols-2 gap-4 mt-4">
                                     <select className="p-5 rounded-3xl bg-white font-bold shadow-sm outline-none appearance-none" value={form.category} onChange={e => setForm({...form, category: e.target.value})}>
-                                        <option>Category</option><option>Health</option><option>Work</option><option>Mind</option><option>Finance</option><option>Growth</option>
+                                        <option value="Category" disabled>Category</option><option>Health</option><option>Work</option><option>Mind</option><option>Finance</option><option>Growth</option>
                                     </select>
                                     <select className="p-5 rounded-3xl bg-white font-bold shadow-sm outline-none appearance-none" value={form.frequency} onChange={e => setForm({...form, frequency: e.target.value})}>
-                                        <option>Frequency</option><option>Daily</option><option>Specific Days of Week</option><option>Specific Days of Month</option><option>Customise Days</option>
+                                        <option value="Frequency" disabled>Frequency</option><option>Daily</option><option>Specific Days of Week</option><option>Specific Days of Month</option><option>Customise Days</option>
                                     </select>
                                 </div>
 
@@ -339,13 +347,11 @@
                                     <div className="flex items-center gap-4 bg-white p-6 rounded-[32px] animate-fade shadow-sm border border-black/5">
                                         <input type="number" className="w-16 font-black text-xl text-center outline-none border-b-2 border-black/5 bg-transparent" value={form.customCount} onChange={e => setForm({...form, customCount: e.target.value})} />
                                         <span className="font-bold text-xs opacity-40 uppercase tracking-widest">Times per</span>
-                                        <select className="font-black text-sm outline-none bg-transparent" value={form.customPeriod} onChange={e => setForm({...form, customPeriod: e.target.value})}>
-                                            <option>Week</option><option>Month</option>
-                                        </select>
+                                        <select className="font-black text-sm outline-none bg-transparent" value={form.customPeriod} onChange={e => setForm({...form, customPeriod: e.target.value})}><option>Week</option><option>Month</option></select>
                                     </div>
                                 )}
 
-                                <button onClick={() => {if(form.name){setHabits([...habits, {...form, id: Date.now()}]); setCurrentPage('home');}}} className="w-full py-6 rounded-[32px] logo-gradient text-white font-black text-lg shadow-xl active:scale-95 transition-all">Confirm Ritual</button>
+                                <button onClick={handleConfirmRitual} className="w-full py-6 rounded-[32px] logo-gradient text-white font-black text-lg shadow-xl active:scale-95 transition-all">Confirm Ritual</button>
                             </div>
                         )}
                     </div>
