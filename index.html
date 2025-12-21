@@ -19,47 +19,28 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
         
-        /* THEME COLORS BASED ON YOUR LOGO */
         :root {
-            --logo-gold: #D4AF37;   /* Classic Gold from logo icons */
-            --logo-black: #1A1A1A;  /* Deep Black from logo text */
-            --logo-peach: #F5E6D3;  /* Soft Peach/Cream background */
+            --logo-gold: #D4AF37;
+            --logo-black: #1A1A1A;
+            --logo-peach: #F5E6D3;
         }
 
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: var(--logo-peach); 
-            color: var(--logo-black); 
-            margin: 0; 
-        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--logo-peach); color: var(--logo-black); margin: 0; }
         
-        /* Centered Branding Overlay */
-        .overlay-screen {
-            position: fixed; inset: 0; background: #FFFFFF;
-            display: flex; align-items: center; justify-content: center;
-            z-index: 9999; transition: opacity 0.8s ease-in-out;
-        }
+        .overlay-screen { position: fixed; inset: 0; background: #FFFFFF; display: flex; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.8s ease-in-out; }
         .branding-wrapper { display: flex; flex-direction: column; align-items: center; text-align: center; }
         .splash-logo { width: 180px; height: 180px; object-fit: contain; animation: logo-pop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         .hide-overlay { opacity: 0; pointer-events: none; }
 
-        /* THEME GRADIENTS & CARDS */
         .logo-gradient { background: linear-gradient(135deg, #1A1A1A 0%, #444444 100%); }
         .gold-accent { color: var(--logo-gold); }
-        .gold-bg { background-color: var(--logo-gold); }
-        
-        .card-standard { 
-            background: #FFFFFF; 
-            border: 1px solid rgba(212, 175, 55, 0.1); 
-            border-radius: 24px; 
-            padding: 20px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
-        }
-
+        .card-standard { background: #FFFFFF; border-radius: 24px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
         .nav-text { font-size: 9px; font-weight: 800; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.1em; }
         
-        /* Custom Checkbox Style */
-        .check-active { background-color: var(--logo-black); color: var(--logo-gold); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+        .calendar-day { aspect-ratio: 1; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; transition: all 0.2s; }
+        
+        @keyframes logo-pop { 0% { transform: scale(0.6); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body>
@@ -72,14 +53,12 @@
             const [overlayStage, setOverlayStage] = useState('logo');
             const [currentPage, setCurrentPage] = useState('home');
             const [showMenu, setShowMenu] = useState(false);
+            const [viewDate, setViewDate] = useState(new Date());
             
             const [habits, setHabits] = useState(() => JSON.parse(localStorage.getItem('habits')) || []);
             const [logs, setLogs] = useState(() => JSON.parse(localStorage.getItem('habitLogs')) || {});
             
-            const quotes = [
-                "Discipline is the bridge between goals and accomplishment.",
-                "Your routine is your signature."
-            ];
+            const quotes = ["Your routine is your signature.", "Discipline is freedom."];
             const [activeQuote] = useState(() => quotes[Math.floor(Math.random() * quotes.length)]);
 
             useEffect(() => {
@@ -93,37 +72,61 @@
                 localStorage.setItem('habitLogs', JSON.stringify(logs));
             }, [habits, logs]);
 
-            const today = new Date().toISOString().split('T')[0];
+            const getCompletionPct = (dateStr) => {
+                if (habits.length === 0) return 0;
+                const completed = (logs[dateStr] || []).length;
+                return (completed / habits.length) * 100;
+            };
+
+            const CalendarView = () => {
+                const year = viewDate.getFullYear();
+                const month = viewDate.getMonth();
+                const firstDay = new Date(year, month, 1).getDay();
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+                const monthName = viewDate.toLocaleString('default', { month: 'long' });
+
+                return (
+                    <div className="animate-in fade-in slide-in-from-top-4 duration-500">
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-xl font-black italic">{monthName} {year}</h2>
+                            <div className="flex gap-2">
+                                <button onClick={() => setViewDate(new Date(year, month - 1))} className="p-2 bg-white rounded-lg border border-black/5"><i className="fa-solid fa-chevron-left text-xs"></i></button>
+                                <button onClick={() => setViewDate(new Date(year, month + 1))} className="p-2 bg-white rounded-lg border border-black/5"><i className="fa-solid fa-chevron-right text-xs"></i></button>
+                            </div>
+                        </div>
+                        <div className="calendar-grid bg-white p-4 rounded-[28px] border border-black/5 shadow-sm">
+                            {['S','M','T','W','T','F','S'].map(d => <div key={d} className="text-center text-[10px] font-black text-slate-300 mb-2">{d}</div>)}
+                            {[...Array(firstDay)].map((_, i) => <div key={`empty-${i}`}></div>)}
+                            {[...Array(daysInMonth)].map((_, i) => {
+                                const d = i + 1;
+                                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                                const pct = getCompletionPct(dateStr);
+                                let color = 'bg-slate-50 text-slate-300';
+                                if (pct > 0) color = 'bg-amber-100 text-amber-700';
+                                if (pct > 50) color = 'bg-amber-300 text-amber-900';
+                                if (pct === 100) color = 'bg-black text-amber-400 shadow-md';
+                                return <div key={d} className={`calendar-day ${color}`}>{d}</div>
+                            })}
+                        </div>
+                        <button onClick={() => setCurrentPage('home')} className="w-full mt-6 py-4 rounded-2xl bg-black text-white font-bold text-sm">Back to Rituals</button>
+                    </div>
+                );
+            };
 
             const Nav = () => (
                 <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-slate-100 px-2 py-5 flex justify-around items-center z-40">
-                    <button onClick={() => setCurrentPage('home')} className={`flex flex-col items-center w-14 ${currentPage === 'home' ? 'text-black' : 'text-slate-300'}`}>
-                        <i className="fa-solid fa-house text-lg"></i>
-                        <span className="nav-text">Home</span>
-                    </button>
-                    <button onClick={() => setCurrentPage('habits')} className={`flex flex-col items-center w-14 ${currentPage === 'habits' ? 'text-black' : 'text-slate-300'}`}>
-                        <i className="fa-solid fa-list-check text-lg"></i>
-                        <span className="nav-text">Habits</span>
-                    </button>
+                    <button onClick={() => setCurrentPage('home')} className={`flex flex-col items-center w-14 ${currentPage === 'home' ? 'text-black' : 'text-slate-300'}`}><i className="fa-solid fa-house"></i><span className="nav-text">Home</span></button>
+                    <button onClick={() => setCurrentPage('habits')} className={`flex flex-col items-center w-14 ${currentPage === 'habits' ? 'text-black' : 'text-slate-300'}`}><i className="fa-solid fa-list-check"></i><span className="nav-text">Habits</span></button>
                     <div className="relative w-14 flex justify-center">
-                        <button onClick={() => setCurrentPage('add')} className="w-14 h-14 logo-gradient rounded-2xl flex items-center justify-center text-white -mt-14 border-4 border-white shadow-xl active:scale-95 transition-all">
-                            <i className="fa-solid fa-plus text-xl gold-accent"></i>
-                        </button>
+                        <button onClick={() => setCurrentPage('add')} className="w-14 h-14 logo-gradient rounded-2xl flex items-center justify-center text-white -mt-14 border-4 border-white shadow-xl"><i className="fa-solid fa-plus text-xl gold-accent"></i></button>
                     </div>
-                    <button onClick={() => setCurrentPage('insights')} className={`flex flex-col items-center w-14 ${currentPage === 'insights' ? 'text-black' : 'text-slate-300'}`}>
-                        <i className="fa-solid fa-chart-pie text-lg"></i>
-                        <span className="nav-text">Growth</span>
-                    </button>
-                    <button onClick={() => setCurrentPage('coach')} className={`flex flex-col items-center w-14 ${currentPage === 'coach' ? 'text-black' : 'text-slate-300'}`}>
-                        <i className="fa-solid fa-wand-magic-sparkles text-lg"></i>
-                        <span className="nav-text">Coach</span>
-                    </button>
+                    <button onClick={() => setCurrentPage('insights')} className={`flex flex-col items-center w-14 ${currentPage === 'insights' ? 'text-black' : 'text-slate-300'}`}><i className="fa-solid fa-chart-pie"></i><span className="nav-text">Growth</span></button>
+                    <button onClick={() => setCurrentPage('coach')} className={`flex flex-col items-center w-14 ${currentPage === 'coach' ? 'text-black' : 'text-slate-300'}`}><i className="fa-solid fa-wand-magic-sparkles"></i><span className="nav-text">Coach</span></button>
                 </nav>
             );
 
             return (
                 <div className="min-h-screen max-w-lg mx-auto relative overflow-hidden">
-                    {/* Theme-Matched Splash Overlay */}
                     <div className={`overlay-screen ${overlayStage === 'none' ? 'hide-overlay' : ''}`}>
                         {overlayStage === 'logo' && (
                             <div className="branding-wrapper">
@@ -131,9 +134,7 @@
                                 <h1 className="text-4xl font-black text-black mt-4 italic tracking-tighter">Routiq</h1>
                             </div>
                         )}
-                        {overlayStage === 'quote' && (
-                            <p className="px-10 text-center text-xl font-bold text-black italic">"{activeQuote}"</p>
-                        )}
+                        {overlayStage === 'quote' && <p className="px-10 text-center text-xl font-bold text-black italic">"{activeQuote}"</p>}
                     </div>
 
                     <div className="p-7 pb-32">
@@ -142,61 +143,61 @@
                                 <h1 className="text-3xl font-black italic tracking-tighter">Routiq</h1>
                                 <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mt-1">Today's Discipline</p>
                             </div>
-                            <div className="flex gap-3">
-                                <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-white text-black border border-slate-100">
+                            <div className="flex gap-3 relative z-50">
+                                <button onClick={() => setCurrentPage('calendar_full')} className="w-10 h-10 flex items-center justify-center rounded-xl bg-white text-black border border-black/5 shadow-sm active:scale-95">
                                     <i className="fa-solid fa-calendar-day"></i>
                                 </button>
-                                <button onClick={() => setShowMenu(!showMenu)} className="w-10 h-10 flex items-center justify-center rounded-xl bg-black text-white shadow-lg">
+                                <button onClick={() => setShowMenu(!showMenu)} className="w-10 h-10 flex items-center justify-center rounded-xl bg-black text-white shadow-lg active:scale-95">
                                     <i className="fa-solid fa-ellipsis-vertical gold-accent"></i>
                                 </button>
+                                
+                                {showMenu && (
+                                    <div className="absolute right-0 top-12 w-48 bg-white border border-black/5 rounded-2xl shadow-2xl z-[60] overflow-hidden">
+                                        <button onClick={() => { localStorage.clear(); window.location.reload(); }} className="w-full px-5 py-4 text-left text-sm font-black text-rose-500 hover:bg-rose-50 flex items-center gap-3">
+                                            <i className="fa-solid fa-trash-can"></i> Clear Data
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         </header>
 
                         {currentPage === 'home' && (
                             <div className="space-y-4">
                                 {habits.map(h => {
-                                    const isDone = logs[today]?.includes(h.id);
+                                    const todayStr = new Date().toISOString().split('T')[0];
+                                    const isDone = logs[todayStr]?.includes(h.id);
                                     return (
-                                        <div key={h.id} className="card-standard flex justify-between items-center animate-in fade-in slide-in-from-bottom-2">
-                                            <div>
-                                                <span className={`font-bold text-lg ${isDone ? 'text-slate-300 line-through' : 'text-black'}`}>{h.name}</span>
-                                            </div>
-                                            <button 
-                                                onClick={() => {
-                                                    const curLogs = logs[today] || [];
-                                                    const newLogs = curLogs.includes(h.id) ? curLogs.filter(id => id !== h.id) : [...curLogs, h.id];
-                                                    setLogs({...logs, [today]: newLogs});
-                                                }} 
-                                                className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${isDone ? 'check-active' : 'bg-slate-100 text-transparent'}`}
-                                            >
-                                                <i className="fa-solid fa-check text-lg"></i>
-                                            </button>
+                                        <div key={h.id} className="card-standard flex justify-between items-center">
+                                            <span className={`font-bold text-lg ${isDone ? 'text-slate-300 line-through' : 'text-black'}`}>{h.name}</span>
+                                            <button onClick={() => {
+                                                const curLogs = logs[todayStr] || [];
+                                                const newLogs = curLogs.includes(h.id) ? curLogs.filter(id => id !== h.id) : [...curLogs, h.id];
+                                                setLogs({...logs, [todayStr]: newLogs});
+                                            }} className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${isDone ? 'bg-black text-amber-400' : 'bg-slate-100 text-transparent'}`}><i className="fa-solid fa-check text-lg"></i></button>
                                         </div>
                                     );
                                 })}
-                                {habits.length === 0 && (
-                                    <div className="text-center py-20 opacity-20">
-                                        <i className="fa-solid fa-feather text-6xl mb-4"></i>
-                                        <p className="font-bold uppercase tracking-widest text-xs">Awaiting Rituals</p>
-                                    </div>
-                                )}
+                                {habits.length === 0 && <p className="text-center text-slate-400 mt-20 italic">No rituals added. Tap +</p>}
                             </div>
                         )}
 
+                        {currentPage === 'calendar_full' && <CalendarView />}
+                        
                         {currentPage === 'add' && (
                             <div className="animate-in slide-in-from-bottom-6">
-                                <h2 className="text-2xl font-black mb-8 uppercase italic">New Habit</h2>
-                                <input id="hIn" type="text" className="w-full p-5 rounded-3xl border-2 border-black/5 bg-white text-black font-bold outline-none focus:border-black transition-all mb-4" placeholder="Name your ritual..." />
+                                <h2 className="text-2xl font-black mb-8 italic">New Habit</h2>
+                                <input id="hIn" type="text" className="w-full p-5 rounded-3xl border border-black/5 bg-white font-bold outline-none mb-4" placeholder="Drinking Water..." />
                                 <button onClick={() => {
                                     const v = document.getElementById('hIn').value;
                                     if(v) { setHabits([...habits, {id: Date.now(), name: v}]); setCurrentPage('home'); }
-                                }} className="w-full py-5 rounded-3xl logo-gradient text-white font-black text-lg shadow-2xl active:scale-95 transition-all">
-                                    Start Journey
-                                </button>
+                                }} className="w-full py-5 rounded-3xl logo-gradient text-white font-black text-lg">Start Journey</button>
                             </div>
                         )}
+                        
+                        {(currentPage === 'insights' || currentPage === 'coach' || currentPage === 'habits') && (
+                            <div className="text-center py-20 text-slate-300 italic">Page "{currentPage}" under construction.</div>
+                        )}
                     </div>
-
                     <Nav />
                 </div>
             );
