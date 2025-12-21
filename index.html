@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Routiq Master Build</title>
+    <title>Routiq Master Build Legacy</title>
     
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
@@ -12,21 +12,19 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        /* 1. FONT DEFINITIONS 
-        */
+        /* 1. TYPOGRAPHY & FONT CONFIGURATION */
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
         
-        /* 2. GLOBAL THEME VARIABLES 
-        */
+        /* 2. GLOBAL SYSTEM CONSTANTS */
         :root {
             --logo-gold: #D4AF37;   
             --logo-black: #1A1A1A;  
             --logo-peach: #F5E6D3;  
             --card-shadow: 0 10px 40px rgba(0,0,0,0.04);
+            --mastery-gradient: linear-gradient(135deg, #1A1A1A 0%, #444444 100%);
         }
 
-        /* 3. BASE BODY RESET 
-        */
+        /* 3. CORE DOCUMENT RESET */
         body, html, #root { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
             background-color: var(--logo-peach) !important; 
@@ -38,8 +36,7 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* 4. STRUCTURAL SHELL 
-        */
+        /* 4. STRUCTURAL ARCHITECTURE */
         .app-shell { 
             height: 100vh; 
             display: flex; 
@@ -53,7 +50,7 @@
             flex: 1; 
             display: flex; 
             flex-direction: column; 
-            padding: 28px 28px 150px 28px; 
+            padding: 28px 28px 160px 28px; 
             overflow-y: auto; 
             scrollbar-width: none;
             -ms-overflow-style: none;
@@ -62,8 +59,7 @@
             display: none; 
         }
 
-        /* 5. SPLASH & OVERLAY ANIMATIONS 
-        */
+        /* 5. OVERLAY & SPLASH ENGINE */
         .overlay-screen { 
             position: fixed; 
             inset: 0; 
@@ -99,8 +95,7 @@
             letter-spacing: 0.12em; 
         }
 
-        /* 6. CENTERING LOGIC 
-        */
+        /* 6. COMPONENT ALIGNMENT */
         .centered-container { 
             flex: 1; 
             display: flex; 
@@ -110,8 +105,7 @@
             text-align: center; 
         }
         
-        /* 7. CALENDAR SYSTEM 
-        */
+        /* 7. CALENDAR SYSTEM */
         .calendar-grid { 
             display: grid; 
             grid-template-columns: repeat(7, 1fr); 
@@ -128,13 +122,14 @@
             transition: all 0.3s ease;
         }
 
-        /* 8. HORIZONTAL SCROLL ENGINES 
-        */
+        /* 8. PICKER SCROLL ENGINE */
         .scroll-wrapper { 
             overflow-x: auto; 
             width: 100%; 
             -webkit-overflow-scrolling: touch; 
             padding: 10px 0; 
+            position: relative;
+            z-index: 80; /* High priority visibility */
         }
         .scroll-inner { 
             display: flex; 
@@ -142,24 +137,12 @@
             width: max-content; 
             padding-right: 40px; 
         }
-        .no-scrollbar::-webkit-scrollbar { 
-            display: none; 
-        }
-        .no-scrollbar { 
-            -ms-overflow-style: none; 
-            scrollbar-width: none; 
-        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* 9. GROWTH DATA VISUALIZATION 
-        */
-        .meter-svg { 
-            transform: rotate(-90deg); 
-        }
-        .meter-bg { 
-            fill: none; 
-            stroke: #F8FAFC; 
-            stroke-width: 10; 
-        }
+        /* 9. DATA VISUALIZATION ENGINE */
+        .meter-svg { transform: rotate(-90deg); }
+        .meter-bg { fill: none; stroke: #F8FAFC; stroke-width: 10; }
         .meter-progress { 
             fill: none; 
             stroke: var(--logo-gold); 
@@ -168,8 +151,7 @@
             transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1); 
         }
 
-        /* 10. HEATMAP ENGINE (GITHUB STYLE) 
-        */
+        /* 10. CONSISTENCY MATRIX */
         .heatmap-grid { 
             display: grid; 
             grid-template-columns: repeat(10, 1fr); 
@@ -186,6 +168,7 @@
             z-index: 10; 
         }
         
+        /* 11. INTERACTION UI */
         .filter-chip { 
             padding: 10px 20px; 
             border-radius: 24px; 
@@ -196,8 +179,17 @@
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* 11. FLOATING NAVIGATION CONTROLS 
-        */
+        /* 12. CALENDAR PROTECTION */
+        .month-picker-grid { 
+            display: grid; 
+            grid-template-columns: repeat(7, 1fr); 
+            gap: 6px; 
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+            padding: 2px;
+        }
+
         .fixed-bottom-btn { 
             position: absolute; 
             bottom: 110px; 
@@ -205,29 +197,11 @@
             right: 28px; 
             z-index: 40; 
         }
-        
-        /* 12. MONTH PICKER REFINEMENT 
-        */
-        .month-picker-grid { 
-            display: grid; 
-            grid-template-columns: repeat(7, 1fr); 
-            gap: 6px; 
-            width: 100%;
-            max-width: 330px;
-            margin: 0 auto;
-        }
 
-        /* 13. KEYFRAME DEFINITIONS 
-        */
+        /* 13. KEYFRAME DEFINITIONS */
         @keyframes fadeInScale { 
-            from { 
-                opacity: 0; 
-                transform: translateY(20px) scale(0.95); 
-            } 
-            to { 
-                opacity: 1; 
-                transform: translateY(0) scale(1); 
-            } 
+            from { opacity: 0; transform: translateY(20px) scale(0.95); } 
+            to { opacity: 1; transform: translateY(0) scale(1); } 
         }
         
         .animate-fade { 
@@ -240,12 +214,12 @@
 
     <script type="text/babel">
         // ---------------------------------------------------------
-        // REACT APPLICATION MODULE
+        // REACT SYSTEM INITIALIZATION
         // ---------------------------------------------------------
         const { useState, useEffect, useMemo, Fragment } = React;
 
         const App = () => {
-            // --- A. STATE ARCHITECTURE ---
+            // --- A. STATE REPOSITORY ---
             const [overlayStage, setOverlayStage] = useState('logo');
             const [currentPage, setCurrentPage] = useState('home');
             const [showMenu, setShowMenu] = useState(false);
@@ -254,17 +228,13 @@
             const [growthRange, setGrowthRange] = useState(30); 
             const [pickers, setPickers] = useState({ color: false, icon: false });
 
-            // B. DATA PERSISTENCE LAYER
+            // STORAGE HANDLERS
             const [habits, setHabits] = useState(() => {
                 try {
                     const saved = localStorage.getItem('habits');
-                    if (saved) {
-                        return JSON.parse(saved);
-                    } else {
-                        return [];
-                    }
+                    return saved ? JSON.parse(saved) : [];
                 } catch (err) {
-                    console.error("Habit loading failed", err);
+                    console.error("Local Data Habit Error", err);
                     return [];
                 }
             });
@@ -272,18 +242,14 @@
             const [logs, setLogs] = useState(() => {
                 try {
                     const savedLogs = localStorage.getItem('habitLogs');
-                    if (savedLogs) {
-                        return JSON.parse(savedLogs);
-                    } else {
-                        return {};
-                    }
+                    return savedLogs ? JSON.parse(savedLogs) : {};
                 } catch (err) {
-                    console.error("Logs loading failed", err);
+                    console.error("Local Data Logs Error", err);
                     return {};
                 }
             });
             
-            // C. FORM DEFAULTS
+            // FORM BLUEPRINT
             const defaultForm = {
                 name: '', 
                 description: '', 
@@ -299,19 +265,17 @@
 
             const [form, setForm] = useState(defaultForm);
 
-            // D. ASSET DEFINITIONS
-            const quotesArray = [
+            // GLOBAL ASSETS
+            const quotesCollection = [
                 "Consistency is your signature.", 
                 "Discipline equals freedom.", 
                 "Quality is a habit.",
                 "Small steps lead to big results.",
-                "The secret is in your routine.",
-                "Forge your character daily."
+                "Transform through routine."
             ];
-            
             const [activeQuote] = useState(() => {
-                const randomIndex = Math.floor(Math.random() * quotesArray.length);
-                return quotesArray[randomIndex];
+                const randomVal = Math.floor(Math.random() * quotesCollection.length);
+                return quotesCollection[randomVal];
             });
 
             const colorPalette = [
@@ -327,112 +291,99 @@
                 '🚶', '🚴', '🥗', '🥛', '🎧', '⚡', '⏳', '🏆'
             ];
 
-            // --- E. LIFECYCLE HOOKS ---
+            // --- B. SYSTEM LIFECYCLE ---
             useEffect(() => {
-                // Initialize Splash Sequence
-                const timerLogo = setTimeout(() => {
-                    setOverlayStage('quote');
-                }, 1400);
-
-                const timerMain = setTimeout(() => {
-                    setOverlayStage('none');
-                }, 3800);
-
-                return () => {
-                    clearTimeout(timerLogo);
-                    clearTimeout(timerMain);
-                };
+                // Initialize Sequence
+                const splash1 = setTimeout(() => setOverlayStage('quote'), 1400);
+                const splash2 = setTimeout(() => setOverlayStage('none'), 3800);
+                return () => { clearTimeout(splash1); clearTimeout(splash2); };
             }, []);
 
             useEffect(() => {
-                // Synchronize Storage
-                const habitData = JSON.stringify(habits);
-                localStorage.setItem('habits', habitData);
-                
-                const logData = JSON.stringify(logs);
-                localStorage.setItem('habitLogs', logData);
+                // Background Synchronization
+                localStorage.setItem('habits', JSON.stringify(habits));
+                localStorage.setItem('habitLogs', JSON.stringify(logs));
             }, [habits, logs]);
 
             const todayStr = new Date().toISOString().split('T')[0];
 
-            // --- F. STATISTICAL COMPONENT LOGIC ---
-            const statsEngine = useMemo(() => {
-                const totalActiveRituals = habits.length;
-                const completedTodayCount = (logs[todayStr] || []).length;
+            // --- C. STATISTICAL ENGINE (DEEP VERIFICATION) ---
+            const statsModule = useMemo(() => {
+                const habitTotal = habits.length;
+                const doneToday = (logs[todayStr] || []).length;
                 
-                // 1. Precise Daily Score (2 Decimals)
+                // Percentage Accuracy Fix (2 Decimals)
                 let currentWinRate;
-                if (totalActiveRituals === 0) {
+                if (habitTotal === 0) {
                     currentWinRate = "0.00";
                 } else {
-                    currentWinRate = ((completedTodayCount / totalActiveRituals) * 100).toFixed(2);
+                    currentWinRate = ((doneToday / habitTotal) * 100).toFixed(2);
                 }
                 
-                // 2. Historical Aggregation
-                let totalSuccessfulChecks = 0;
-                let totalAvailableSlots = totalActiveRituals * growthRange;
-                const finalHeatmapArray = [];
+                // Aggregated Performance
+                let successfulChecksTotal = 0;
+                let potentialCheckpoints = habitTotal * growthRange;
+                const heatmapMatrix = [];
 
                 // CORRECTED LOOP ENGINE:
-                // From oldest (growthRange days ago) to Newest (Today)
-                // Ensures top-left to bottom-right visualization
-                for (let dayIndex = 0; dayIndex <= growthRange; dayIndex++) {
+                // Start from Beginning (Past) and end at Present Day (Today)
+                // Ensures left-to-right, top-to-bottom reading logic
+                for (let i = 0; i <= growthRange; i++) {
                     const tempDate = new Date();
-                    const offset = growthRange - dayIndex;
-                    tempDate.setDate(tempDate.getDate() - offset);
+                    const dayOffset = growthRange - i;
+                    tempDate.setDate(tempDate.getDate() - dayOffset);
                     
-                    const dateString = tempDate.toISOString().split('T')[0];
-                    const countForDay = (logs[dateString] || []).length;
+                    const dKey = tempDate.toISOString().split('T')[0];
+                    const dailySuccessCount = (logs[dKey] || []).length;
                     
-                    totalSuccessfulChecks += countForDay;
+                    successfulChecksTotal += dailySuccessCount;
                     
-                    let dayPercentage;
-                    if (totalActiveRituals === 0) {
-                        dayPercentage = 0;
+                    let dayStrength;
+                    if (habitTotal === 0) {
+                        dayStrength = 0;
                     } else {
-                        dayPercentage = countForDay / totalActiveRituals;
+                        dayStrength = dailySuccessCount / habitTotal;
                     }
 
-                    finalHeatmapArray.push({ 
-                        date: dateString, 
-                        pct: dayPercentage 
+                    heatmapMatrix.push({ 
+                        id: dKey, 
+                        pct: dayStrength 
                     });
                 }
 
-                // 3. Aggregate Mastery Score
-                let aggregateMastery;
-                if (totalAvailableSlots === 0) {
-                    aggregateMastery = "0.00";
+                let rangeMastery;
+                if (potentialCheckpoints === 0) {
+                    rangeMastery = "0.00";
                 } else {
-                    aggregateMastery = ((totalSuccessfulChecks / totalAvailableSlots) * 100).toFixed(2);
+                    rangeMastery = ((successfulChecksTotal / potentialCheckpoints) * 100).toFixed(2);
                 }
                 
                 return { 
-                    countTotal: totalActiveRituals, 
-                    countDone: completedTodayCount, 
-                    winRate: currentWinRate, 
-                    mastery: aggregateMastery, 
-                    heatmap: finalHeatmapArray 
+                    totalCount: habitTotal, 
+                    doneCount: doneToday, 
+                    winPercent: currentWinRate, 
+                    masteryScore: rangeMastery, 
+                    matrix: heatmapMatrix 
                 };
             }, [habits, logs, todayStr, growthRange]);
 
-            // --- G. CORE HANDLERS ---
-            const onSaveRitual = () => {
+            // --- D. LOGIC HANDLERS ---
+            const onSaveHabit = () => {
                 if (!form.name.trim()) return;
                 
                 if (editingId) {
-                    const modifiedList = habits.map((h) => {
+                    const updateList = habits.map((h) => {
                         if (h.id === editingId) {
                             return { ...form, id: editingId };
                         } else {
                             return h;
                         }
                     });
-                    setHabits(modifiedList);
+                    setHabits(updateList);
                     setEditingId(null);
                 } else {
-                    const freshHabit = { ...form, id: Date.now() };
-                    setHabits([...habits, freshHabit]);
+                    const freshEntry = { ...form, id: Date.now() };
+                    setHabits([...habits, freshEntry]);
                 }
                 
                 setForm(defaultForm);
@@ -440,40 +391,39 @@
                 setCurrentPage('habits');
             };
 
-            const onToggleCheck = (habitId) => {
-                const existingLogs = logs[todayStr] || [];
-                let updatedList;
+            const onToggleCheck = (hId) => {
+                const dayEntries = logs[todayStr] || [];
+                let newList;
                 
-                if (existingLogs.includes(habitId)) {
-                    updatedList = existingLogs.filter(id => id !== habitId);
+                if (dayEntries.includes(hId)) {
+                    newList = dayEntries.filter(id => id !== hId);
                 } else {
-                    updatedList = [...existingLogs, habitId];
+                    newList = [...dayEntries, hId];
                 }
                 
-                setLogs({ ...logs, [todayStr]: updatedList });
+                setLogs({ ...logs, [todayStr]: newList });
             };
 
-            const onTriggerEdit = (habitObj) => {
-                setForm(habitObj);
-                setEditingId(habitObj.id);
+            const onInitiateEdit = (hObj) => {
+                setForm(hObj);
+                setEditingId(hObj.id);
                 setCurrentPage('add');
             };
 
-            const onTriggerDelete = (id) => {
-                const message = "Confirm Ritual Deletion: This action is permanent and history will be hidden.";
-                if(window.confirm(message)) {
-                    const filtered = habits.filter(h => h.id !== id);
-                    setHabits(filtered);
+            const onInitiateDelete = (id) => {
+                if(window.confirm("Confirm Deletion: History will remain but ritual will be removed from list.")) {
+                    const pruned = habits.filter(h => h.id !== id);
+                    setHabits(pruned);
                 }
             };
 
-            // --- H. REUSABLE UI: HEADER ---
-            const AppHeader = () => {
+            // --- E. GLOBAL UI COMPONENTS ---
+            const HeaderComponent = () => {
                 return (
                     <header className="flex justify-between items-center mb-10 w-full relative z-[60]">
                         <div>
                             <h1 className="text-3xl font-black italic tracking-tighter text-black">Routiq</h1>
-                            <p className="text-slate-500 text-[10px] font-extrabold uppercase tracking-[0.2em] mt-1">Discipline Engine</p>
+                            <p className="text-slate-500 text-[10px] font-extrabold uppercase tracking-[0.2em] mt-1">Daily Discipline</p>
                         </div>
                         <div className="flex gap-4 relative">
                             <button 
@@ -499,7 +449,7 @@
                                         className="w-full px-5 py-4 text-left text-xs font-black text-rose-500 hover:bg-rose-50 flex items-center gap-4 rounded-2xl transition-all"
                                     >
                                         <i className="fa-solid fa-trash-can opacity-60"></i>
-                                        <span>Reset System Data</span>
+                                        <span>Reset All Data</span>
                                     </button>
                                 </div>
                             )}
@@ -508,8 +458,7 @@
                 );
             };
 
-            // --- I. NAVIGATION BAR LOGIC ---
-            const AppNavBar = () => {
+            const NavigationModule = () => {
                 return (
                     <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl px-2 py-10 flex justify-around items-center z-50 border-t border-black/5 shadow-[0_-10px_40px_rgba(0,0,0,0.03)]">
                         <button 
@@ -530,13 +479,13 @@
                         
                         <button 
                             onClick={() => { setForm(defaultForm); setEditingId(null); setCurrentPage('add'); }} 
-                            className="w-16 h-16 logo-gradient rounded-3xl flex items-center justify-center text-white -mt-20 border-[6px] border-white shadow-2xl active:scale-90 transition-all duration-500 hover:rotate-90"
+                            className="w-16 h-16 logo-gradient rounded-3xl flex items-center justify-center text-white -mt-20 border-[6px] border-white shadow-2xl active:scale-90 transition-all duration-500"
                         >
                             <i className="fa-solid fa-plus text-2xl text-amber-400"></i>
                         </button>
                         
                         <button 
-                            onClick={() => { setEditingId(null); setForm(defaultForm); setCurrentPage('growth'); }} 
+                            onClick={() => { setEditingId(null); setCurrentPage('growth'); }} 
                             className={`flex flex-col items-center w-14 transition-all duration-300 ${currentPage === 'growth' ? 'text-black scale-110' : 'text-slate-300'}`}
                         >
                             <i className="fa-solid fa-chart-pie text-xl"></i>
@@ -544,7 +493,7 @@
                         </button>
                         
                         <button 
-                            onClick={() => { setEditingId(null); setForm(defaultForm); setCurrentPage('coach'); }} 
+                            onClick={() => { setEditingId(null); setCurrentPage('coach'); }} 
                             className={`flex flex-col items-center w-14 transition-all duration-300 ${currentPage === 'coach' ? 'text-black scale-110' : 'text-slate-300'}`}
                         >
                             <i className="fa-solid fa-wand-magic-sparkles text-xl"></i>
@@ -554,17 +503,17 @@
                 );
             };
 
-            // --- J. MAIN PAGE ROUTER ---
+            // --- F. ROUTER & PAGE VIEWS ---
             return (
                 <div className="app-shell">
                     
-                    {/* 1. SPLASH SCREEN COMPONENT */}
+                    {/* SYSTEM OVERLAY MODULE */}
                     <div className={`overlay-screen ${overlayStage === 'none' ? 'hide-overlay' : ''}`}>
                         <div className="flex flex-col items-center animate-fade text-center px-12">
                             {overlayStage === 'logo' ? (
                                 <Fragment>
                                     <div className="w-36 h-36 mb-10 p-6 bg-white rounded-[44px] shadow-2xl flex items-center justify-center border border-black/5">
-                                        <img src="./logo512.png" alt="Icon" className="w-full h-full object-contain" />
+                                        <img src="./logo512.png" alt="App Icon" className="w-full h-full object-contain" />
                                     </div>
                                     <h1 className="text-5xl font-black text-black italic tracking-tighter">Routiq</h1>
                                     <div className="mt-6 w-16 h-1.5 bg-amber-400 rounded-full"></div>
@@ -584,9 +533,9 @@
                     </div>
 
                     <div className="content-area">
-                        {(currentPage === 'home' || currentPage === 'habits' || currentPage === 'growth') && <AppHeader />}
+                        {(currentPage === 'home' || currentPage === 'habits' || currentPage === 'growth') && <HeaderComponent />}
 
-                        {/* --- 2. PAGE: HOME (DAILY TRACKER) --- */}
+                        {/* --- VIEW: HOME (DAILY TRACKER) --- */}
                         {currentPage === 'home' && (
                             <div className="flex-1 flex flex-col gap-10 animate-fade">
                                 {habits.length > 0 && (
@@ -594,12 +543,15 @@
                                         <div className="card-standard text-center py-10 relative overflow-hidden">
                                             <div className="absolute top-0 right-0 w-12 h-12 bg-slate-50/50 rounded-bl-full"></div>
                                             <p className="text-[10px] font-extrabold uppercase text-slate-400 tracking-widest mb-3">Rituals Done</p>
-                                            <h2 className="text-4xl font-black text-black">{statsEngine.countDone}/{statsEngine.countTotal}</h2>
+                                            <h2 className="text-4xl font-black text-black">{statsModule.doneCount}/{statsModule.totalCount}</h2>
                                         </div>
                                         <div className="card-standard text-center py-10 relative overflow-hidden">
                                             <div className="absolute top-0 left-0 w-12 h-12 bg-slate-50/50 rounded-br-full"></div>
                                             <p className="text-[10px] font-extrabold uppercase text-slate-400 tracking-widest mb-3">Daily Score</p>
-                                            <h2 className="text-2xl font-black text-black leading-[2.5rem]">{statsEngine.winRate}%</h2>
+                                            {/* Responsive text size for 100.00% safety */}
+                                            <h2 className="text-2xl font-black text-black leading-[2.5rem] truncate px-1">
+                                                {statsModule.winPercent}%
+                                            </h2>
                                         </div>
                                     </div>
                                 )}
@@ -643,46 +595,42 @@
                                     <div className="centered-container opacity-20 py-28">
                                         <i className="fa-solid fa-feather-pointed text-9xl mb-8 text-black"></i>
                                         <p className="font-black uppercase text-center leading-relaxed tracking-[0.6em] text-[16px] text-black">
-                                            Empty Space<br/>Forge Rituals
+                                            Forge Rituals
                                         </p>
                                     </div>
                                 )}
                             </div>
                         )}
 
-                        {/* --- 3. PAGE: GROWTH (CONSISTENCY ANALYTICS) --- */}
+                        {/* --- 3. VIEW: GROWTH (ANALYTICS ENGINE) --- */}
                         {currentPage === 'growth' && (
                             <div className="animate-fade space-y-12 pb-12">
                                 <div>
                                     <h2 className="text-3xl font-black italic text-black leading-none">Mastery Hub</h2>
-                                    <p className="text-slate-400 text-xs font-bold mt-3 uppercase tracking-[0.25em]">Track Your Transformation</p>
+                                    <p className="text-slate-400 text-xs font-bold mt-3 uppercase tracking-[0.25em]">Track Progress</p>
                                 </div>
                                 
                                 <div className="scroll-wrapper no-scrollbar px-1">
                                     <div className="scroll-inner gap-4">
                                         {[
-                                            {name:'7 Days', val:7}, 
-                                            {name:'1 Month', val:30}, 
-                                            {name:'3 Months', val:90}, 
-                                            {name:'6 Months', val:180}, 
-                                            {name:'9 Months', val:270}, 
-                                            {name:'12 Months', val:365}
-                                        ].map(option => (
+                                            {n:'7 Days', v:7}, {n:'1 Month', v:30}, {n:'3 Months', v:90}, 
+                                            {n:'6 Months', v:180}, {n:'9 Months', v:270}, {n:'12 Months', v:365}
+                                        ].map(range => (
                                             <button 
-                                                key={option.name} 
-                                                onClick={() => setGrowthRange(option.val)} 
-                                                className={`filter-chip ${growthRange === option.val ? 'bg-black text-white shadow-2xl scale-110' : 'bg-white text-slate-400 border border-black/5 hover:border-black/20'}`}
+                                                key={range.n} 
+                                                onClick={() => setGrowthRange(range.v)} 
+                                                className={`filter-chip ${growthRange === range.v ? 'bg-black text-white shadow-2xl scale-110' : 'bg-white text-slate-400 border border-black/5'}`}
                                             >
-                                                {option.name}
+                                                {range.n}
                                             </button>
                                         ))}
                                     </div>
                                 </div>
 
-                                {/* GROWTH CIRCULAR METER */}
+                                {/* GROWTH METER CIRCLE */}
                                 <div className="card-standard flex flex-col items-center py-16 relative overflow-hidden">
                                     <div className="absolute top-0 left-0 w-full h-1.5 bg-slate-50"></div>
-                                    <p className="text-[11px] font-black uppercase tracking-[0.4em] text-slate-300 mb-12">Discipline Index</p>
+                                    <p className="text-[11px] font-black uppercase tracking-[0.4em] text-slate-300 mb-12">Strength Index</p>
                                     <div className="relative w-52 h-52 flex items-center justify-center">
                                         <svg className="meter-svg w-full h-full" viewBox="0 0 100 100">
                                             <circle className="meter-bg" cx="50" cy="50" r="43" />
@@ -691,23 +639,18 @@
                                                 cx="50" cy="50" r="43" 
                                                 style={{ 
                                                     strokeDasharray: '270.2', 
-                                                    strokeDashoffset: 270.2 - (270.2 * parseFloat(statsEngine.mastery)) / 100 
+                                                    strokeDashoffset: 270.2 - (270.2 * parseFloat(statsModule.masteryScore)) / 100 
                                                 }} 
                                             />
                                         </svg>
                                         <div className="absolute flex flex-col items-center animate-fade">
-                                            <span className="text-5xl font-black text-black leading-none">{statsEngine.mastery}%</span>
+                                            <span className="text-5xl font-black text-black leading-none">{statsModule.masteryScore}%</span>
                                             <span className="text-[10px] font-black uppercase text-amber-500 mt-3 tracking-[0.2em]">Mastery</span>
                                         </div>
                                     </div>
-                                    <div className="mt-12 text-center px-4">
-                                        <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">
-                                            Calculated over the last <span className="text-black">{growthRange} days</span>
-                                        </p>
-                                    </div>
                                 </div>
 
-                                {/* MATRIX HEATMAP (FLIPPED: START -> PRESENT) */}
+                                {/* MATRIX HEATMAP GRID (FLIPPED BEGINNING -> TODAY) */}
                                 <div className="card-standard">
                                     <div className="flex justify-between items-center mb-10">
                                         <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Consistency Matrix</p>
@@ -716,17 +659,17 @@
                                         </span>
                                     </div>
                                     <div className={`heatmap-grid ${growthRange > 100 ? 'grid-cols-10' : 'grid-cols-7'}`}>
-                                        {statsEngine.heatmap.map((cellObj, idx) => {
+                                        {statsModule.matrix.map((cell, idx) => {
                                             let cellBg = '#F8FAFC';
-                                            if (cellObj.pct > 0) cellBg = '#FFF4CC';
-                                            if (cellObj.pct > 0.5) cellBg = '#D4AF37';
-                                            if (cellObj.pct === 1) cellBg = '#1A1A1A';
+                                            if (cell.pct > 0) cellBg = '#FFF4CC';
+                                            if (cell.pct > 0.5) cellBg = '#D4AF37';
+                                            if (cell.pct === 1) cellBg = '#1A1A1A';
                                             return (
                                                 <div 
                                                     key={idx} 
                                                     className="heatmap-cell shadow-sm" 
                                                     style={{ backgroundColor: cellBg }} 
-                                                    title={cellObj.date}
+                                                    title={cell.id}
                                                 />
                                             );
                                         })}
@@ -734,7 +677,7 @@
                                     <div className="flex justify-between mt-8 px-2">
                                         <div className="flex items-center gap-3">
                                             <div className="w-2.5 h-2.5 rounded-full bg-slate-100 shadow-inner"></div>
-                                            <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Past</span>
+                                            <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Beginning</span>
                                         </div>
                                         <div className="flex items-center gap-3">
                                             <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Today</span>
@@ -745,12 +688,12 @@
                             </div>
                         )}
 
-                        {/* --- 4. PAGE: RITUAL LIBRARY (MANAGEMENT) --- */}
+                        {/* --- 4. VIEW: RITUALS (LIBRARY) --- */}
                         {currentPage === 'habits' && (
                             <div className="flex-1 flex flex-col animate-fade">
                                 <div className="mb-12">
                                     <h2 className="text-3xl font-black italic text-black">Active Rituals</h2>
-                                    <p className="text-slate-400 text-xs font-bold mt-3 uppercase tracking-[0.25em]">Discipline Portfolio</p>
+                                    <p className="text-slate-400 text-xs font-bold mt-3 uppercase tracking-[0.25em]">Ritual Library</p>
                                 </div>
                                 
                                 {habits.length > 0 ? (
@@ -773,13 +716,13 @@
                                                     </div>
                                                     <div className="flex gap-3">
                                                         <button 
-                                                            onClick={() => onTriggerEdit(habit)} 
+                                                            onClick={() => onInitiateEdit(habit)} 
                                                             className="w-12 h-12 rounded-2xl bg-slate-50 text-slate-400 hover:text-black hover:bg-slate-100 transition-all flex items-center justify-center shadow-sm"
                                                         >
                                                             <i className="fa-solid fa-pen-nib"></i>
                                                         </button>
                                                         <button 
-                                                            onClick={() => onTriggerDelete(habit.id)} 
+                                                            onClick={() => onInitiateDelete(habit.id)} 
                                                             className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-400 hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center shadow-sm"
                                                         >
                                                             <i className="fa-solid fa-trash-can"></i>
@@ -792,7 +735,7 @@
                                                         <p className="text-[11px] font-black uppercase text-slate-500 tracking-widest">
                                                             {
                                                                 habit.frequency === 'Specific Days of Week' ? habit.weekDays.join(', ') : 
-                                                                habit.frequency === 'Specific Days of Month' ? `Scheduled on: ${habit.monthDays.join(', ')}` : 
+                                                                habit.frequency === 'Specific Days of Month' ? `On: ${habit.monthDays.join(', ')}` : 
                                                                 habit.frequency === 'Customise Days' ? `${habit.customCount} times per ${habit.customPeriod}` : habit.frequency
                                                             }
                                                         </p>
@@ -809,38 +752,38 @@
                                 ) : (
                                     <div className="centered-container opacity-20 py-32">
                                         <i className="fa-solid fa-leaf text-9xl mb-8 text-black"></i>
-                                        <p className="font-black uppercase tracking-[0.6em] text-[16px] text-black">Pure Mind</p>
+                                        <p className="font-black uppercase tracking-[0.6em] text-[16px] text-black">Empty Library</p>
                                     </div>
                                 )}
                             </div>
                         )}
 
-                        {/* --- 5. ENGINE: FORGE RITUAL (ADD / EDIT) --- */}
+                        {/* --- 5. VIEW: ADD ENGINE (BUG FIXES INCLUDED) --- */}
                         {currentPage === 'add' && (
                             <div className="animate-fade space-y-10 pb-24">
                                 <div className="mb-6">
                                     <h2 className="text-3xl font-black italic text-black leading-tight">
                                         {editingId ? 'Modify Ritual' : 'Forge Ritual'}
                                     </h2>
-                                    <p className="text-slate-400 text-xs font-bold mt-3 uppercase tracking-[0.25em]">Define Your New Habit</p>
+                                    <p className="text-slate-400 text-xs font-bold mt-3 uppercase tracking-[0.25em]">Ritual Calibration</p>
                                 </div>
                                 
                                 <div className="space-y-6">
                                     <div className="space-y-2">
-                                        <p className="text-[11px] font-black uppercase tracking-widest ml-4 text-slate-400">Identity</p>
+                                        <p className="text-[11px] font-black uppercase tracking-widest ml-4 text-slate-400">Habit Name</p>
                                         <input 
                                             className="w-full p-8 rounded-[36px] bg-white font-black text-xl outline-none shadow-sm text-black placeholder:text-slate-100 border-2 border-transparent focus:border-amber-400/20 transition-all" 
-                                            placeholder="What is this ritual named?" 
+                                            placeholder="What is the title?" 
                                             value={form.name} 
                                             onChange={e => setForm({...form, name: e.target.value})} 
                                         />
                                     </div>
                                     
                                     <div className="space-y-2">
-                                        <p className="text-[11px] font-black uppercase tracking-widest ml-4 text-slate-400">Purpose</p>
+                                        <p className="text-[11px] font-black uppercase tracking-widest ml-4 text-slate-400">Description</p>
                                         <textarea 
                                             className="w-full p-8 rounded-[36px] bg-white font-bold text-sm outline-none shadow-sm text-black placeholder:text-slate-100 border-2 border-transparent focus:border-amber-400/20 transition-all" 
-                                            placeholder="Add an optional note about why this matters." 
+                                            placeholder="Optional context about this ritual." 
                                             rows="4" 
                                             value={form.description} 
                                             onChange={e => setForm({...form, description: e.target.value})} 
@@ -849,23 +792,23 @@
                                 </div>
                                 
                                 <div className="flex flex-col gap-10">
-                                    {/* COLOR PICKER ENGINE */}
+                                    {/* COLOR PICKER (FIXED Z-INDEX) */}
                                     <div className="flex flex-col gap-4">
                                         <p className="text-[11px] font-black uppercase tracking-[0.3em] ml-6 text-slate-400">Theme Palette</p>
                                         <div className="flex items-center">
                                             <button 
                                                 onClick={() => setPickers({color: !pickers.color, icon: false})} 
-                                                className="w-20 h-20 rounded-full border-[10px] border-white shadow-2xl z-10 shrink-0 transition-transform active:scale-90" 
+                                                className="w-20 h-20 rounded-full border-[10px] border-white shadow-2xl z-20 shrink-0 transition-transform active:scale-90" 
                                                 style={{ backgroundColor: form.color }} 
                                             />
                                             {pickers.color && (
-                                                <div className="scroll-wrapper no-scrollbar ml-4 bg-white/70 p-3 rounded-full animate-fade shadow-inner border border-white">
+                                                <div className="scroll-wrapper no-scrollbar ml-4 bg-white/80 p-3 rounded-full animate-fade shadow-inner border border-white">
                                                     <div className="scroll-inner px-6">
                                                         {colorPalette.map(hex => (
                                                             <button 
                                                                 key={hex} 
                                                                 onClick={() => {setForm({...form, color: hex}); setPickers({color: false})}} 
-                                                                className="w-13 h-13 rounded-full shrink-0 shadow-xl transition-all duration-300 active:scale-75 hover:scale-125 border-4 border-white" 
+                                                                className="w-13 h-13 rounded-full shrink-0 shadow-xl transition-all duration-300 active:scale-75 border-4 border-white" 
                                                                 style={{ backgroundColor: hex }} 
                                                             />
                                                         ))}
@@ -875,24 +818,24 @@
                                         </div>
                                     </div>
 
-                                    {/* ICON PICKER ENGINE */}
+                                    {/* ICON PICKER (FIXED Z-INDEX) */}
                                     <div className="flex flex-col gap-4">
-                                        <p className="text-[11px] font-black uppercase tracking-[0.3em] ml-6 text-slate-400">Visual Icon</p>
+                                        <p className="text-[11px] font-black uppercase tracking-[0.3em] ml-6 text-slate-400">Visual Symbol</p>
                                         <div className="flex items-center">
                                             <button 
                                                 onClick={() => setPickers({icon: !pickers.icon, color: false})} 
-                                                className="w-20 h-20 rounded-[32px] bg-white flex items-center justify-center text-4xl shadow-2xl z-10 border border-black/5 shrink-0 text-black transition-transform active:scale-90"
+                                                className="w-20 h-20 rounded-[32px] bg-white flex items-center justify-center text-4xl shadow-2xl z-20 border border-black/5 shrink-0 text-black transition-transform active:scale-90"
                                             >
                                                 {form.icon}
                                             </button>
                                             {pickers.icon && (
-                                                <div className="scroll-wrapper no-scrollbar ml-4 bg-white/70 p-3 rounded-[36px] animate-fade shadow-inner border border-white">
+                                                <div className="scroll-wrapper no-scrollbar ml-4 bg-white/80 p-3 rounded-[36px] animate-fade shadow-inner border border-white">
                                                     <div className="scroll-inner px-6">
                                                         {iconLibrary.map(sym => (
                                                             <button 
                                                                 key={sym} 
                                                                 onClick={() => {setForm({...form, icon: sym}); setPickers({icon: false})}} 
-                                                                className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center text-2xl shrink-0 border border-black/5 shadow-md transition-all duration-300 active:scale-75 hover:scale-125"
+                                                                className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center text-2xl shrink-0 border border-black/5 shadow-md transition-all duration-300 active:scale-75"
                                                             >
                                                                 {sym}
                                                             </button>
@@ -904,42 +847,34 @@
                                     </div>
                                 </div>
 
-                                {/* PICKER DROPDOWN GRID */}
                                 <div className="grid grid-cols-2 gap-6 mt-6">
                                     <div className="space-y-3">
-                                        <p className="text-[10px] font-black uppercase text-slate-400 ml-6 tracking-[0.2em]">Pillar</p>
-                                        <div className="relative">
-                                            <select 
-                                                className="w-full p-7 rounded-[32px] bg-white font-black text-xs shadow-sm outline-none appearance-none text-black border border-transparent focus:border-black/5 cursor-pointer" 
-                                                value={form.category} 
-                                                onChange={e => setForm({...form, category: e.target.value})}
-                                            >
-                                                <option value="Category" disabled>Select Pillar</option>
-                                                <option>Body</option><option>Mind</option><option>Work</option><option>Growth</option><option>Finance</option><option>Social</option>
-                                            </select>
-                                            <i className="fa-solid fa-chevron-down absolute right-8 top-1/2 -translate-y-1/2 text-slate-200 pointer-events-none"></i>
-                                        </div>
+                                        <p className="text-[10px] font-black uppercase text-slate-400 ml-6 tracking-[0.2em]">Category</p>
+                                        <select 
+                                            className="w-full p-7 rounded-[32px] bg-white font-black text-xs shadow-sm outline-none appearance-none text-black border border-transparent focus:border-black/5 cursor-pointer" 
+                                            value={form.category} 
+                                            onChange={e => setForm({...form, category: e.target.value})}
+                                        >
+                                            <option value="Category" disabled>Category</option>
+                                            <option>Body</option><option>Mind</option><option>Work</option><option>Social</option>
+                                        </select>
                                     </div>
                                     <div className="space-y-3">
-                                        <p className="text-[10px] font-black uppercase text-slate-400 ml-6 tracking-[0.2em]">Cadence</p>
-                                        <div className="relative">
-                                            <select 
-                                                className="w-full p-7 rounded-[32px] bg-white font-black text-xs shadow-sm outline-none appearance-none text-black border border-transparent focus:border-black/5 cursor-pointer" 
-                                                value={form.frequency} 
-                                                onChange={e => setForm({...form, frequency: e.target.value})}
-                                            >
-                                                <option value="Frequency" disabled>Set Cadence</option>
-                                                <option>Daily</option>
-                                                <option>Specific Days of Week</option>
-                                                <option>Specific Days of Month</option>
-                                                <option>Customise Days</option>
-                                            </select>
-                                            <i className="fa-solid fa-calendar-day absolute right-8 top-1/2 -translate-y-1/2 text-slate-200 pointer-events-none"></i>
-                                        </div>
+                                        <p className="text-[10px] font-black uppercase text-slate-400 ml-6 tracking-[0.2em]">Frequency</p>
+                                        <select 
+                                            className="w-full p-7 rounded-[32px] bg-white font-black text-xs shadow-sm outline-none appearance-none text-black border border-transparent focus:border-black/5 cursor-pointer" 
+                                            value={form.frequency} 
+                                            onChange={e => setForm({...form, frequency: e.target.value})}
+                                        >
+                                            <option value="Frequency" disabled>Frequency</option>
+                                            <option>Daily</option>
+                                            <option>Specific Days of Week</option>
+                                            <option>Specific Days of Month</option>
+                                            <option>Customise Days</option>
+                                        </select>
                                     </div>
                                 </div>
 
-                                {/* FREQUENCY LOGIC: WEEKDAYS EXPANSION */}
                                 {form.frequency === 'Specific Days of Week' && (
                                     <div className="flex justify-between gap-2 animate-fade p-3 bg-white/50 rounded-[40px] shadow-inner border border-white">
                                         {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(name => {
@@ -960,7 +895,7 @@
                                     </div>
                                 )}
 
-                                {/* FREQUENCY LOGIC: MONTH DATES (FIXED ALIGNMENT) */}
+                                {/* FIXED: MONTH PICKER OVERFLOW PROTECTION */}
                                 {form.frequency === 'Specific Days of Month' && (
                                     <div className="month-picker-grid bg-white/70 p-8 rounded-[48px] animate-fade shadow-inner border border-white">
                                         {[...Array(31)].map((_, i) => {
@@ -982,11 +917,9 @@
                                     </div>
                                 )}
 
-                                {/* FREQUENCY LOGIC: CUSTOM REPETITION */}
                                 {form.frequency === 'Customise Days' && (
                                     <div className="flex items-center gap-8 bg-white/80 p-10 rounded-[48px] animate-fade shadow-xl border border-white">
                                         <div className="flex flex-col">
-                                            <p className="text-[9px] font-black text-slate-300 uppercase mb-3 ml-2">Amount</p>
                                             <input 
                                                 type="number" 
                                                 className="w-24 font-black text-4xl text-center outline-none border-b-4 border-amber-400 bg-transparent text-black" 
@@ -995,7 +928,7 @@
                                             />
                                         </div>
                                         <div className="flex flex-col flex-1">
-                                            <p className="font-black text-[10px] text-slate-300 uppercase tracking-[0.25em] mb-4">Frequency Window</p>
+                                            <p className="font-black text-[10px] text-slate-300 uppercase tracking-[0.25em] mb-4">Per</p>
                                             <select 
                                                 className="font-black text-2xl outline-none bg-transparent text-black cursor-pointer" 
                                                 value={form.customPeriod} 
@@ -1009,10 +942,10 @@
                                 )}
 
                                 <button 
-                                    onClick={onSaveRitual} 
-                                    className="w-full py-9 rounded-[44px] logo-gradient text-white font-black text-2xl shadow-2xl active:scale-95 transition-all duration-400 flex items-center justify-center gap-5 group"
+                                    onClick={onSaveHabit} 
+                                    className="w-full py-9 rounded-[44px] logo-gradient text-white font-black text-2xl shadow-2xl active:scale-95 transition-all duration-400 flex items-center justify-center gap-5"
                                 >
-                                    <i className="fa-solid fa-bolt-lightning text-amber-400 group-hover:animate-pulse"></i>
+                                    <i className="fa-solid fa-bolt-lightning text-amber-400"></i>
                                     {editingId ? 'Update Ritual' : 'Forge Ritual'}
                                 </button>
                                 
@@ -1021,13 +954,13 @@
                                         onClick={() => { setEditingId(null); setForm(defaultForm); setCurrentPage('habits'); }} 
                                         className="w-full text-slate-400 font-bold text-xs py-4 hover:text-black transition-colors tracking-widest uppercase"
                                     >
-                                        Discard Changes
+                                        Discard
                                     </button>
                                 )}
                             </div>
                         )}
 
-                        {/* --- 6. PAGE: CALENDAR (FULL HISTORY) --- */}
+                        {/* --- 6. VIEW: CALENDAR (FULL HISTORY) --- */}
                         {currentPage === 'calendar_full' && (
                             <div className="animate-fade flex flex-col h-full relative">
                                 <div className="flex justify-between items-end mb-10 px-2">
@@ -1035,7 +968,7 @@
                                         <h2 className="text-4xl font-black italic text-black leading-tight">
                                             {viewDate.toLocaleString('default', { month: 'long' })}
                                         </h2>
-                                        <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.3em] mt-2">Historical Records • {viewDate.getFullYear()}</p>
+                                        <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.3em] mt-2">Archives • {viewDate.getFullYear()}</p>
                                     </div>
                                     <div className="flex gap-4">
                                         <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1))} className="w-13 h-13 bg-white rounded-2xl shadow-sm border border-black/5 text-black hover:bg-slate-50 active:scale-90 transition-all"><i className="fa-solid fa-chevron-left"></i></button>
@@ -1045,8 +978,8 @@
                                 
                                 <div className="bg-white p-10 rounded-[56px] border border-black/5 shadow-2xl mb-28">
                                     <div className="calendar-grid">
-                                        {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(name => (
-                                            <div key={name} className="text-center text-[10px] font-black text-slate-200 mb-8 uppercase tracking-widest">{name}</div>
+                                        {['S','M','T','W','T','F','S'].map(n => (
+                                            <div key={n} className="text-center text-[10px] font-black text-slate-200 mb-8 uppercase tracking-widest">{n}</div>
                                         ))}
                                         
                                         {[...Array(new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay())].map((_, i) => (
@@ -1056,15 +989,15 @@
                                         {[...Array(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate())].map((_, i) => {
                                             const day = i + 1;
                                             const dsKey = `${viewDate.getFullYear()}-${String(viewDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                                            const doneCount = (logs[dsKey] || []).length;
-                                            const percent = habits.length > 0 ? (doneCount / habits.length) * 100 : 0;
+                                            const count = (logs[dsKey] || []).length;
+                                            const percent = habits.length > 0 ? (count / habits.length) * 100 : 0;
                                             
-                                            let cellBg = 'bg-slate-50 text-slate-300';
-                                            if (percent > 0) cellBg = 'bg-amber-100 text-amber-700 font-black';
-                                            if (percent === 100) cellBg = 'bg-black text-amber-400 shadow-xl scale-110 z-10 font-black';
+                                            let cellStyle = 'bg-slate-50 text-slate-300';
+                                            if (percent > 0) cellStyle = 'bg-amber-100 text-amber-700 font-black';
+                                            if (percent === 100) cellStyle = 'bg-black text-amber-400 shadow-xl scale-110 z-10 font-black';
                                             
                                             return (
-                                                <div key={day} className={`calendar-day transition-all duration-700 ${cellBg}`}>
+                                                <div key={day} className={`calendar-day transition-all duration-700 ${cellStyle}`}>
                                                     {day}
                                                 </div>
                                             );
@@ -1072,19 +1005,60 @@
                                     </div>
                                 </div>
                                 
-                                <div className="fixed-bottom-btn">
+                                {/* FIXED: SLEEK, SMALLER TODAY BUTTON */}
+                                <div className="fixed-bottom-btn flex justify-center">
                                     <button 
                                         onClick={() => { setViewDate(new Date()); setCurrentPage('home'); }} 
-                                        className="w-full py-8 rounded-[44px] bg-black text-white font-black text-lg shadow-2xl shadow-black/50 active:scale-95 transition-all"
+                                        className="px-10 py-5 rounded-[40px] bg-black text-white font-black text-xs uppercase tracking-widest shadow-2xl shadow-black/50 active:scale-95 transition-all"
                                     >
-                                        Jump Back to Today
+                                        Back to Today
                                     </button>
                                 </div>
                             </div>
                         )}
                     </div>
 
-                    <AppNavBar />
+                    {/* GLOBAL NAVIGATION MODULE */}
+                    <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl px-2 py-10 flex justify-around items-center z-50 border-t border-black/5 shadow-[0_-10px_40px_rgba(0,0,0,0.03)]">
+                        <button 
+                            onClick={() => { setEditingId(null); setForm(defaultForm); setCurrentPage('home'); }} 
+                            className={`flex flex-col items-center w-14 transition-all duration-300 ${currentPage === 'home' ? 'text-black scale-110' : 'text-slate-300'}`}
+                        >
+                            <i className="fa-solid fa-house-chimney text-xl"></i>
+                            <span className="nav-text">Home</span>
+                        </button>
+                        
+                        <button 
+                            onClick={() => { setEditingId(null); setForm(defaultForm); setCurrentPage('habits'); }} 
+                            className={`flex flex-col items-center w-14 transition-all duration-300 ${currentPage === 'habits' ? 'text-black scale-110' : 'text-slate-300'}`}
+                        >
+                            <i className="fa-solid fa-dna text-xl"></i>
+                            <span className="nav-text">Rituals</span>
+                        </button>
+                        
+                        <button 
+                            onClick={() => { setForm(defaultForm); setEditingId(null); setCurrentPage('add'); }} 
+                            className="w-16 h-16 logo-gradient rounded-3xl flex items-center justify-center text-white -mt-20 border-[6px] border-white shadow-2xl active:scale-90 transition-all duration-500"
+                        >
+                            <i className="fa-solid fa-plus text-2xl text-amber-400"></i>
+                        </button>
+                        
+                        <button 
+                            onClick={() => { setEditingId(null); setCurrentPage('growth'); }} 
+                            className={`flex flex-col items-center w-14 transition-all duration-300 ${currentPage === 'growth' ? 'text-black scale-110' : 'text-slate-300'}`}
+                        >
+                            <i className="fa-solid fa-chart-pie text-xl"></i>
+                            <span className="nav-text">Growth</span>
+                        </button>
+                        
+                        <button 
+                            onClick={() => { setEditingId(null); setCurrentPage('coach'); }} 
+                            className={`flex flex-col items-center w-14 transition-all duration-300 ${currentPage === 'coach' ? 'text-black scale-110' : 'text-slate-300'}`}
+                        >
+                            <i className="fa-solid fa-wand-magic-sparkles text-xl"></i>
+                            <span className="nav-text">Coach</span>
+                        </button>
+                    </nav>
                 </div>
             );
         };
