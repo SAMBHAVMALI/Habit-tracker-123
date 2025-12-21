@@ -39,6 +39,7 @@
         }
         .content-area::-webkit-scrollbar { display: none; }
 
+        /* Splash Sequence */
         .overlay-screen { 
             position: fixed; inset: 0; background: #FFFFFF; 
             display: flex; align-items: center; justify-content: center; 
@@ -55,11 +56,29 @@
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
         .calendar-day { aspect-ratio: 1; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; }
 
-        .scroll-wrapper { overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch; padding: 5px 0; }
-        .scroll-inner { display: flex; gap: 12px; width: max-content; padding-right: 20px; }
+        /* Scroll Fix for Pickers */
+        .scroll-wrapper {
+            overflow-x: auto;
+            width: 100%;
+            -webkit-overflow-scrolling: touch;
+            padding: 5px 0;
+        }
+        .scroll-inner {
+            display: flex;
+            gap: 12px;
+            width: max-content;
+            padding-right: 20px;
+        }
         .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        .fixed-bottom-btn { position: absolute; bottom: 100px; left: 28px; right: 28px; z-index: 40; }
+        .fixed-bottom-btn {
+            position: absolute;
+            bottom: 100px;
+            left: 28px;
+            right: 28px;
+            z-index: 40;
+        }
 
         .heatmap-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; }
         .heatmap-cell { aspect-ratio: 1; border-radius: 6px; }
@@ -113,19 +132,20 @@
 
             const todayStr = new Date().toISOString().split('T')[0];
 
-            // --- Growth Engine ---
-            const growthStats = useMemo(() => {
+            // --- Stats Engine ---
+            const stats = useMemo(() => {
                 const total = habits.length;
                 const completedToday = (logs[todayStr] || []).length;
+                const winRate = total === 0 ? 0 : Math.round((completedToday / total) * 100);
+                
                 const heatmap = [];
                 for (let i = 29; i >= 0; i--) {
-                    const d = new Date();
-                    d.setDate(d.getDate() - i);
+                    const d = new Date(); d.setDate(d.getDate() - i);
                     const ds = d.toISOString().split('T')[0];
                     const doneCount = (logs[ds] || []).length;
                     heatmap.push({ date: ds, pct: total === 0 ? 0 : doneCount / total });
                 }
-                return { total, completedToday, heatmap };
+                return { total, completedToday, winRate, heatmap };
             }, [habits, logs, todayStr]);
 
             const handleConfirmRitual = () => {
@@ -145,9 +165,7 @@
                 <header className="flex justify-between items-center mb-10 w-full relative z-[60]">
                     <div>
                         <h1 className="text-3xl font-black italic tracking-tighter">Routiq</h1>
-                        <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mt-1">
-                            {currentPage === 'growth' ? 'Performance' : 'Daily Discipline'}
-                        </p>
+                        <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mt-1">Daily Discipline</p>
                     </div>
                     <div className="flex gap-3 relative">
                         <button onClick={() => setCurrentPage('calendar_full')} className="w-11 h-11 flex items-center justify-center rounded-2xl bg-white border border-black/5 text-black shadow-sm active:scale-90 transition-transform">
@@ -169,7 +187,6 @@
 
             return (
                 <div className="app-shell max-w-lg mx-auto">
-                    {/* RESTORED SPLASH */}
                     <div className={`overlay-screen ${overlayStage === 'none' ? 'hide-overlay' : ''}`}>
                         {overlayStage === 'logo' ? (
                             <div className="flex flex-col items-center animate-fade">
@@ -186,9 +203,21 @@
                     <div className="content-area">
                         {(currentPage === 'home' || currentPage === 'habits' || currentPage === 'growth') && <Header />}
 
-                        {/* HOME PAGE */}
+                        {/* HOME PAGE WITH LIVE STATS */}
                         {currentPage === 'home' && (
-                            <div className="flex-1 flex flex-col">
+                            <div className="flex-1 flex flex-col gap-6 animate-fade">
+                                {habits.length > 0 && (
+                                    <div className="grid grid-cols-2 gap-4 mb-2">
+                                        <div className="card-standard text-center py-5">
+                                            <p className="text-[10px] font-black uppercase text-slate-400 mb-1">Rituals Done</p>
+                                            <h2 className="text-2xl font-black">{stats.completedToday}/{stats.total}</h2>
+                                        </div>
+                                        <div className="card-standard text-center py-5">
+                                            <p className="text-[10px] font-black uppercase text-slate-400 mb-1">Daily Win</p>
+                                            <h2 className="text-2xl font-black">{stats.winRate}%</h2>
+                                        </div>
+                                    </div>
+                                )}
                                 {habits.length > 0 ? (
                                     <div className="space-y-4">
                                         {habits.map(h => {
@@ -217,26 +246,13 @@
                             </div>
                         )}
 
-                        {/* GROWTH PAGE (INTEGRATED) */}
+                        {/* GROWTH PAGE WITH HEATMAP */}
                         {currentPage === 'growth' && (
                             <div className="animate-fade space-y-8 pb-10">
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="card-standard text-center">
-                                        <p className="text-[10px] font-black uppercase text-slate-400 mb-1">Rituals Done</p>
-                                        <h2 className="text-3xl font-black">{growthStats.completedToday}/{growthStats.total}</h2>
-                                    </div>
-                                    <div className="card-standard text-center">
-                                        <p className="text-[10px] font-black uppercase text-slate-400 mb-1">Win Rate</p>
-                                        <h2 className="text-3xl font-black">
-                                            {growthStats.total === 0 ? '0' : Math.round((growthStats.completedToday/growthStats.total)*100)}%
-                                        </h2>
-                                    </div>
-                                </div>
-
                                 <div className="card-standard">
                                     <p className="text-xs font-black uppercase tracking-widest text-slate-400 mb-4">Consistency Heatmap</p>
                                     <div className="heatmap-grid">
-                                        {growthStats.heatmap.map((day, i) => {
+                                        {stats.heatmap.map((day, i) => {
                                             let bg = '#FFFFFF';
                                             if (day.pct > 0) bg = '#FFF4CC';
                                             if (day.pct > 0.5) bg = '#D4AF37';
@@ -248,45 +264,17 @@
                                         <span>30 Days Ago</span><span>Today</span>
                                     </div>
                                 </div>
-                                <p className="text-center text-[10px] font-black uppercase text-slate-300 tracking-[0.2em] italic">Keep the streak alive.</p>
-                            </div>
-                        )}
-
-                        {/* CALENDAR PAGE */}
-                        {currentPage === 'calendar_full' && (
-                            <div className="animate-fade flex flex-col h-full relative">
-                                <div className="flex justify-between items-center mb-8">
-                                    <h2 className="text-2xl font-black italic">{viewDate.toLocaleString('default', { month: 'long' })} {viewDate.getFullYear()}</h2>
-                                    <div className="flex gap-2">
-                                        <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1))} className="w-10 h-10 bg-white rounded-xl shadow-sm border border-black/5"><i className="fa-solid fa-chevron-left"></i></button>
-                                        <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1))} className="w-10 h-10 bg-white rounded-xl shadow-sm border border-black/5"><i className="fa-solid fa-chevron-right"></i></button>
-                                    </div>
-                                </div>
-                                <div className="bg-white p-6 rounded-[32px] border border-black/5 shadow-sm mb-20">
-                                    <div className="calendar-grid">
-                                        {['S','M','T','W','T','F','S'].map(d => <div key={d} className="text-center text-[10px] font-black text-slate-300 mb-4">{d}</div>)}
-                                        {[...Array(new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay())].map((_, i) => <div key={`e-${i}`}></div>)}
-                                        {[...Array(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate())].map((_, i) => {
-                                            const d = i + 1;
-                                            const ds = `${viewDate.getFullYear()}-${String(viewDate.getMonth() + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-                                            const count = (logs[ds] || []).length;
-                                            const pct = habits.length > 0 ? (count / habits.length) * 100 : 0;
-                                            let style = 'bg-slate-50 text-slate-300';
-                                            if (pct > 0) style = 'bg-amber-100 text-amber-700';
-                                            if (pct === 100) style = 'bg-black text-amber-400 shadow-md';
-                                            return <div key={d} className={`calendar-day ${style}`}>{d}</div>
-                                        })}
-                                    </div>
-                                </div>
-                                <div className="fixed-bottom-btn">
-                                    <button onClick={() => { setViewDate(new Date()); setCurrentPage('home'); }} className="w-full py-6 rounded-[32px] bg-black text-white font-black text-lg shadow-xl">Back to Today</button>
+                                <div className="card-standard bg-black text-white text-center py-10">
+                                    <i className="fa-solid fa-bolt text-amber-400 text-3xl mb-4"></i>
+                                    <h3 className="text-xl font-black italic">Commit to the process.</h3>
+                                    <p className="text-xs text-slate-400 mt-2">Every cell represents a win against your old self.</p>
                                 </div>
                             </div>
                         )}
 
-                        {/* HABITS LIBRARY (ALL OPTIONS PRESERVED) */}
+                        {/* HABITS LIBRARY (DETAILED) */}
                         {currentPage === 'habits' && (
-                            <div className="flex-1 flex flex-col">
+                            <div className="flex-1 flex flex-col animate-fade">
                                 <h2 className="text-2xl font-black italic mb-8">My Rituals</h2>
                                 {habits.length > 0 ? (
                                     <div className="space-y-6">
@@ -309,7 +297,7 @@
                                                         h.frequency === 'Customise Days' ? `${h.customCount}x per ${h.customPeriod}` : h.frequency
                                                     }
                                                 </p>
-                                                {h.description && <p className="text-slate-500 text-sm mt-2 font-medium">{h.description}</p>}
+                                                {h.description && <p className="text-slate-500 text-sm mt-2 font-medium leading-relaxed">{h.description}</p>}
                                             </div>
                                         ))}
                                     </div>
@@ -322,7 +310,7 @@
                             </div>
                         )}
 
-                        {/* ADD/EDIT PAGE (ALL OPTIONS PRESERVED) */}
+                        {/* FULL ADD/EDIT ENGINE */}
                         {currentPage === 'add' && (
                             <div className="animate-fade space-y-6 pb-20">
                                 <h2 className="text-2xl font-black italic">{editingId ? 'Edit Ritual' : 'New Ritual'}</h2>
@@ -394,7 +382,9 @@
                                     <div className="flex items-center gap-4 bg-white p-6 rounded-[32px] animate-fade shadow-sm border border-black/5">
                                         <input type="number" className="w-16 font-black text-xl text-center outline-none border-b-2 border-black/5 bg-transparent" value={form.customCount} onChange={e => setForm({...form, customCount: e.target.value})} />
                                         <span className="font-bold text-xs opacity-40 uppercase tracking-widest">Times per</span>
-                                        <select className="font-black text-sm outline-none bg-transparent" value={form.customPeriod} onChange={e => setForm({...form, customPeriod: e.target.value})}><option>Week</option><option>Month</option></select>
+                                        <select className="font-black text-sm outline-none bg-transparent" value={form.customPeriod} onChange={e => setForm({...form, customPeriod: e.target.value})}>
+                                            <option>Week</option><option>Month</option>
+                                        </select>
                                     </div>
                                 )}
 
@@ -403,11 +393,43 @@
                                 </button>
                             </div>
                         )}
+
+                        {/* CALENDAR PAGE */}
+                        {currentPage === 'calendar_full' && (
+                            <div className="animate-fade flex flex-col h-full relative">
+                                <div className="flex justify-between items-center mb-8">
+                                    <h2 className="text-2xl font-black italic">{viewDate.toLocaleString('default', { month: 'long' })} {viewDate.getFullYear()}</h2>
+                                    <div className="flex gap-2">
+                                        <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1))} className="w-10 h-10 bg-white rounded-xl shadow-sm border border-black/5"><i className="fa-solid fa-chevron-left"></i></button>
+                                        <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1))} className="w-10 h-10 bg-white rounded-xl shadow-sm border border-black/5"><i className="fa-solid fa-chevron-right"></i></button>
+                                    </div>
+                                </div>
+                                <div className="bg-white p-6 rounded-[32px] border border-black/5 shadow-sm mb-20">
+                                    <div className="calendar-grid">
+                                        {['S','M','T','W','T','F','S'].map(d => <div key={d} className="text-center text-[10px] font-black text-slate-300 mb-4">{d}</div>)}
+                                        {[...Array(new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay())].map((_, i) => <div key={`e-${i}`}></div>)}
+                                        {[...Array(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate())].map((_, i) => {
+                                            const d = i + 1;
+                                            const ds = `${viewDate.getFullYear()}-${String(viewDate.getMonth() + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                                            const count = (logs[ds] || []).length;
+                                            const pct = habits.length > 0 ? (count / habits.length) * 100 : 0;
+                                            let bg = 'bg-slate-50 text-slate-300';
+                                            if (pct > 0) bg = 'bg-amber-100 text-amber-700';
+                                            if (pct === 100) bg = 'bg-black text-amber-400 shadow-md';
+                                            return <div key={d} className={`calendar-day ${bg}`}>{d}</div>
+                                        })}
+                                    </div>
+                                </div>
+                                <div className="fixed-bottom-btn">
+                                    <button onClick={() => { setViewDate(new Date()); setCurrentPage('home'); }} className="w-full py-6 rounded-[32px] bg-black text-white font-black text-lg shadow-xl">Back to Today</button>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     <nav className="fixed bottom-0 left-0 right-0 bg-white px-2 py-8 flex justify-around items-center z-50 border-t border-black/5 shadow-[0_-4px_20px_rgba(0,0,0,0.02)]">
-                        <button onClick={() => setCurrentPage('home')} className={`flex flex-col items-center w-14 transition-colors ${currentPage === 'home' ? 'text-black' : 'text-slate-300'}`}><i className="fa-solid fa-house text-lg"></i><span className="nav-text">Home</span></button>
-                        <button onClick={() => setCurrentPage('habits')} className={`flex flex-col items-center w-14 transition-colors ${currentPage === 'habits' ? 'text-black' : 'text-slate-300'}`}><i className="fa-solid fa-list-check text-lg"></i><span className="nav-text">Habits</span></button>
+                        <button onClick={() => {setForm(defaultForm); setEditingId(null); setCurrentPage('home');}} className={`flex flex-col items-center w-14 transition-colors ${currentPage === 'home' ? 'text-black' : 'text-slate-300'}`}><i className="fa-solid fa-house text-lg"></i><span className="nav-text">Home</span></button>
+                        <button onClick={() => {setForm(defaultForm); setEditingId(null); setCurrentPage('habits');}} className={`flex flex-col items-center w-14 transition-colors ${currentPage === 'habits' ? 'text-black' : 'text-slate-300'}`}><i className="fa-solid fa-list-check text-lg"></i><span className="nav-text">Habits</span></button>
                         <button onClick={() => {setForm(defaultForm); setEditingId(null); setCurrentPage('add');}} className="w-16 h-16 logo-gradient rounded-[24px] flex items-center justify-center text-white -mt-16 border-4 border-white shadow-2xl active:scale-95 transition-all"><i className="fa-solid fa-plus text-2xl gold-accent"></i></button>
                         <button onClick={() => setCurrentPage('growth')} className={`flex flex-col items-center w-14 transition-colors ${currentPage === 'growth' ? 'text-black' : 'text-slate-300'}`}><i className="fa-solid fa-chart-pie text-lg"></i><span className="nav-text">Growth</span></button>
                         <button onClick={() => setCurrentPage('coach')} className={`flex flex-col items-center w-14 transition-colors ${currentPage === 'coach' ? 'text-black' : 'text-slate-300'}`}><i className="fa-solid fa-wand-magic-sparkles text-lg"></i><span className="nav-text">Coach</span></button>
