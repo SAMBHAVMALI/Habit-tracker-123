@@ -416,9 +416,10 @@
                                             <p className="text-[10px] font-extrabold uppercase text-slate-400 tracking-widest mb-2">Rituals Done</p>
                                             <h2 className="text-3xl font-black text-black">{stats.doneCount}/{stats.totalCount}</h2>
                                         </div>
-                                        <div className="card-standard text-center py-8 border-b-4 border-black/5">
+                                        <div className="card-standard text-center py-8 border-b-4 border-black/5 overflow-hidden">
                                             <p className="text-[10px] font-extrabold uppercase text-slate-400 tracking-widest mb-2">Daily Score</p>
-                                            <h2 className="text-3xl font-black text-black">{stats.winRate}%</h2>
+                                            {/* FIXED: Changed text-3xl to text-2xl to fit 100.00% inside the card */}
+                                            <h2 className="text-2xl font-black text-black">{stats.winRate}%</h2>
                                         </div>
                                     </div>
                                 )}
@@ -585,7 +586,7 @@
                                     </div>
                                 ) : (
                                     <div className="centered-container opacity-20 py-20">
-                                        <i className="fa-solid fa-leaf text-8xl mb-6 text-black"></i>
+                                        <i className="fa-solid fa-leaf text-8xl mb-4 text-black"></i>
                                         <p className="font-black uppercase tracking-[0.5em] text-[14px] text-black">Pure Mind</p>
                                     </div>
                                 )}
@@ -669,8 +670,7 @@
                                     </div>
                                 </div>
 
-                                {/* DROPDOWN CATEGORY/FREQUENCY BOXES */}
-                                <div className="grid grid-cols-2 gap-5 mt-4">
+                                <div className="grid grid-cols-2 gap-4 mt-4">
                                     <div className="space-y-2">
                                         <p className="text-[9px] font-black uppercase text-slate-400 ml-4 tracking-widest">Type</p>
                                         <select 
@@ -698,7 +698,7 @@
                                     </div>
                                 </div>
 
-                                {/* CONDITIONAL MODULE: WEEKDAYS */}
+                                {/* FREQUENCY LOGIC: SPECIFIC WEEKDAYS */}
                                 {form.frequency === 'Specific Days of Week' && (
                                     <div className="flex justify-between gap-2 animate-fade p-2 bg-white rounded-[32px] shadow-sm">
                                         {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(day => {
@@ -719,7 +719,7 @@
                                     </div>
                                 )}
 
-                                {/* CONDITIONAL MODULE: MONTH DATES (1-31) */}
+                                {/* FREQUENCY LOGIC: SPECIFIC MONTH DATES (1-31) */}
                                 {form.frequency === 'Specific Days of Month' && (
                                     <div className="month-picker-grid bg-white p-7 rounded-[40px] animate-fade shadow-sm border border-black/5">
                                         {[...Array(31)].map((_, i) => {
@@ -741,7 +741,7 @@
                                     </div>
                                 )}
 
-                                {/* CONDITIONAL MODULE: CUSTOM REPETITION */}
+                                {/* FREQUENCY LOGIC: CUSTOM REPETITION */}
                                 {form.frequency === 'Customise Days' && (
                                     <div className="flex items-center gap-6 bg-white p-8 rounded-[40px] animate-fade shadow-sm border border-black/5">
                                         <div className="flex flex-col">
@@ -789,20 +789,16 @@
                         {currentPage === 'calendar_full' && (
                             <div className="animate-fade flex flex-col h-full relative">
                                 <div className="flex justify-between items-center mb-10">
-                                    <div>
-                                        <h2 className="text-3xl font-black italic text-black leading-tight">{viewDate.toLocaleString('default', { month: 'long' })}</h2>
-                                        <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">{viewDate.getFullYear()}</p>
-                                    </div>
-                                    <div className="flex gap-3">
-                                        <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1))} className="w-12 h-12 bg-white rounded-2xl shadow-sm border border-black/5 text-black hover:bg-slate-50 transition-all"><i className="fa-solid fa-chevron-left"></i></button>
-                                        <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1))} className="w-12 h-12 bg-white rounded-2xl shadow-sm border border-black/5 text-black hover:bg-slate-50 transition-all"><i className="fa-solid fa-chevron-right"></i></button>
+                                    <h2 className="text-3xl font-black italic text-black leading-tight">{viewDate.toLocaleString('default', { month: 'long' })}</h2>
+                                    <div className="flex gap-4">
+                                        <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1))} className="w-12 h-12 bg-white rounded-2xl border border-black/5 active:scale-90 transition-all"><i className="fa-solid fa-chevron-left"></i></button>
+                                        <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1))} className="w-12 h-12 bg-white rounded-2xl border border-black/5 active:scale-90 transition-all"><i className="fa-solid fa-chevron-right"></i></button>
                                     </div>
                                 </div>
-                                
-                                <div className="bg-white p-8 rounded-[48px] border border-black/5 shadow-2xl mb-24">
+                                <div className="bg-white p-8 rounded-[48px] border border-black/5 shadow-2xl mb-12">
                                     <div className="calendar-grid">
-                                        {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(dName => <div key={dName} className="text-center text-[10px] font-black text-slate-200 mb-6 uppercase tracking-tighter">{dName}</div>)}
-                                        {[...Array(new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay())].map((_, i) => <div key={`empty-${i}`}></div>)}
+                                        {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(l => <div key={l} className="text-center text-[10px] font-black text-slate-200 mb-6 uppercase tracking-widest">{l}</div>)}
+                                        {[...Array(new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay())].map((_, i) => <div key={`e-${i}`}></div>)}
                                         {[...Array(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate())].map((_, i) => {
                                             const dayNum = i + 1;
                                             const dsString = `${viewDate.getFullYear()}-${String(viewDate.getMonth() + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
@@ -810,20 +806,20 @@
                                             const dayPct = habits.length > 0 ? (dayCount / habits.length) * 100 : 0;
                                             
                                             let bgStatus = 'bg-slate-50 text-slate-300';
-                                            if (dayPct > 0) bgStatus = 'bg-amber-100 text-amber-700';
-                                            if (dayPct === 100) bgStatus = 'bg-black text-amber-400 shadow-xl scale-105 z-10';
+                                            if (dayPct > 0) bgStatus = 'bg-amber-100 text-amber-700 font-black';
+                                            if (dayPct === 100) bgStatus = 'bg-black text-amber-400 shadow-xl scale-110 z-10 font-black';
                                             
-                                            return <div key={dayNum} className={`calendar-day transition-all duration-500 ${bgStatus}`}>{dayNum}</div>
+                                            return <div key={dayNum} className={`calendar-day transition-all duration-700 ${bgStatus}`}>{dayNum}</div>
                                         })}
                                     </div>
                                 </div>
                                 
-                                <div className="fixed-bottom-btn">
+                                <div className="flex justify-center mb-10">
                                     <button 
                                         onClick={() => { setViewDate(new Date()); setCurrentPage('home'); }} 
-                                        className="w-full py-7 rounded-[40px] bg-black text-white font-black text-lg shadow-2xl shadow-black/40 active:scale-95 transition-all"
+                                        className="px-12 py-5 rounded-[40px] bg-black text-white font-black text-xs shadow-2xl active:scale-95 transition-all uppercase tracking-widest"
                                     >
-                                        Return to Today
+                                        Back to Today
                                     </button>
                                 </div>
                             </div>
@@ -832,11 +828,11 @@
 
                     {/* PERMANENT NAV ENGINE */}
                     <nav className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl px-2 py-10 flex justify-around items-center z-50 border-t border-black/5 shadow-[0_-10px_40px_rgba(0,0,0,0.03)]">
-                        <button onClick={() => { setEditingId(null); setForm(defaultForm); setCurrentPage('home'); }} className={`flex flex-col items-center w-14 transition-all duration-300 ${currentPage === 'home' ? 'text-black scale-110' : 'text-slate-300'}`}>
+                        <button onClick={() => { setEditingId(null); setCurrentPage('home'); }} className={`flex flex-col items-center w-14 transition-all duration-500 ${currentPage === 'home' ? 'text-black scale-110' : 'text-slate-300'}`}>
                             <i className="fa-solid fa-house-chimney text-xl"></i>
                             <span className="nav-text">Home</span>
                         </button>
-                        <button onClick={() => { setEditingId(null); setForm(defaultForm); setCurrentPage('habits'); }} className={`flex flex-col items-center w-14 transition-all duration-300 ${currentPage === 'habits' ? 'text-black scale-110' : 'text-slate-300'}`}>
+                        <button onClick={() => { setEditingId(null); setCurrentPage('habits'); }} className={`flex flex-col items-center w-14 transition-all duration-500 ${currentPage === 'habits' ? 'text-black scale-110' : 'text-slate-300'}`}>
                             <i className="fa-solid fa-dna text-xl"></i>
                             <span className="nav-text">Rituals</span>
                         </button>
