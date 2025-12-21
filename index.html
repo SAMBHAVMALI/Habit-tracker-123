@@ -55,7 +55,6 @@
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
         .calendar-day { aspect-ratio: 1; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; }
 
-        /* Scroll Fix for Pickers */
         .scroll-wrapper {
             overflow-x: auto;
             width: 100%;
@@ -94,12 +93,12 @@
             const [currentPage, setCurrentPage] = useState('home');
             const [showMenu, setShowMenu] = useState(false);
             const [viewDate, setViewDate] = useState(new Date());
+            const [editingId, setEditingId] = useState(null);
 
             const [pickers, setPickers] = useState({ color: false, icon: false });
             const [habits, setHabits] = useState(() => JSON.parse(localStorage.getItem('habits')) || []);
             const [logs, setLogs] = useState(() => JSON.parse(localStorage.getItem('habitLogs')) || {});
             
-            // Initial/Default State
             const defaultForm = {
                 name: '', description: '', color: '#1A1A1A', icon: '✨', 
                 category: 'Category', frequency: 'Frequency', weekDays: [], monthDays: [],
@@ -127,13 +126,25 @@
 
             const todayStr = new Date().toISOString().split('T')[0];
 
-            // FIXED: Reset function
             const handleConfirmRitual = () => {
                 if(!form.name) return;
-                setHabits([...habits, {...form, id: Date.now()}]);
-                setForm(defaultForm); // This wipes the previous details
+                
+                if (editingId) {
+                    setHabits(habits.map(h => h.id === editingId ? {...form, id: editingId} : h));
+                    setEditingId(null);
+                } else {
+                    setHabits([...habits, {...form, id: Date.now()}]);
+                }
+                
+                setForm(defaultForm);
                 setPickers({ color: false, icon: false });
-                setCurrentPage('home');
+                setCurrentPage('habits');
+            };
+
+            const startEdit = (habit) => {
+                setForm(habit);
+                setEditingId(habit.id);
+                setCurrentPage('add');
             };
 
             const Header = () => (
@@ -151,7 +162,7 @@
                         </button>
                         {showMenu && (
                             <div className="absolute right-0 top-14 w-48 bg-white border border-black/5 rounded-3xl shadow-2xl z-[70] p-2">
-                                <button onClick={() => {localStorage.clear(); window.location.reload();}} className="w-full px-5 py-4 text-left text-xs font-bold text-rose-500 hover:bg-rose-50 flex items-center gap-3 rounded-2xl">
+                                <button onClick={() => {localStorage.clear(); window.location.reload();}} className="w-full px-5 py-4 text-left text-xs font-bold text-rose-500 hover:bg-rose-50 flex items-center gap-3 rounded-2xl transition-all">
                                     <i className="fa-solid fa-trash-can opacity-50"></i> Clear All Data
                                 </button>
                             </div>
@@ -253,7 +264,10 @@
                                                         <span className="text-2xl">{h.icon}</span>
                                                         <h3 className="font-bold text-lg">{h.name}</h3>
                                                     </div>
-                                                    <button onClick={() => setHabits(habits.filter(x => x.id !== h.id))} className="text-rose-500 transition-colors p-2 rounded-lg"><i className="fa-solid fa-trash-can"></i></button>
+                                                    <div className="flex gap-2">
+                                                        <button onClick={() => startEdit(h)} className="text-slate-300 hover:text-black p-2 transition-colors"><i className="fa-solid fa-pen-to-square"></i></button>
+                                                        <button onClick={() => setHabits(habits.filter(x => x.id !== h.id))} className="text-rose-400 hover:text-rose-600 p-2 transition-colors"><i className="fa-solid fa-trash-can"></i></button>
+                                                    </div>
                                                 </div>
                                                 <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">
                                                     {h.category} • {
@@ -278,7 +292,7 @@
 
                         {currentPage === 'add' && (
                             <div className="animate-fade space-y-6 pb-20">
-                                <h2 className="text-2xl font-black italic">New Ritual</h2>
+                                <h2 className="text-2xl font-black italic">{editingId ? 'Edit Ritual' : 'New Ritual'}</h2>
                                 <input className="w-full p-6 rounded-3xl bg-white font-bold outline-none shadow-sm" placeholder="Habit Name" value={form.name} onChange={e => setForm({...form, name: e.target.value})} />
                                 <textarea className="w-full p-6 rounded-3xl bg-white font-medium text-sm outline-none shadow-sm" placeholder="Description" rows="2" value={form.description} onChange={e => setForm({...form, description: e.target.value})} />
                                 
@@ -351,14 +365,20 @@
                                     </div>
                                 )}
 
-                                <button onClick={handleConfirmRitual} className="w-full py-6 rounded-[32px] logo-gradient text-white font-black text-lg shadow-xl active:scale-95 transition-all">Confirm Ritual</button>
+                                <button onClick={handleConfirmRitual} className="w-full py-6 rounded-[32px] logo-gradient text-white font-black text-lg shadow-xl active:scale-95 transition-all">
+                                    {editingId ? 'Update Ritual' : 'Confirm Ritual'}
+                                </button>
+                                
+                                {editingId && (
+                                    <button onClick={() => { setEditingId(null); setForm(defaultForm); setCurrentPage('habits'); }} className="w-full py-4 text-slate-400 font-bold text-sm">Cancel Editing</button>
+                                )}
                             </div>
                         )}
                     </div>
 
                     <nav className="fixed bottom-0 left-0 right-0 bg-white px-2 py-8 flex justify-around items-center z-50 border-t border-black/5 shadow-[0_-4px_20px_rgba(0,0,0,0.02)]">
-                        <button onClick={() => setCurrentPage('home')} className={`flex flex-col items-center w-14 transition-colors ${currentPage === 'home' ? 'text-black' : 'text-slate-300'}`}><i className="fa-solid fa-house text-lg"></i><span className="nav-text">Home</span></button>
-                        <button onClick={() => setCurrentPage('habits')} className={`flex flex-col items-center w-14 transition-colors ${currentPage === 'habits' ? 'text-black' : 'text-slate-300'}`}><i className="fa-solid fa-list-check text-lg"></i><span className="nav-text">Habits</span></button>
+                        <button onClick={() => {setEditingId(null); setCurrentPage('home');}} className={`flex flex-col items-center w-14 transition-colors ${currentPage === 'home' ? 'text-black' : 'text-slate-300'}`}><i className="fa-solid fa-house text-lg"></i><span className="nav-text">Home</span></button>
+                        <button onClick={() => {setEditingId(null); setCurrentPage('habits');}} className={`flex flex-col items-center w-14 transition-colors ${currentPage === 'habits' ? 'text-black' : 'text-slate-300'}`}><i className="fa-solid fa-list-check text-lg"></i><span className="nav-text">Habits</span></button>
                         <button onClick={() => setCurrentPage('add')} className="w-16 h-16 logo-gradient rounded-[24px] flex items-center justify-center text-white -mt-16 border-4 border-white shadow-2xl active:scale-95 transition-all"><i className="fa-solid fa-plus text-2xl gold-accent"></i></button>
                         <button onClick={() => setCurrentPage('growth')} className={`flex flex-col items-center w-14 transition-colors ${currentPage === 'growth' ? 'text-black' : 'text-slate-300'}`}><i className="fa-solid fa-chart-pie text-lg"></i><span className="nav-text">Growth</span></button>
                         <button onClick={() => setCurrentPage('coach')} className={`flex flex-col items-center w-14 transition-colors ${currentPage === 'coach' ? 'text-black' : 'text-slate-300'}`}><i className="fa-solid fa-wand-magic-sparkles text-lg"></i><span className="nav-text">Coach</span></button>
