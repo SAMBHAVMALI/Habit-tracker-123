@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HabitFlow - Unlimited Habit Tracker</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const App = () => {
+            const [currentPage, setCurrentPage] = useState('home');
+            const [habits, setHabits] = useState(() => {
+                const saved = localStorage.getItem('habits');
+                return saved ? JSON.parse(saved) : [];
+            });
+            const [logs, setLogs] = useState(() => {
+                const saved = localStorage.getItem('habitLogs');
+                return saved ? JSON.parse(saved) : {};
+            });
+
+            useEffect(() => {
+                localStorage.setItem('habits', JSON.stringify(habits));
+                localStorage.setItem('habitLogs', JSON.stringify(logs));
+            }, [habits, logs]);
+
+            const today = new Date().toISOString().split('T')[0];
+
+            const toggleHabit = (id) => {
+                const currentLogs = logs[today] || [];
+                const newLogs = currentLogs.includes(id)
+                    ? currentLogs.filter(hId => hId !== id)
+                    : [...currentLogs, id];
+                setLogs({ ...logs, [today]: newLogs });
+            };
+
+            const addHabit = (name, category) => {
+                const newHabit = { id: Date.now(), name, category, streak: 0, createdAt: new Date() };
+                setHabits([...habits, newHabit]);
+                setCurrentPage('habits');
+            };
+
+            // --- Components ---
+
+            const Nav = () => (
+                <nav className="fixed bottom-0 left-0 right-0 glass border-t border-slate-200 px-6 py-3 flex justify-between items-center z-50">
+                    <button onClick={() => setCurrentPage('home')} className={`flex flex-col items-center ${currentPage === 'home' ? 'text-blue-600' : 'text-slate-400'}`}>
+                        <i className="fa-solid fa-house text-xl"></i>
+                        <span className="text-[10px] mt-1 font-semibold">Home</span>
+                    </button>
+                    <button onClick={() => setCurrentPage('habits')} className={`flex flex-col items-center ${currentPage === 'habits' ? 'text-blue-600' : 'text-slate-400'}`}>
+                        <i className="fa-solid fa-list-check text-xl"></i>
+                        <span className="text-[10px] mt-1 font-semibold">Habits</span>
+                    </button>
+                    <button onClick={() => setCurrentPage('add')} className="bg-blue-600 text-white p-3 rounded-full -mt-10 shadow-lg shadow-blue-200 transition-transform active:scale-90">
+                        <i className="fa-solid fa-plus text-xl"></i>
+                    </button>
+                    <button onClick={() => setCurrentPage('calendar')} className={`flex flex-col items-center ${currentPage === 'calendar' ? 'text-blue-600' : 'text-slate-400'}`}>
+                        <i className="fa-solid fa-calendar-days text-xl"></i>
+                        <span className="text-[10px] mt-1 font-semibold">Calendar</span>
+                    </button>
+                    <button onClick={() => setCurrentPage('insights')} className={`flex flex-col items-center ${currentPage === 'insights' ? 'text-blue-600' : 'text-slate-400'}`}>
+                        <i className="fa-solid fa-chart-line text-xl"></i>
+                        <span className="text-[10px] mt-1 font-semibold">Insights</span>
+                    </button>
+                </nav>
+            );
+
+            const HomePage = () => {
+                const completedToday = (logs[today] || []).length;
+                const progress = habits.length > 0 ? Math.round((completedToday / habits.length) * 100) : 0;
+
+                return (
+                    <div className="p-6 pb-24 animate-fadeIn">
+                        <header className="mb-8">
+                            <h1 className="text-2xl font-bold text-slate-800">Hello there!</h1>
+                            <p className="text-slate-500">You've finished {progress}% of your goals today.</p>
+                        </header>
+
+                        <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl p-6 text-white mb-8 shadow-xl shadow-blue-100">
+                            <div className="flex justify-between items-center mb-4">
+                                <div>
+                                    <p className="opacity-80 text-sm font-medium">Daily Streak</p>
+                                    <h2 className="text-3xl font-bold">12 Days</h2>
+                                </div>
+                                <div className="bg-white/20 p-3 rounded-2xl backdrop-blur-md">
+                                    <i className="fa-solid fa-fire-flame-curved text-2xl text-orange-400"></i>
+                                </div>
+                            </div>
+                            <div className="w-full bg-white/20 h-2 rounded-full overflow-hidden">
+                                <div className="bg-white h-full transition-all duration-1000" style={{width: `${progress}%`}}></div>
+                            </div>
+                        </div>
+
+                        <section className="mb-8">
+                            <h3 className="text-lg font-bold text-slate-800 mb-4">Today's Habits</h3>
+                            <div className="space-y-3">
+                                {habits.length === 0 && <p className="text-slate-400 italic">No habits added yet. Click + to start!</p>}
+                                {habits.map(habit => (
+                                    <div key={habit.id} className="glass border border-slate-100 p-4 rounded-2xl flex items-center justify-between shadow-sm">
+                                        <div className="flex items-center gap-4">
+                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${logs[today]?.includes(habit.id) ? 'bg-green-100 text-green-600' : 'bg-blue-50 text-blue-500'}`}>
+                                                <i className="fa-solid fa-bolt"></i>
+                                            </div>
+                                            <div>
+                                                <h4 className="font-semibold text-slate-700">{habit.name}</h4>
+                                                <p className="text-xs text-slate-400">{habit.category}</p>
+                                            </div>
+                                        </div>
+                                        <button 
+                                            onClick={() => toggleHabit(habit.id)}
+                                            className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all ${logs[today]?.includes(habit.id) ? 'bg-green-500 border-green-500 text-white' : 'border-slate-200 text-transparent'}`}
+                                        >
+                                            <i className="fa-solid fa-check text-sm"></i>
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    </div>
+                );
+            };
+
+            const HabitsPage = () => (
+                <div className="p-6 pb-24">
+                    <h2 className="text-2xl font-bold mb-6">All Habits</h2>
+                    <div className="grid grid-cols-1 gap-4">
+                        {habits.map(h => (
+                            <div key={h.id} className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
+                                <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center text-slate-600">
+                                    <i className="fa-solid fa-star"></i>
+                                </div>
+                                <div className="flex-1">
+                                    <h4 className="font-bold">{h.name}</h4>
+                                    <p className="text-sm text-slate-500 capitalize">{h.category}</p>
+                                </div>
+                                <div className="text-right text-orange-500 font-bold">
+                                    <i className="fa-solid fa-fire mr-1"></i> {h.streak || 0}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+
+            const AddPage = () => {
+                const [name, setName] = useState('');
+                const [cat, setCat] = useState('health');
+                return (
+                    <div className="p-6 pb-24">
+                        <h2 className="text-2xl font-bold mb-6">Create New Habit</h2>
+                        <div className="space-y-6">
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">Habit Name</label>
+                                <input value={name} onChange={(e) => setName(e.target.value)} type="text" className="w-full p-4 rounded-2xl bg-white border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g. Morning Yoga" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">Category</label>
+                                <select value={cat} onChange={(e) => setCat(e.target.value)} className="w-full p-4 rounded-2xl bg-white border border-slate-200 appearance-none">
+                                    <option value="health">Health</option>
+                                    <option value="productivity">Productivity</option>
+                                    <option value="mindset">Mindset</option>
+                                    <option value="finance">Finance</option>
+                                </select>
+                            </div>
+                            <button onClick={() => addHabit(name, cat)} className="w-full bg-blue-600 text-white font-bold py-4 rounded-2xl shadow-lg shadow-blue-200 active:scale-95 transition-transform">
+                                Save Habit
+                            </button>
+                        </div>
+                    </div>
+                );
+            };
+
+            const CalendarPage = () => (
+                <div className="p-6 pb-24 text-center">
+                    <h2 className="text-2xl font-bold mb-6 text-left">Consistency Map</h2>
+                    <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
+                        <div className="grid grid-cols-7 gap-2">
+                            {['S','M','T','W','T','F','S'].map(d => <div key={d} className="text-[10px] font-bold text-slate-400">{d}</div>)}
+                            {[...Array(31)].map((_, i) => (
+                                <div key={i} className={`aspect-square rounded-md ${i < 20 ? 'bg-blue-100' : (i < 22 ? 'bg-blue-600' : 'bg-slate-50')}`}></div>
+                            ))}
+                        </div>
+                        <p className="mt-6 text-sm text-slate-500">Visualizing your last 31 days of activity.</p>
+                    </div>
+                </div>
+            );
+
+            const InsightsPage = () => (
+                <div className="p-6 pb-24">
+                    <h2 className="text-2xl font-bold mb-6">Performance</h2>
+                    <div className="grid grid-cols-2 gap-4 mb-6">
+                        <div className="bg-white p-4 rounded-2xl border border-slate-100 text-center">
+                            <p className="text-slate-400 text-xs font-bold uppercase mb-1">Weekly Avg</p>
+                            <p className="text-2xl font-bold text-blue-600">84%</p>
+                        </div>
+                        <div className="bg-white p-4 rounded-2xl border border-slate-100 text-center">
+                            <p className="text-slate-400 text-xs font-bold uppercase mb-1">Perfect Days</p>
+                            <p className="text-2xl font-bold text-green-500">5</p>
+                        </div>
+                    </div>
+                    <div className="bg-white p-6 rounded-3xl border border-slate-100">
+                        <h4 className="font-bold mb-4">Category Analysis</h4>
+                        <div className="space-y-4">
+                            {['Health', 'Productivity', 'Mindset'].map(c => (
+                                <div key={c}>
+                                    <div className="flex justify-between text-sm mb-1">
+                                        <span>{c}</span>
+                                        <span className="font-bold">70%</span>
+                                    </div>
+                                    <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                                        <div className="bg-blue-500 h-full" style={{width: '70%'}}></div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+
+            return (
+                <div className="max-w-md mx-auto min-h-screen relative overflow-hidden">
+                    {currentPage === 'home' && <HomePage />}
+                    {currentPage === 'habits' && <HabitsPage />}
+                    {currentPage === 'add' && <AddPage />}
+                    {currentPage === 'calendar' && <CalendarPage />}
+                    {currentPage === 'insights' && <InsightsPage />}
+                    <Nav />
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
