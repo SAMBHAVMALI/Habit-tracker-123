@@ -36,13 +36,14 @@
             display: flex; 
             flex-direction: column; 
             position: relative; 
+            max-width: 500px;
+            margin: 0 auto;
         }
         
         .content-area { 
             flex: 1; 
             display: flex; 
             flex-direction: column; 
-            /* INCREASED BOTTOM PADDING TO PREVENT OVERLAP */
             padding: 28px 28px 180px 28px; 
             overflow-y: auto; 
             scrollbar-width: none;
@@ -131,9 +132,11 @@
         .fixed-bottom-btn { 
             position: absolute; 
             bottom: 110px; 
-            left: 28px; 
-            right: 28px; 
+            left: 0; 
+            right: 0; 
             z-index: 40; 
+            display: flex;
+            justify-content: center;
         }
 
         /* data visualization components */
@@ -175,7 +178,8 @@
         .month-picker-grid { 
             display: grid; 
             grid-template-columns: repeat(7, 1fr); 
-            gap: 7px; 
+            gap: 5px; 
+            width: 100%;
         }
 
         @keyframes fadeInScale { 
@@ -185,8 +189,24 @@
         .animate-fade { 
             animation: fadeInScale 0.5s ease-out forwards; 
         }
-        
-        /* ADJUSTED NAV BAR FOR BETTER SPACING */
+
+        .btn-today-primary {
+            display: block;
+            margin: 0 auto;
+            padding: 16px 36px;
+            background: #1A1A1A;
+            color: #FFFFFF;
+            font-weight: 800;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            border-radius: 100px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            width: fit-content;
+        }
+        .btn-today-primary:active { transform: scale(0.92); }
+
         .rout-nav {
             position: fixed;
             bottom: 0;
@@ -407,7 +427,6 @@
                                         <img src="./logo512.png" alt="Routiq Logo" className="w-full h-full object-contain" />
                                     </div>
                                     <h1 className="text-4xl font-black text-black italic tracking-tighter">Routiq</h1>
-                                    <div className="mt-4 w-12 h-1 bg-amber-400 rounded-full"></div>
                                 </Fragment>
                             ) : (
                                 <Fragment>
@@ -499,6 +518,7 @@
                                     </div>
                                 </div>
 
+                                {/* MASTER CIRCULAR GAUGE */}
                                 <div className="card-standard flex flex-col items-center py-12 relative overflow-hidden">
                                     <div className="absolute top-0 left-0 w-full h-1 bg-slate-50"></div>
                                     <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-300 mb-10">Strength Index</p>
@@ -518,8 +538,12 @@
                                     </div>
                                 </div>
 
+                                {/* MATRIX GRID (Oldest -> Newest) */}
                                 <div className="card-standard">
-                                    <p className="text-xs font-black uppercase tracking-widest text-slate-400 mb-8 text-center">Consistency Matrix</p>
+                                    <div className="flex justify-between items-center mb-8">
+                                        <p className="text-xs font-black uppercase tracking-widest text-slate-400">Consistency Matrix</p>
+                                        <span className="bg-slate-50 px-3 py-1 rounded-full text-[9px] font-black text-slate-400 uppercase tracking-tighter">{growthRange} Days Tracking</span>
+                                    </div>
                                     <div className={`heatmap-grid ${growthRange > 100 ? 'grid-cols-10' : 'grid-cols-7'}`}>
                                         {stats.heatmap.map((cell, idx) => {
                                             let intensity = '#F8FAFC';
@@ -678,7 +702,7 @@
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-4 mt-4">
+                                <div className="grid grid-cols-2 gap-5 mt-4">
                                     <div className="space-y-2">
                                         <p className="text-[9px] font-black uppercase text-slate-400 ml-4 tracking-widest">Type</p>
                                         <select 
@@ -726,7 +750,7 @@
                                     </div>
                                 )}
 
-                                {/* FIXED: TARGETED CHANGE TO MONTH PICKER GRID SIZE */}
+                                {/* FIXED: REDUCED BUTTON AND FONT SIZE FOR MONTH PICKER */}
                                 {form.frequency === 'Specific Days of Month' && (
                                     <div className="month-picker-grid bg-white p-7 rounded-[40px] animate-fade shadow-sm border border-black/5">
                                         {[...Array(31)].map((_, i) => {
@@ -739,7 +763,7 @@
                                                         const current = isSel ? form.monthDays.filter(d => d !== dNum) : [...form.monthDays, dNum];
                                                         setForm({...form, monthDays: current});
                                                     }} 
-                                                    className={`w-9 h-9 rounded-xl text-[9px] font-black transition-all duration-300 ${isSel ? 'bg-black text-white shadow-lg' : 'bg-slate-50 text-slate-300'}`}
+                                                    className={`w-7 h-7 rounded-lg text-[7px] font-black transition-all duration-300 ${isSel ? 'bg-black text-white shadow-lg' : 'bg-slate-50 text-slate-300'}`}
                                                 >
                                                     {dNum}
                                                 </button>
@@ -824,10 +848,10 @@
                                 </div>
                                 
                                 <div className="fixed-bottom-btn">
-                                    {/* FIXED: TARGETED CHANGE TO BUTTON WIDTH */}
+                                    {/* FIXED: Reduced button size for return to today */}
                                     <button 
                                         onClick={() => { setViewDate(new Date()); setCurrentPage('home'); }} 
-                                        className="py-4 px-10 rounded-[100px] bg-black text-white font-black text-xs uppercase tracking-widest shadow-2xl active:scale-95 transition-all mx-auto block"
+                                        className="mx-auto block px-12 py-5 rounded-[100px] bg-black text-white font-black text-xs uppercase tracking-widest shadow-2xl active:scale-95 transition-all"
                                     >
                                         Return to Today
                                     </button>
