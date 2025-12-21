@@ -242,7 +242,7 @@
             const [growthRange, setGrowthRange] = useState(30); 
             const [pickers, setPickers] = useState({ color: false, icon: false });
 
-            // Coach Page States
+            // Coach Personality States
             const [coachInput, setCoachInput] = useState("");
             const [coachDisplayMessage, setCoachDisplayMessage] = useState("");
 
@@ -382,25 +382,36 @@
                 }
             };
 
-            // AI Coach Logic
+            // Enhanced AI Coach Logic
             const handleCoachSubmit = () => {
                 if (!coachInput.trim()) return;
                 
-                // Simple logic for replies based on keywords or stats
-                let reply = "";
                 const input = coachInput.toLowerCase();
-                
-                if (input.includes("stats") || input.includes("score")) {
-                    reply = `Aapka current score ${stats.winRate}% hai. Aapne aaj ${stats.doneCount} out of ${stats.totalCount} rituals poore kiye hain.`;
-                } else if (input.includes("motivate") || input.includes("tired")) {
-                    reply = "Yaad rakhein: 'Discipline is doing what needs to be done, even if you don't feel like doing it.' Bas agla chota kadam uthayein.";
-                } else if (input.includes("help") || input.includes("ritual")) {
-                    reply = "Apne rituals ko 'Habit Stacking' ke zariye asaan banayein. Ek naye ritual ko apne purane pakke habit se jodein.";
+                let finalReply = "";
+
+                const genericReplies = [
+                    "Focus on the identity, not the outcome. You're becoming a disciplined person.",
+                    "Consistency is better than intensity. Just do one chota ritual right now.",
+                    "Discipline is freedom. Don't negotiate with your mind.",
+                    "The secret to a great life is hidden in your daily routine."
+                ];
+
+                if (input.includes("stats") || input.includes("score") || input.includes("progress")) {
+                    finalReply = `Coach: "Aapka current win rate ${stats.winRate}% hai. Aapne aaj ${stats.doneCount} kaam khatam kiye hain. Agla target 100%?"`;
+                } else if (input.includes("tired") || input.includes("lazy") || input.includes("motivation")) {
+                    finalReply = `Coach: "Thakaan dimaag mein hoti hai. Bas 5 minute ke liye apna '${habits[0]?.name || 'Ritual'}' shuru karke dekho, flow apne aap ban jayega."`;
+                } else if (input.includes("hello") || input.includes("hi") || input.includes("hey")) {
+                    finalReply = `Coach: "Hello! Main aapka performance coach hoon. Aaj hum discipline ki limit push karenge ya sirf rituals maintain karenge?"`;
                 } else {
-                    reply = `Coach: "${coachInput}" - Ye ek acha point hai. Meri advice hai ki aap apne rituals ki consistency par focus karein. Aapka mastery level abhi ${stats.mastery}% hai.`;
+                    finalReply = `Coach: "${coachInput}" - Interesting point. Bas yaad rakhein ki mastery level ${stats.mastery}% hai, ise badhane ke liye aaj ke baaki rituals complete karein.`;
                 }
 
-                setCoachDisplayMessage(reply);
+                // If no specific keyword, mix in a generic wisdom quote
+                if (finalReply.startsWith("Coach: \"") && Math.random() > 0.7) {
+                    finalReply = "Coach: " + genericReplies[Math.floor(Math.random() * genericReplies.length)];
+                }
+
+                setCoachDisplayMessage(finalReply);
                 setCoachInput("");
             };
 
@@ -895,13 +906,13 @@
                                 </div>
 
                                 {/* Dynamic Insight Card */}
-                                <div className="card-standard bg-black text-white relative overflow-hidden">
+                                <div className="card-standard bg-black text-white relative overflow-hidden min-h-[140px]">
                                     <div className="absolute top-0 right-0 p-4 opacity-10">
                                         <i className="fa-solid fa-brain text-6xl"></i>
                                     </div>
                                     <div className="relative z-10">
                                         <span className="bg-amber-400 text-black text-[8px] font-black px-2 py-1 rounded-full uppercase tracking-tighter">Neural Engine Active</span>
-                                        <p className="mt-4 font-bold text-lg leading-tight">
+                                        <p className="mt-4 font-bold text-lg leading-tight animate-fade">
                                             {coachDisplayMessage || `"Aapka current score ${stats.winRate}% hai. Aaj ke rituals par focus banaye rakhein!"`}
                                         </p>
                                     </div>
