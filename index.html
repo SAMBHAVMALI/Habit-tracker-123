@@ -113,6 +113,7 @@
 
             return (
                 <div className="app-shell max-w-lg mx-auto">
+                    {/* Splash Overlay */}
                     <div className={`overlay-screen ${overlayStage === 'none' ? 'hide-overlay' : ''}`}>
                         {overlayStage === 'logo' ? (
                             <div className="flex flex-col items-center">
@@ -127,6 +128,7 @@
                     <div className="content-area">
                         {(currentPage === 'home' || currentPage === 'habits') && <Header />}
 
+                        {/* HOME PAGE */}
                         {currentPage === 'home' && (
                             <div className="flex-1 flex flex-col">
                                 {habits.length > 0 ? (
@@ -157,6 +159,7 @@
                             </div>
                         )}
 
+                        {/* CALENDAR PAGE */}
                         {currentPage === 'calendar_full' && (
                             <div className="animate-in fade-in flex flex-col h-full">
                                 <div className="flex justify-between items-center mb-8">
@@ -182,10 +185,15 @@
                                         })}
                                     </div>
                                 </div>
-                                <button onClick={() => { setViewDate(new Date()); setCurrentPage('home'); }} className="w-full mt-10 py-5 rounded-[32px] bg-black text-white font-bold shadow-xl transition-transform active:scale-95">Back to Today</button>
+                                {/* THE "BACK TO TODAY" BUTTON */}
+                                <button onClick={() => { setViewDate(new Date()); setCurrentPage('home'); }} className="w-full mt-8 py-6 rounded-[32px] bg-black text-white font-black text-lg shadow-xl shadow-black/10 transition-transform active:scale-95 flex items-center justify-center gap-3">
+                                    <i className="fa-solid fa-calendar-check text-amber-400"></i>
+                                    Back to Today
+                                </button>
                             </div>
                         )}
 
+                        {/* HABITS PAGE */}
                         {currentPage === 'habits' && (
                             <div className="flex-1 flex flex-col">
                                 <h2 className="text-2xl font-black italic mb-8">My Rituals</h2>
@@ -198,13 +206,13 @@
                                                         <span className="text-2xl">{h.icon}</span>
                                                         <h3 className="font-bold text-lg">{h.name}</h3>
                                                     </div>
-                                                    <button onClick={() => setHabits(habits.filter(x => x.id !== h.id))} className="text-rose-500 transition-colors hover:bg-rose-50 p-2 rounded-lg"><i className="fa-solid fa-trash-can"></i></button>
+                                                    <button onClick={() => setHabits(habits.filter(x => x.id !== h.id))} className="text-rose-500 transition-colors p-2 rounded-lg"><i className="fa-solid fa-trash-can"></i></button>
                                                 </div>
                                                 <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">
                                                     {h.category} • {
                                                         h.frequency === 'Specific Days of Week' ? h.weekDays.join(', ') : 
                                                         h.frequency === 'Specific Days of Month' ? `Dates: ${h.monthDays.join(', ')}` : 
-                                                        h.frequency === 'Customise Days' ? `${h.customCount} times per ${h.customPeriod}` : 
+                                                        h.frequency === 'Customise Days' ? `${h.customCount}x per ${h.customPeriod}` : 
                                                         h.frequency
                                                     }
                                                 </p>
@@ -221,6 +229,7 @@
                             </div>
                         )}
 
+                        {/* ADD PAGE */}
                         {currentPage === 'add' && (
                             <div className="animate-in slide-in-from-bottom-6 space-y-6 pb-20">
                                 <h2 className="text-2xl font-black italic">New Ritual</h2>
