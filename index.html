@@ -242,6 +242,10 @@
             const [growthRange, setGrowthRange] = useState(30); 
             const [pickers, setPickers] = useState({ color: false, icon: false });
 
+            // Coach Page States
+            const [coachInput, setCoachInput] = useState("");
+            const [coachDisplayMessage, setCoachDisplayMessage] = useState("");
+
             // Persistence Management
             const [habits, setHabits] = useState(() => {
                 try {
@@ -376,6 +380,28 @@
                     const remainingHabits = habits.filter(h => h.id !== id);
                     setHabits(remainingHabits);
                 }
+            };
+
+            // AI Coach Logic
+            const handleCoachSubmit = () => {
+                if (!coachInput.trim()) return;
+                
+                // Simple logic for replies based on keywords or stats
+                let reply = "";
+                const input = coachInput.toLowerCase();
+                
+                if (input.includes("stats") || input.includes("score")) {
+                    reply = `Aapka current score ${stats.winRate}% hai. Aapne aaj ${stats.doneCount} out of ${stats.totalCount} rituals poore kiye hain.`;
+                } else if (input.includes("motivate") || input.includes("tired")) {
+                    reply = "Yaad rakhein: 'Discipline is doing what needs to be done, even if you don't feel like doing it.' Bas agla chota kadam uthayein.";
+                } else if (input.includes("help") || input.includes("ritual")) {
+                    reply = "Apne rituals ko 'Habit Stacking' ke zariye asaan banayein. Ek naye ritual ko apne purane pakke habit se jodein.";
+                } else {
+                    reply = `Coach: "${coachInput}" - Ye ek acha point hai. Meri advice hai ki aap apne rituals ki consistency par focus karein. Aapka mastery level abhi ${stats.mastery}% hai.`;
+                }
+
+                setCoachDisplayMessage(reply);
+                setCoachInput("");
             };
 
             // --- 5. COMPONENT: NAVIGATIONAL HEADER ---
@@ -876,7 +902,7 @@
                                     <div className="relative z-10">
                                         <span className="bg-amber-400 text-black text-[8px] font-black px-2 py-1 rounded-full uppercase tracking-tighter">Neural Engine Active</span>
                                         <p className="mt-4 font-bold text-lg leading-tight">
-                                            "Aapka current score <span className="text-amber-400">{stats.winRate}%</span> hai. Kal se behtar karne ke liye bas ek chota ritual aur kijiye!"
+                                            {coachDisplayMessage || `"Aapka current score ${stats.winRate}% hai. Aaj ke rituals par focus banaye rakhein!"`}
                                         </p>
                                     </div>
                                 </div>
@@ -902,14 +928,20 @@
                                     </div>
                                 </div>
 
-                                {/* Chat Interface Placeholder */}
+                                {/* Chat Interface */}
                                 <div className="mt-4 relative">
                                     <input 
                                         type="text" 
+                                        value={coachInput}
+                                        onChange={(e) => setCoachInput(e.target.value)}
+                                        onKeyPress={(e) => e.key === 'Enter' && handleCoachSubmit()}
                                         placeholder="Ask coach something..." 
                                         className="w-full p-6 pr-16 rounded-[32px] bg-white shadow-sm border border-black/5 outline-none font-bold text-sm text-black placeholder:opacity-30" 
                                     />
-                                    <button className="absolute right-3 top-3 w-12 h-12 rounded-2xl bg-black text-amber-400 flex items-center justify-center active:scale-90 transition-all">
+                                    <button 
+                                        onClick={handleCoachSubmit}
+                                        className="absolute right-3 top-3 w-12 h-12 rounded-2xl bg-black text-amber-400 flex items-center justify-center active:scale-90 transition-all"
+                                    >
                                         <i className="fa-solid fa-paper-plane"></i>
                                     </button>
                                 </div>
