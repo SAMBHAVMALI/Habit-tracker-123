@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Routiq Legacy Master Pro v4</title>
+    <title>Routiq Legacy Master Pro v6</title>
     
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
@@ -13,8 +13,8 @@
     
     <style>
         /* =========================================================
-           II. ADVANCED CSS ARCHITECTURE & THEMING
-           =========================================================
+            SECTION 2: CORE TYPOGRAPHY & DESIGN TOKENS
+            =========================================================
         */
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
         
@@ -22,15 +22,16 @@
             --logo-gold: #D4AF37;   
             --logo-black: #1A1A1A;  
             --logo-peach: #F5E6D3;  
-            --card-shadow: 0 10px 40px rgba(0,0,0,0.04);
-            --transition-primary: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+            --card-shadow-soft: 0 10px 40px rgba(0,0,0,0.04);
+            --card-shadow-medium: 0 15px 50px rgba(0,0,0,0.06);
+            --card-shadow-deep: 0 25px 70px rgba(0,0,0,0.12);
+            --transition-primary: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
             --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            --nav-blur: blur(24px);
         }
 
         /* =========================================================
-           III. GLOBAL RESET & SCROLL OPTIMIZATION
-           =========================================================
+            SECTION 3: GLOBAL LAYOUT RESET
+            =========================================================
         */
         body, html, #root { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
@@ -44,8 +45,8 @@
         }
 
         /* =========================================================
-           IV. STRUCTURAL BOX MODEL
-           =========================================================
+            SECTION 4: STRUCTURAL ARCHITECTURE
+            =========================================================
         */
         .app-shell { 
             height: 100vh; 
@@ -54,13 +55,15 @@
             position: relative; 
             max-width: 500px;
             margin: 0 auto;
+            overflow: hidden;
+            background: transparent;
         }
         
         .content-area { 
             flex: 1; 
             display: flex; 
             flex-direction: column; 
-            padding: 28px 28px 200px 28px; 
+            padding: 28px 28px 220px 28px; 
             overflow-y: auto; 
             scrollbar-width: none;
             -ms-overflow-style: none;
@@ -73,8 +76,8 @@
         }
 
         /* =========================================================
-           V. COMPONENT UI DEFINITIONS
-           =========================================================
+            SECTION 5: COMPONENT VISUALS
+            =========================================================
         */
         .overlay-screen { 
             position: fixed; 
@@ -84,7 +87,7 @@
             align-items: center; 
             justify-content: center; 
             z-index: 9999; 
-            transition: opacity 1.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1); 
         }
         
         .hide-overlay { 
@@ -98,26 +101,25 @@
         
         .card-standard { 
             background: #FFFFFF; 
-            border-radius: 36px; 
-            padding: 26px; 
-            box-shadow: var(--card-shadow); 
+            border-radius: 40px; 
+            padding: 30px; 
+            box-shadow: var(--card-shadow-soft); 
             border: none; 
             transition: var(--transition-primary);
             position: relative;
-            overflow: hidden;
         }
         
         .nav-text { 
             font-size: 9px; 
             font-weight: 800; 
-            margin-top: 6px; 
+            margin-top: 8px; 
             text-transform: uppercase; 
-            letter-spacing: 0.14em; 
+            letter-spacing: 0.16em; 
         }
 
         /* =========================================================
-           VI. DATA VISUALIZATION (MASTERY & MATRIX)
-           =========================================================
+            SECTION 6: DATA ANALYSIS STYLING
+            =========================================================
         */
         .meter-svg { transform: rotate(-90deg); }
         .meter-bg { fill: none; stroke: #F8FAFC; stroke-width: 10; }
@@ -126,68 +128,43 @@
             stroke: var(--logo-gold); 
             stroke-width: 10; 
             stroke-linecap: round; 
-            transition: stroke-dashoffset 1.8s cubic-bezier(0.4, 0, 0.2, 1); 
+            transition: stroke-dashoffset 2.2s cubic-bezier(0.4, 0, 0.2, 1); 
         }
 
         .heatmap-grid { 
             display: grid; 
             grid-template-columns: repeat(10, 1fr); 
-            gap: 7px; 
+            gap: 8px; 
         }
         
         .heatmap-cell { 
             aspect-ratio: 1; 
-            border-radius: 8px; 
+            border-radius: 10px; 
             transition: transform 0.4s ease, background 0.6s ease; 
-            border: 1.5px solid rgba(0,0,0,0.02); 
+            border: 2px solid rgba(0,0,0,0.02); 
         }
         
-        .heatmap-cell:hover { transform: scale(1.2); z-index: 20; }
-        
         .filter-chip { 
-            padding: 12px 22px; 
-            border-radius: 26px; 
+            padding: 14px 26px; 
+            border-radius: 32px; 
             font-size: 10px; 
             font-weight: 800; 
             text-transform: uppercase; 
             cursor: pointer; 
-            transition: all 0.5s ease;
+            transition: all 0.6s ease;
         }
 
         /* =========================================================
-           VII. SCROLLING & PICKER SYSTEMS
-           =========================================================
-        */
-        .scroll-wrapper { 
-            overflow-x: auto; 
-            width: 100%; 
-            -webkit-overflow-scrolling: touch; 
-            padding: 12px 0; 
-            position: relative;
-            z-index: 150; 
-        }
-        
-        .scroll-inner { 
-            display: flex; 
-            gap: 16px; 
-            width: max-content; 
-            padding-right: 50px; 
-        }
-        
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        /* =========================================================
-           VIII. CALENDAR GRID PROTECTION
-           =========================================================
+            SECTION 7: GRID BOXES & PROTECTORS
+            =========================================================
         */
         .month-picker-container { 
             width: 100%; 
-            background: rgba(255,255,255,0.8); 
-            border-radius: 44px; 
-            padding: 26px; 
+            background: rgba(255,255,255,0.9); 
+            border-radius: 48px; 
+            padding: 32px; 
             border: 2px solid white; 
-            box-shadow: inset 0 4px 15px rgba(0,0,0,0.02); 
+            box-shadow: inset 0 5px 25px rgba(0,0,0,0.02); 
             overflow: hidden;
             margin: 0 auto;
         }
@@ -195,62 +172,90 @@
         .month-picker-grid { 
             display: grid; 
             grid-template-columns: repeat(7, 1fr); 
-            gap: 8px; 
+            gap: 12px; 
             width: 100%; 
         }
 
         .calendar-grid { 
             display: grid; 
             grid-template-columns: repeat(7, 1fr); 
-            gap: 8px; 
+            gap: 12px; 
         }
         
         .calendar-day { 
             aspect-ratio: 1; 
-            border-radius: 16px; 
+            border-radius: 20px; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            font-size: 11px; 
+            font-size: 13px; 
             font-weight: 800; 
-            transition: all 0.4s ease;
+            transition: all 0.5s ease;
         }
 
         /* =========================================================
-           IX. KEYFRAME ENGINES
-           =========================================================
+            SECTION 8: GLOBAL NAVIGATION BAR
+            =========================================================
         */
-        @keyframes fadeInScaleUp { 
-            from { opacity: 0; transform: translateY(25px) scale(0.94); } 
-            to { opacity: 1; transform: translateY(0) scale(1); } 
-        }
-        
-        .animate-fade { 
-            animation: fadeInScaleUp 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards; 
+        .fixed-navbar { 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            right: 0; 
+            background: rgba(255,255,255,0.98); 
+            backdrop-blur: 40px; 
+            padding: 30px 20px 55px 20px; 
+            display: flex; 
+            justify-content: space-around; 
+            align-items: center; 
+            z-index: 1000; 
+            border-top: 1px solid rgba(0,0,0,0.04); 
+            box-shadow: 0 -20px 60px rgba(0,0,0,0.04);
         }
 
-        /* Explicit Button Sizing Fix */
-        .back-today-action {
+        .btn-today-legacy {
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 30px auto 50px auto;
-            padding: 18px 45px;
-            background: var(--logo-black);
+            margin: 50px auto 160px auto;
+            padding: 22px 60px;
+            background: #1A1A1A;
             color: #FFFFFF;
             font-weight: 800;
-            font-size: 12px;
+            font-size: 13px;
             text-transform: uppercase;
-            letter-spacing: 0.15em;
+            letter-spacing: 0.25em;
             border-radius: 100px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.35);
             transition: var(--transition-bounce);
             cursor: pointer;
             border: none;
             width: fit-content;
+            position: relative;
+            z-index: 100;
         }
         
-        .back-today-action:active { transform: scale(0.92); }
+        .btn-today-legacy:active { transform: scale(0.88); }
+
+        @keyframes entranceEffect { 
+            from { opacity: 0; transform: translateY(40px) scale(0.9); } 
+            to { opacity: 1; transform: translateY(0) scale(1); } 
+        }
+        
+        .animate-view { 
+            animation: entranceEffect 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards; 
+        }
+
+        .color-picker-item {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 5px solid white;
+            flex-shrink: 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.12);
+            transition: all 0.4s ease;
+        }
+        .color-picker-item:hover { transform: scale(1.1); }
     </style>
 </head>
 <body>
@@ -258,12 +263,62 @@
 
     <script type="text/babel">
         // ---------------------------------------------------------
-        // REACT MASTER ARCHITECTURE
+        // SECTION 9: REACT CORE UTILITIES
         // ---------------------------------------------------------
-        const { useState, useEffect, useMemo, Fragment, useCallback } = React;
+        const { useState, useEffect, useMemo, Fragment, useCallback, useRef } = React;
 
-        const App = () => {
-            // --- 1. CORE APPLICATION STATE ---
+        // ---------------------------------------------------------
+        // SUB-COMPONENT: REUSABLE HEADER
+        // ---------------------------------------------------------
+        const AppHeader = ({ title, subtitle, onCalendarClick, onMenuClick, showMenu, onReset }) => {
+            return (
+                <header className="flex justify-between items-center mb-14 w-full relative z-[60]">
+                    <div className="animate-view">
+                        <h1 className="text-3xl font-black italic tracking-tighter text-black">{title}</h1>
+                        <p className="text-slate-500 text-[10px] font-extrabold uppercase tracking-[0.25em] mt-2">{subtitle}</p>
+                    </div>
+                    <div className="flex gap-5">
+                        {onCalendarClick && (
+                            <button 
+                                onClick={onCalendarClick} 
+                                className="w-13 h-13 flex items-center justify-center rounded-2xl bg-white border border-black/5 text-black shadow-sm active:scale-90 transition-all duration-500"
+                                style={{ width: '52px', height: '52px' }}
+                            >
+                                <i className="fa-solid fa-calendar-day text-lg"></i>
+                            </button>
+                        )}
+                        <button 
+                            onClick={onMenuClick} 
+                            className="w-13 h-13 flex items-center justify-center rounded-2xl bg-black text-white shadow-xl active:scale-90 transition-all duration-500"
+                            style={{ width: '52px', height: '52px' }}
+                        >
+                            <i className="fa-solid fa-ellipsis-vertical text-[--logo-gold] text-lg"></i>
+                        </button>
+                        
+                        {showMenu && (
+                            <div className="absolute right-0 top-18 w-64 bg-white border border-black/5 rounded-[40px] shadow-2xl z-[70] p-5 animate-view">
+                                <div className="p-4 mb-3 border-b border-slate-50">
+                                    <p className="text-[11px] font-black text-slate-300 uppercase tracking-widest text-center">App Management</p>
+                                </div>
+                                <button 
+                                    onClick={onReset} 
+                                    className="w-full px-6 py-5 text-left text-xs font-black text-rose-500 hover:bg-rose-50 flex items-center gap-5 rounded-3xl transition-all"
+                                >
+                                    <i className="fa-solid fa-trash-can opacity-70"></i>
+                                    <span>Clear All Data</span>
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </header>
+            );
+        };
+
+        // ---------------------------------------------------------
+        // MASTER COMPONENT: ROUTIQ
+        // ---------------------------------------------------------
+        const RoutiqApp = () => {
+            // --- 1. CORE ARCHITECTURAL STATE ---
             const [overlayStage, setOverlayStage] = useState('logo');
             const [currentPage, setCurrentPage] = useState('home');
             const [showMenu, setShowMenu] = useState(false);
@@ -272,24 +327,30 @@
             const [growthRange, setGrowthRange] = useState(30); 
             const [pickers, setPickers] = useState({ color: false, icon: false });
 
-            // Persistence Engines
+            // --- 2. DATA ENGINES ---
             const [habits, setHabits] = useState(() => {
-                const s = localStorage.getItem('habits');
-                if (s) { 
-                    try { return JSON.parse(s); } catch(e) { return []; }
+                const storage = localStorage.getItem('habits');
+                if (storage) { 
+                    try { 
+                        const parsed = JSON.parse(storage);
+                        return Array.isArray(parsed) ? parsed : [];
+                    } catch(err) { return []; }
                 }
                 return [];
             });
             
             const [logs, setLogs] = useState(() => {
-                const s = localStorage.getItem('habitLogs');
-                if (s) { 
-                    try { return JSON.parse(s); } catch(e) { return {}; }
+                const storage = localStorage.getItem('habitLogs');
+                if (storage) { 
+                    try { 
+                        const parsed = JSON.parse(storage);
+                        return (parsed && typeof parsed === 'object') ? parsed : {};
+                    } catch(err) { return {}; }
                 }
                 return {};
             });
             
-            // Detailed Form Defaults
+            // --- 3. FORM DEFAULTS & REFS ---
             const defaultFormState = {
                 name: '', 
                 description: '', 
@@ -303,37 +364,49 @@
                 customPeriod: 'Week'
             };
             const [form, setForm] = useState(defaultFormState);
+            const contentRef = useRef(null);
 
-            // Asset definitions
-            const quotes = [
+            // --- 4. ASSET DICTIONARIES ---
+            const splashQuotes = [
                 "Consistency is your signature.", 
                 "Discipline equals freedom.", 
                 "Quality is a habit.",
                 "Small steps lead to big results.",
-                "The secret is in your routine."
+                "The secret is in your routine.",
+                "Discipline is choosing between what you want now and what you want most."
             ];
-            const [activeQuote] = useState(() => quotes[Math.floor(Math.random() * quotes.length)]);
+            const [activeQuote] = useState(() => {
+                const randIndex = Math.floor(Math.random() * splashQuotes.length);
+                return splashQuotes[randIndex];
+            });
 
-            const colorPalette = [
+            const paletteColors = [
                 '#1A1A1A', '#D4AF37', '#6366F1', '#EC4899', 
                 '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6', 
                 '#FF6B6B', '#4ECDC4', '#A8E6CF', '#FFD3B6',
-                '#FFAAA5', '#88D8B0'
+                '#FFAAA5', '#88D8B0', '#778BEB', '#F7D794'
             ];
-            const iconLibrary = [
+            const libraryIcons = [
                 '✨', '🏃‍♂️', '💧', '📚', '🧘‍♂️', '🍎', '💪', '🧠', 
                 '☀️', '💼', '🎨', '🔥', '🧗', '🔋', '🧘', '🛌', 
-                '🚶', '🚴', '🥗', '🥛', '🎧', '⚡', '⏳', '🏆'
+                '🚶', '🚴', '🥗', '🥛', '🎧', '⚡', '⏳', '🏆',
+                '🧿', '🧬', '🔭', '🕯️', '🪴', '🗝️', '🎬', '🧩', '🎯'
             ];
 
-            // --- 2. SYSTEM EFFECTS & PERSISTENCE ---
+            // --- 5. SYSTEM PERSISTENCE & LIFECYCLE ---
             useEffect(() => {
-                const t1 = setTimeout(() => setOverlayStage('quote'), 1500);
-                const t2 = setTimeout(() => setOverlayStage('none'), 4000);
-                return () => { clearTimeout(t1); clearTimeout(t2); };
+                // Splash Logic
+                const stage1 = setTimeout(() => { setOverlayStage('quote'); }, 1600);
+                const stage2 = setTimeout(() => { setOverlayStage('none'); }, 4400);
+                
+                return () => { 
+                    clearTimeout(stage1); 
+                    clearTimeout(stage2); 
+                };
             }, []);
 
             useEffect(() => {
+                // Auto-save logic
                 const hString = JSON.stringify(habits);
                 const lString = JSON.stringify(logs);
                 localStorage.setItem('habits', hString);
@@ -342,87 +415,110 @@
 
             const todayStr = new Date().toISOString().split('T')[0];
 
-            // --- 3. ANALYTICS CALCULATION MODULE ---
-            const stats = useMemo(() => {
-                const totalRitualsCount = habits.length;
-                const completedTodayCount = (logs[todayStr] || []).length;
+            // --- 6. STATS COMPUTATION ENGINE (MAX PRECISION) ---
+            const analytics = useMemo(() => {
+                const totalH = habits.length;
+                const doneToday = (logs[todayStr] || []).length;
                 
-                // Precise win rate logic
-                let currentWinRate;
-                if (totalRitualsCount === 0) {
-                    currentWinRate = "0.00";
+                // Win Rate Logic
+                let winRateFinal;
+                if (totalH === 0) {
+                    winRateFormatted = "0.00";
                 } else {
-                    const ratio = completedTodayCount / totalRitualsCount;
-                    currentWinRate = (ratio * 100).toFixed(2);
+                    const ratioValue = doneToday / totalH;
+                    winRateFormatted = (ratioValue * 100).toFixed(2);
                 }
                 
-                // Matrix logic expansion
-                let totalSuccessfulHits = 0;
-                let totalPotentialChecks = totalRitualsCount * growthRange;
-                const heatmapBuffer = [];
+                // Historical Accumulation logic
+                let hitSum = 0;
+                let potentialCheckSum = totalH * growthRange;
+                const heatmapMatrixArray = [];
 
-                // CORRECTED HEATMAP LOOP: Forward reading (Past -> Today)
+                // CORRECTED HEATMAP LOOP: Forward reading (Oldest date to Today)
+                // 
                 for (let i = 0; i <= growthRange; i++) {
-                    const checkDateObj = new Date();
-                    const dayOffsetCount = growthRange - i;
-                    checkDateObj.setDate(checkDateObj.getDate() - dayOffsetCount);
+                    const tempDateObject = new Date();
+                    const dayOffsetValue = growthRange - i;
+                    tempDateObject.setDate(tempDateObject.getDate() - dayOffsetValue);
                     
-                    const dateStringKey = checkDateObj.toISOString().split('T')[0];
-                    const countForSpecificDay = (logs[dateStringKey] || []).length;
+                    const dateStringKey = tempDateObject.toISOString().split('T')[0];
+                    const countOnThatDay = (logs[dateStringKey] || []).length;
                     
-                    totalSuccessfulHits += countForSpecificDay;
+                    hitSum += countOnThatDay;
                     
-                    let dayPercentageValue;
-                    if (totalRitualsCount === 0) {
-                        dayPercentageValue = 0;
+                    let dayPercentageRatio;
+                    if (totalH === 0) {
+                        dayPercentageRatio = 0;
                     } else {
-                        dayPercentageValue = countForSpecificDay / totalRitualsCount;
+                        dayPercentageRatio = countOnThatDay / totalH;
                     }
 
-                    heatmapBuffer.push({ 
+                    heatmapMatrixArray.push({ 
                         date: dateStringKey, 
-                        pct: dayPercentageValue 
+                        pct: dayPercentageRatio 
                     });
                 }
 
-                // Mastery score logic
-                let aggregateMasteryValue;
-                if (totalPotentialChecks === 0) {
-                    aggregateMasteryValue = "0.00";
+                let masteryScoreFinal;
+                if (potentialCheckSum === 0) {
+                    masteryScoreFinal = "0.00";
                 } else {
-                    const masteryRatio = totalSuccessfulHits / totalPotentialChecks;
-                    aggregateMasteryValue = (masteryRatio * 100).toFixed(2);
+                    const masteryRatioValue = hitSum / potentialCheckSum;
+                    masteryScoreFinal = (masteryRatioValue * 100).toFixed(2);
                 }
 
                 return { 
-                    totalCount: totalRitualsCount, 
-                    doneCount: completedTodayCount, 
-                    winRate: currentWinRate, 
-                    mastery: aggregateMasteryValue, 
-                    heatmap: heatmapBuffer 
+                    totalCount: totalH, 
+                    doneCount: doneToday, 
+                    winRate: winRateFormatted, 
+                    mastery: masteryScoreFinal, 
+                    heatmap: heatmapMatrixArray 
                 };
             }, [habits, logs, todayStr, growthRange]);
 
-            // --- 4. ACTION HANDLER REPOSITORY ---
-            const handleRitualStorage = () => {
-                const currentName = form.name;
-                if (!currentName || currentName.trim() === "") {
+            // --- 7. ACTION REPOSITORY ---
+            
+            // FIXED: State-Safe Toggle for Ritual Check
+            const onToggleRitualCheck = (habitID) => {
+                setLogs((prevLogsState) => {
+                    const existingTodayEntries = prevLogsState[todayStr] || [];
+                    const isCheckActive = existingTodayEntries.includes(habitID);
+                    
+                    let nextTodayEntries;
+                    if (isCheckActive) {
+                        nextTodayEntries = existingTodayEntries.filter(id => id !== habitID);
+                    } else {
+                        nextTodayEntries = [...existingTodayEntries, habitID];
+                    }
+                    
+                    const newLogStateObject = {
+                        ...prevLogsState,
+                        [todayStr]: nextTodayEntries
+                    };
+                    return newLogStateObject;
+                });
+            };
+
+            const onSaveHabitAction = () => {
+                const checkNameInput = form.name;
+                if (!checkNameInput || checkNameInput.trim() === "") {
                     return;
                 }
                 
                 if (editingId) {
-                    const updatedArray = habits.map((ritualItem) => {
-                        if (ritualItem.id === editingId) {
-                            return { ...form, id: editingId };
+                    const updatedRitualList = habits.map((item) => {
+                        if (item.id === editingId) {
+                            const newObj = { ...form, id: editingId };
+                            return newObj;
                         }
-                        return ritualItem;
+                        return item;
                     });
-                    setHabits(updatedArray);
+                    setHabits(updatedRitualList);
                     setEditingId(null);
                 } else {
-                    const newGeneratedID = Date.now();
-                    const newRitualObject = { ...form, id: newGeneratedID };
-                    setHabits([...habits, newRitualObject]);
+                    const ritualNewID = Date.now();
+                    const ritualNewObject = { ...form, id: ritualNewID };
+                    setHabits([...habits, ritualNewObject]);
                 }
                 
                 setForm(defaultFormState);
@@ -430,176 +526,151 @@
                 setCurrentPage('habits');
             };
 
-            // FIXED: Functional Tick Mark Toggle Logic
-            const handleCheckToggle = (habitID) => {
-                setLogs((prevLogsState) => {
-                    const existingTodayEntries = prevLogsState[todayStr] || [];
-                    let nextTodayEntries;
-                    
-                    if (existingTodayEntries.includes(habitID)) {
-                        nextTodayEntries = existingTodayEntries.filter(id => id !== habitID);
-                    } else {
-                        nextTodayEntries = [...existingTodayEntries, habitID];
-                    }
-                    
-                    return {
-                        ...prevLogsState,
-                        [todayStr]: nextTodayEntries
-                    };
-                });
-            };
-
-            const handleRitualPurge = (id) => {
-                const userConfirmed = confirm("Are you sure you want to remove this ritual? History will remain in analytics but the item will disappear from lists.");
-                if (userConfirmed) {
-                    const remainingRituals = habits.filter(h => h.id !== id);
-                    setHabits(remainingRituals);
+            const onRemoveRitualAction = (id) => {
+                const userChoice = confirm("Warning: Deleting this ritual removes it from your current list. Historical data remains for analytics.");
+                if (userChoice) {
+                    const filteredList = habits.filter(h => h.id !== id);
+                    setHabits(filteredList);
                 }
             };
 
-            const handleEditTrigger = (targetObject) => {
-                setForm(targetObject);
-                setEditingId(targetObject.id);
+            const onEditRitualAction = (ritualData) => {
+                const ritualDeepClone = JSON.parse(JSON.stringify(ritualData));
+                setForm(ritualDeepClone);
+                setEditingId(ritualData.id);
                 setCurrentPage('add');
             };
 
-            // --- 5. COMPONENT FRAGMENTS: GLOBAL UI ---
-            const GlobalAppHeader = () => (
-                <header className="flex justify-between items-center mb-12 w-full relative z-[60]">
-                    <div className="animate-fade">
-                        <h1 className="text-3xl font-black italic tracking-tighter text-black">Routiq</h1>
-                        <p className="text-slate-500 text-[10px] font-extrabold uppercase tracking-[0.2em] mt-1">Daily Discipline</p>
-                    </div>
-                    <div className="flex gap-4">
-                        <button 
-                            onClick={() => setCurrentPage('calendar_full')} 
-                            className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white border border-black/5 text-black shadow-sm active:scale-90 transition-all duration-300"
-                        >
-                            <i className="fa-solid fa-calendar-day text-lg"></i>
-                        </button>
-                        <button 
-                            onClick={() => setShowMenu(!showMenu)} 
-                            className="w-12 h-12 flex items-center justify-center rounded-2xl bg-black text-white shadow-xl active:scale-90 transition-all duration-300"
-                        >
-                            <i className="fa-solid fa-ellipsis-vertical text-[--logo-gold] text-lg"></i>
-                        </button>
-                        
-                        {showMenu && (
-                            <div className="absolute right-0 top-16 w-60 bg-white border border-black/5 rounded-[36px] shadow-2xl z-[70] p-4 animate-fade">
-                                <div className="p-3 mb-2 border-b border-slate-50">
-                                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest text-center">Settings</p>
-                                </div>
-                                <button 
-                                    onClick={() => { localStorage.clear(); window.location.reload(); }} 
-                                    className="w-full px-5 py-4 text-left text-xs font-black text-rose-500 hover:bg-rose-50 flex items-center gap-4 rounded-2xl transition-all"
-                                >
-                                    <i className="fa-solid fa-trash-can opacity-60"></i>
-                                    <span>Reset Discipline</span>
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                </header>
-            );
+            const onGlobalReset = () => {
+                if (confirm("FACTORY RESET: Wipe all habits and historical records?")) {
+                    localStorage.clear();
+                    window.location.reload();
+                }
+            };
 
-            // --- 6. PAGE COMPONENT MODULES ---
-            const HomeView = () => (
-                <div className="flex-1 flex flex-col gap-10 animate-fade">
+            // --- 8. PAGE RENDERER MODULES (LONG-FORM) ---
+            
+            const PageHome = () => (
+                <div className="flex-1 flex flex-col gap-12 animate-view">
+                    <AppHeader 
+                        title="Routiq" 
+                        subtitle="Daily Discipline" 
+                        onCalendarClick={() => setCurrentPage('calendar_full')}
+                        onMenuClick={() => setShowMenu(!showMenu)}
+                        showMenu={showMenu}
+                        onReset={onGlobalReset}
+                    />
+                    
                     {habits.length > 0 && (
-                        <div className="grid grid-cols-2 gap-5">
-                            <div className="card-standard text-center py-10 relative overflow-hidden">
-                                <div className="absolute top-0 right-0 w-14 h-14 bg-slate-50/50 rounded-bl-full"></div>
-                                <p className="text-[10px] font-extrabold uppercase text-slate-400 tracking-widest mb-4">Rituals Done</p>
-                                <h2 className="text-4xl font-black text-black">{stats.doneCount}/{stats.totalCount}</h2>
+                        <div className="grid grid-cols-2 gap-6">
+                            <div className="card-standard text-center py-12 relative overflow-hidden">
+                                <div className="absolute top-0 right-0 w-20 h-20 bg-slate-50/50 rounded-bl-full"></div>
+                                <p className="text-[11px] font-black uppercase text-slate-400 tracking-[0.25em] mb-4">Rituals Done</p>
+                                <h2 className="text-5xl font-black text-black tracking-tighter">{analytics.doneCount}/{analytics.totalCount}</h2>
                             </div>
-                            <div className="card-standard text-center py-10 relative overflow-hidden">
-                                <div className="absolute top-0 left-0 w-14 h-14 bg-slate-50/50 rounded-br-full"></div>
-                                <p className="text-[10px] font-extrabold uppercase text-slate-400 tracking-widest mb-4">Daily Score</p>
-                                <div className="flex items-center justify-center">
+                            <div className="card-standard text-center py-12 relative overflow-hidden flex flex-col items-center justify-center">
+                                <div className="absolute top-0 left-0 w-20 h-20 bg-slate-50/50 rounded-br-full"></div>
+                                <p className="text-[11px] font-black uppercase text-slate-400 tracking-[0.25em] mb-4">Daily Win</p>
+                                <div className="flex flex-nowrap shrink-0">
                                     <h2 className="text-xl sm:text-2xl font-black text-black leading-tight whitespace-nowrap">
-                                        {stats.winRate}%
+                                        {analytics.winRate}%
                                     </h2>
                                 </div>
                             </div>
                         </div>
                     )}
                     
-                    {habits.length > 0 ? (
-                        <div className="space-y-6">
-                            <div className="flex justify-between items-center px-4">
-                                <p className="text-[12px] font-black uppercase text-slate-400 tracking-[0.3em]">Due Today</p>
-                                <span className="text-[10px] font-bold text-slate-300 italic">{todayStr}</span>
-                            </div>
-                            {habits.map(ritual => {
-                                const checkedStatus = (logs[todayStr] || []).includes(ritual.id);
-                                return (
-                                    <div 
-                                        key={ritual.id} 
-                                        className="card-standard flex justify-between items-center transition-all duration-500 hover:shadow-2xl active:scale-[0.96] border-l-[12px]" 
-                                        style={{ borderLeftColor: ritual.color }}
-                                    >
-                                        <div className="flex items-center gap-6">
-                                            <div className="text-4xl filter drop-shadow-sm transition-transform duration-500 hover:scale-125">{ritual.icon}</div>
-                                            <div className="flex flex-col">
-                                                <span className={`font-bold text-xl leading-tight transition-all duration-500 ${checkedStatus ? 'text-slate-300 line-through italic' : 'text-black'}`}>
-                                                    {ritual.name}
-                                                </span>
-                                                <span className="text-[10px] font-black uppercase text-amber-500 tracking-[0.2em] mt-2">
-                                                    {ritual.category}
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <button 
-                                            onClick={() => handleCheckToggle(ritual.id)} 
-                                            className={`w-16 h-16 rounded-[24px] flex items-center justify-center transition-all duration-700 ${checkedStatus ? 'bg-black text-amber-400 shadow-2xl rotate-[360deg]' : 'bg-slate-50 border border-slate-100 text-slate-200'}`}
-                                            style={{ width: '74px', height: '74px' }}
+                    <div className="space-y-8">
+                        {habits.length > 0 ? (
+                            <Fragment>
+                                <div className="flex justify-between items-center px-6">
+                                    <p className="text-[13px] font-black uppercase text-slate-400 tracking-[0.4em]">Current Path</p>
+                                    <span className="text-[11px] font-bold text-slate-300 italic uppercase">{todayStr}</span>
+                                </div>
+                                {habits.map(ritualItem => {
+                                    const ritualCompletionStatus = (logs[todayStr] || []).includes(ritualItem.id);
+                                    return (
+                                        <div 
+                                            key={ritualItem.id} 
+                                            className="card-standard flex justify-between items-center transition-all duration-700 hover:shadow-2xl active:scale-[0.96] border-l-[14px]" 
+                                            style={{ borderLeftColor: ritualItem.color }}
                                         >
-                                            <i className={`fa-solid ${checkedStatus ? 'fa-check-double' : 'fa-check'} text-3xl`}></i>
-                                        </button>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    ) : (
-                        <div className="centered-container opacity-20 py-32">
-                            <i className="fa-solid fa-feather-pointed text-9xl mb-10 text-black animate-bounce"></i>
-                            <p className="font-black uppercase text-center leading-relaxed tracking-[0.7em] text-[18px] text-black">
-                                Forge Rituals
-                            </p>
-                        </div>
-                    )}
+                                            <div className="flex items-center gap-8">
+                                                <div className="text-5xl filter drop-shadow-lg transition-all duration-700 hover:rotate-12">{ritualItem.icon}</div>
+                                                <div className="flex flex-col">
+                                                    <span className={`font-black text-2xl leading-tight transition-all duration-700 ${ritualCompletionStatus ? 'text-slate-300 line-through italic' : 'text-black'}`}>
+                                                        {ritualItem.name}
+                                                    </span>
+                                                    <span className="text-[11px] font-black uppercase text-amber-500 tracking-[0.3em] mt-3">
+                                                        {ritualItem.category}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <button 
+                                                onClick={() => onToggleRitualCheck(ritualItem.id)} 
+                                                className={`w-20 h-20 rounded-[32px] flex items-center justify-center transition-all duration-700 ${ritualCompletionStatus ? 'bg-black text-amber-400 shadow-2xl rotate-[360deg]' : 'bg-slate-50 border border-slate-100 text-slate-200'}`}
+                                                style={{ width: '82px', height: '82px' }}
+                                            >
+                                                <i className={`fa-solid ${ritualCompletionStatus ? 'fa-check-double' : 'fa-check'} text-4xl`}></i>
+                                            </button>
+                                        </div>
+                                    );
+                                })}
+                            </Fragment>
+                        ) : (
+                            <div className="centered-container opacity-20 py-48">
+                                <i className="fa-solid fa-feather-pointed text-[120px] mb-14 text-black animate-bounce"></i>
+                                <p className="font-black uppercase text-center leading-loose tracking-[1em] text-[22px] text-black">
+                                    Forge Rituals
+                                </p>
+                            </div>
+                        )}
+                    </div>
                 </div>
             );
 
-            const GrowthView = () => (
-                <div className="animate-fade space-y-14 pb-14">
-                    <div className="animate-fade">
-                        <h2 className="text-4xl font-black italic text-black leading-none tracking-tight">Mastery Hub</h2>
-                        <p className="text-slate-400 text-xs font-bold mt-4 uppercase tracking-[0.3em]">Quantify Your Evolution</p>
+            const PageGrowth = () => (
+                <div className="animate-view space-y-16 pb-16">
+                    <AppHeader 
+                        title="Growth" 
+                        subtitle="Quantitative Mastery" 
+                        onMenuClick={() => setShowMenu(!showMenu)}
+                        showMenu={showMenu}
+                        onReset={onGlobalReset}
+                    />
+                    
+                    <div className="animate-view">
+                        <h2 className="text-4xl font-black italic text-black leading-none tracking-tighter">Mastery Hub</h2>
+                        <p className="text-slate-400 text-[11px] font-bold mt-6 uppercase tracking-[0.4em]">Visualizing Your Development</p>
                     </div>
                     
-                    <div className="scroll-wrapper no-scrollbar px-1">
-                        <div className="scroll-inner gap-4">
+                    <div className="scroll-wrapper no-scrollbar px-2">
+                        <div className="scroll-inner gap-6">
                             {[
-                                {name:'7 Days', val:7}, {name:'1 Month', val:30}, {name:'3 Months', val:90}, 
-                                {name:'6 Months', val:180}, {name:'9 Months', val:270}, {name:'12 Months', val:365}
-                            ].map(filter => (
+                                {label:'7 Days', days:7}, 
+                                {label:'1 Month', days:30}, 
+                                {label:'3 Months', days:90}, 
+                                {label:'6 Months', days:180}, 
+                                {label:'9 Months', days:270}, 
+                                {label:'12 Months', days:365}
+                            ].map(rangeOption => (
                                 <button 
-                                    key={filter.name} 
-                                    onClick={() => setGrowthRange(filter.val)} 
-                                    className={`filter-chip ${growthRange === filter.val ? 'bg-black text-white shadow-2xl scale-110' : 'bg-white text-slate-400 border border-black/5 hover:border-black/20'}`}
+                                    key={rangeOption.label} 
+                                    onClick={() => setGrowthRange(rangeOption.days)} 
+                                    className={`filter-chip ${growthRange === rangeOption.days ? 'bg-black text-white shadow-2xl scale-110' : 'bg-white text-slate-400 border border-black/5 hover:border-black/20'}`}
+                                    style={growthRange === rangeOption.days ? {background: '#1A1A1A', color: 'white'} : {}}
                                 >
-                                    {filter.name}
+                                    {rangeOption.label}
                                 </button>
                             ))}
                         </div>
                     </div>
 
-                    {/* GROWTH CIRCULAR GAUGE COMPONENT */}
-                    <div className="card-standard flex flex-col items-center py-20 relative overflow-hidden">
-                        <div className="absolute top-0 left-0 w-full h-2 bg-slate-50"></div>
-                        <p className="text-[11px] font-black uppercase tracking-[0.5em] text-slate-300 mb-14 text-center">Discipline Strength</p>
-                        <div className="relative w-56 h-56 flex items-center justify-center">
+                    {/* GROWTH MASTERY CIRCLE */}
+                    <div className="card-standard flex flex-col items-center py-24 relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-3 bg-slate-50"></div>
+                        <p className="text-[12px] font-black uppercase tracking-[0.6em] text-slate-300 mb-20 text-center">Aggregate Discipline Score</p>
+                        <div className="relative w-64 h-64 flex items-center justify-center">
                             <svg className="meter-svg w-full h-full" viewBox="0 0 100 100">
                                 <circle className="meter-bg" cx="50" cy="50" r="44" />
                                 <circle 
@@ -607,109 +678,114 @@
                                     cx="50" cy="50" r="44" 
                                     style={{ 
                                         strokeDasharray: '276.5', 
-                                        strokeDashoffset: 276.5 - (276.5 * parseFloat(stats.mastery)) / 100 
+                                        strokeDashoffset: 276.5 - (276.5 * parseFloat(analytics.mastery)) / 100 
                                     }} 
                                 />
                             </svg>
-                            <div className="absolute flex flex-col items-center animate-fade">
-                                <span className="text-5xl font-black text-black leading-none">{stats.mastery}%</span>
-                                <span className="text-[11px] font-black uppercase text-amber-500 mt-4 tracking-[0.25em]">Mastery</span>
+                            <div className="absolute flex flex-col items-center animate-view">
+                                <span className="text-6xl font-black text-black leading-none tracking-tighter">{analytics.mastery}%</span>
+                                <span className="text-[12px] font-black uppercase text-amber-500 mt-6 tracking-[0.3em]">Mastery</span>
                             </div>
                         </div>
+                        <div className="mt-16 w-12 h-1.5 bg-slate-50 rounded-full"></div>
                     </div>
 
-                    {/* HEATMAP GRID COMPONENT */}
+                    {/* CONSISTENCY MATRIX ENGINE */}
                     <div className="card-standard">
-                        <div className="flex justify-between items-center mb-12">
-                            <p className="text-xs font-black uppercase tracking-[0.3em] text-slate-400">Consistency Matrix</p>
-                            <span className="bg-slate-50 px-5 py-2 rounded-full text-[10px] font-black text-slate-400 uppercase tracking-tighter shadow-inner">
-                                {growthRange} Units
+                        <div className="flex justify-between items-center mb-16">
+                            <p className="text-[11px] font-black uppercase tracking-[0.4em] text-slate-400 leading-none">Consistency Matrix</p>
+                            <span className="bg-slate-50 px-6 py-2 rounded-full text-[10px] font-black text-slate-400 uppercase tracking-tighter shadow-inner">
+                                {growthRange} Data Points
                             </span>
                         </div>
                         <div className={`heatmap-grid ${growthRange > 100 ? 'grid-cols-10' : 'grid-cols-7'}`}>
-                            {stats.heatmap.map((cell, idx) => {
-                                let colorValue = '#F8FAFC';
-                                if (cell.pct > 0) colorValue = '#FFF4CC';
-                                if (cell.pct > 0.5) colorValue = '#D4AF37';
-                                if (cell.pct === 1) colorValue = '#1A1A1A';
+                            {analytics.heatmap.map((matrixPoint, matrixIdx) => {
+                                let pointColorValue = '#F8FAFC';
+                                if (matrixPoint.pct > 0) pointColorValue = '#FFF4CC';
+                                if (matrixPoint.pct > 0.5) pointColorValue = '#D4AF37';
+                                if (matrixPoint.pct === 1) pointColorValue = '#1A1A1A';
                                 return (
                                     <div 
-                                        key={idx} 
-                                        className="heatmap-cell shadow-sm" 
-                                        style={{ backgroundColor: colorValue }} 
-                                        title={cell.date}
+                                        key={matrixIdx} 
+                                        className="heatmap-cell shadow-sm transition-all duration-500 hover:scale-150 active:scale-90" 
+                                        style={{ backgroundColor: pointColorValue }} 
+                                        title={matrixPoint.date} 
                                     />
                                 );
                             })}
                         </div>
-                        <div className="flex justify-between mt-10 px-4">
+                        <div className="flex justify-between mt-14 px-8">
                             <div className="flex items-center gap-4">
-                                <div className="w-3 h-3 rounded-full bg-slate-100 shadow-inner"></div>
-                                <span className="text-[11px] font-black text-slate-300 uppercase tracking-widest">Beginning</span>
+                                <div className="w-4 h-4 rounded-full bg-slate-50 shadow-inner"></div>
+                                <span className="text-[12px] font-black text-slate-300 uppercase tracking-[0.2em]">Start</span>
                             </div>
                             <div className="flex items-center gap-4">
-                                <span className="text-[11px] font-black text-slate-300 uppercase tracking-widest">Today</span>
-                                <div className="w-3 h-3 rounded-full bg-black shadow-lg"></div>
+                                <span className="text-[12px] font-black text-slate-300 uppercase tracking-[0.2em]">Today</span>
+                                <div className="w-4 h-4 rounded-full bg-black shadow-lg"></div>
                             </div>
                         </div>
                     </div>
                 </div>
             );
 
-            const RitualLibraryView = () => (
-                <div className="flex-1 flex flex-col animate-fade">
-                    <div className="mb-14">
-                        <h2 className="text-4xl font-black italic text-black leading-none">My Rituals</h2>
-                        <p className="text-slate-400 text-xs font-bold mt-4 uppercase tracking-[0.25em]">Management Console</p>
-                    </div>
+            const PageRituals = () => (
+                <div className="flex-1 flex flex-col animate-view">
+                    <AppHeader 
+                        title="Rituals" 
+                        subtitle="Library Management" 
+                        onMenuClick={() => setShowMenu(!showMenu)}
+                        showMenu={showMenu}
+                        onReset={onGlobalReset}
+                    />
+                    <h2 className="text-4xl font-black italic text-black leading-none mb-16 tracking-tight">Active Rituals</h2>
                     
                     {habits.length > 0 ? (
-                        <div className="space-y-10">
-                            {habits.map(hObj => (
+                        <div className="space-y-12">
+                            {habits.map(habitObject => (
                                 <div 
-                                    key={hObj.id} 
-                                    className="card-standard relative overflow-hidden border-t-[10px]" 
-                                    style={{ borderTopColor: hObj.color }}
+                                    key={habitObject.id} 
+                                    className="card-standard relative overflow-hidden border-t-[14px]" 
+                                    style={{ borderTopColor: habitObject.color }}
                                 >
-                                    <div className="flex justify-between items-start mb-8">
-                                        <div className="flex items-center gap-6">
-                                            <div className="w-18 h-18 rounded-[28px] bg-slate-50 flex items-center justify-center text-4xl shadow-inner border border-black/5">
-                                                {hObj.icon}
+                                    <div className="flex justify-between items-start mb-10">
+                                        <div className="flex items-center gap-8">
+                                            <div className="w-22 h-22 rounded-[36px] bg-slate-50 flex items-center justify-center text-5xl shadow-inner border border-black/5" style={{ width: '88px', height: '88px' }}>
+                                                {habitObject.icon}
                                             </div>
                                             <div className="flex flex-col">
-                                                <h3 className="font-black text-2xl text-black leading-none">{hObj.name}</h3>
-                                                <p className="text-[12px] font-black uppercase text-amber-500 tracking-[0.25em] mt-4">{hObj.category}</p>
+                                                <h3 className="font-black text-3xl text-black leading-none tracking-tight">{habitObject.name}</h3>
+                                                <p className="text-[13px] font-black uppercase text-amber-500 tracking-[0.3em] mt-5">{habitObject.category}</p>
                                             </div>
                                         </div>
-                                        <div className="flex gap-4">
+                                        <div className="flex gap-5">
                                             <button 
-                                                onClick={() => handleEditTrigger(hObj)} 
-                                                className="w-13 h-13 rounded-2xl bg-slate-50 text-slate-400 hover:text-black hover:bg-slate-100 transition-all flex items-center justify-center shadow-sm"
+                                                onClick={() => onEditRitualAction(habitObject)} 
+                                                className="w-14 h-14 rounded-3xl bg-slate-50 text-slate-400 hover:text-black transition-all duration-500 flex items-center justify-center shadow-md hover:shadow-xl active:scale-75"
                                             >
-                                                <i className="fa-solid fa-pen-nib text-lg"></i>
+                                                <i className="fa-solid fa-pen-nib text-xl"></i>
                                             </button>
                                             <button 
-                                                onClick={() => handleRitualPurge(hObj.id)} 
-                                                className="w-13 h-13 rounded-2xl bg-rose-50 text-rose-400 hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center shadow-sm"
+                                                onClick={() => onRemoveRitualAction(habitObject.id)} 
+                                                className="w-14 h-14 rounded-3xl bg-rose-50 text-rose-400 hover:bg-rose-500 hover:text-white transition-all duration-500 flex items-center justify-center shadow-md hover:shadow-xl active:scale-75"
                                             >
-                                                <i className="fa-solid fa-trash-can text-lg"></i>
+                                                <i className="fa-solid fa-trash-can text-xl"></i>
                                             </button>
                                         </div>
                                     </div>
-                                    <div className="bg-slate-50/70 p-7 rounded-[32px] border border-black/5">
-                                        <div className="flex items-center gap-4 mb-4">
-                                            <i className="fa-solid fa-clock-rotate-left text-slate-300"></i>
-                                            <p className="text-[11px] font-black uppercase text-slate-500 tracking-widest">
-                                                {
-                                                    hObj.frequency === 'Specific Days of Week' ? hObj.weekDays.join(', ') : 
-                                                    hObj.frequency === 'Specific Days of Month' ? `Scheduled On: ${hObj.monthDays.join(', ')}` : 
-                                                    hObj.frequency === 'Customise Days' ? `${hObj.customCount} reps per ${hObj.customPeriod}` : hObj.frequency
+                                    <div className="bg-slate-50/80 p-9 rounded-[44px] border border-black/5">
+                                        <div className="flex items-center gap-5 mb-5">
+                                            <i className="fa-solid fa-clock-rotate-left text-slate-300 text-lg"></i>
+                                            <p className="text-[12px] font-black uppercase text-slate-500 tracking-[0.2em]">
+                                                Cadence: {
+                                                    habitObject.frequency === 'Specific Days of Week' ? habitObject.weekDays.join(', ') : 
+                                                    habitObject.frequency === 'Specific Days of Month' ? `Scheduled on: ${habitObject.monthDays.join(', ')}` : 
+                                                    habitObject.frequency === 'Customise Days' ? `${habitObject.customCount} repetitions per ${habitObject.customPeriod}` : habitObject.frequency
                                                 }
                                             </p>
                                         </div>
-                                        {hObj.description && (
-                                            <p className="text-slate-500 text-sm mt-5 font-bold leading-relaxed italic border-l-[6px] border-slate-200 pl-5 py-2">
-                                                "{hObj.description}"
+                                        {habitObject.description && (
+                                            <p className="text-slate-500 text-lg mt-8 font-bold leading-relaxed italic border-l-[8px] border-slate-200 pl-8 py-3">
+                                                "{habitObject.description}"
                                             </p>
                                         )}
                                     </div>
@@ -717,65 +793,65 @@
                             ))}
                         </div>
                     ) : (
-                        <div className="centered-container opacity-20 py-40">
-                            <i className="fa-solid fa-seedling text-9xl mb-12 text-black"></i>
-                            <p className="font-black uppercase tracking-[0.7em] text-[18px] text-black">Empty Mind</p>
+                        <div className="centered-container opacity-20 py-48">
+                            <i className="fa-solid fa-seedling text-[130px] mb-14 text-black animate-pulse"></i>
+                            <p className="font-black uppercase tracking-[1em] text-[22px] text-black">Pure Mind</p>
                         </div>
                     )}
                 </div>
             );
 
-            const ForgeRitualView = () => (
-                <div className="animate-fade space-y-12 pb-28">
-                    <div className="mb-8">
-                        <h2 className="text-4xl font-black italic text-black leading-tight tracking-tight">
+            const PageForge = () => (
+                <div className="animate-view space-y-16 pb-32">
+                    <div className="mb-10">
+                        <h2 className="text-5xl font-black italic text-black leading-tight tracking-tighter">
                             {editingId ? 'Modify Ritual' : 'Forge Ritual'}
                         </h2>
-                        <p className="text-slate-400 text-xs font-bold mt-4 uppercase tracking-[0.3em]">Architect Your Habit</p>
+                        <p className="text-slate-400 text-[11px] font-black mt-5 uppercase tracking-[0.4em]">Architecting Discipline</p>
                     </div>
                     
-                    <div className="space-y-8">
-                        <div className="space-y-4">
-                            <p className="text-[12px] font-black uppercase tracking-[0.3em] ml-6 text-slate-400">Habit Name</p>
+                    <div className="space-y-10">
+                        <div className="space-y-5">
+                            <p className="text-[13px] font-black uppercase tracking-[0.4em] ml-10 text-slate-400">Habit Name</p>
                             <input 
-                                className="w-full p-9 rounded-[44px] bg-white font-black text-2xl outline-none shadow-sm text-black placeholder:text-slate-100 border-4 border-transparent focus:border-amber-400/20 transition-all" 
-                                placeholder="What is this habit called?" 
+                                className="w-full p-11 rounded-[56px] bg-white font-black text-2xl outline-none shadow-sm text-black placeholder:text-slate-100 border-4 border-transparent focus:border-amber-400/20 transition-all duration-500" 
+                                placeholder="Ritual Name..." 
                                 value={form.name} 
                                 onChange={e => setForm({...form, name: e.target.value})} 
                             />
                         </div>
                         
-                        <div className="space-y-4">
-                            <p className="text-[12px] font-black uppercase tracking-[0.3em] ml-6 text-slate-400">Description</p>
+                        <div className="space-y-5">
+                            <p className="text-[13px] font-black uppercase tracking-[0.4em] ml-10 text-slate-400">Description</p>
                             <textarea 
-                                className="w-full p-9 rounded-[44px] bg-white font-bold text-base outline-none shadow-sm text-black placeholder:text-slate-100 border-4 border-transparent focus:border-amber-400/20 transition-all" 
-                                placeholder="Purpose and context..." 
-                                rows="5" 
+                                className="w-full p-11 rounded-[56px] bg-white font-bold text-lg outline-none shadow-sm text-black placeholder:text-slate-100 border-4 border-transparent focus:border-amber-400/20 transition-all duration-500" 
+                                placeholder="Purpose of this habit..." 
+                                rows="6" 
                                 value={form.description} 
                                 onChange={e => setForm({...form, description: e.target.value})} 
                             />
                         </div>
                     </div>
                     
-                    <div className="flex flex-col gap-12">
-                        {/* COLOR PICKER SYSTEM (FIXED Z-INDEX) */}
-                        <div className="flex flex-col gap-5">
-                            <p className="text-[12px] font-black uppercase tracking-[0.4em] ml-8 text-slate-400">Theme Palette</p>
+                    <div className="flex flex-col gap-16">
+                        {/* COLOR SELECTION SYSTEM */}
+                        <div className="flex flex-col gap-6">
+                            <p className="text-[13px] font-black uppercase tracking-[0.4em] ml-12 text-slate-400">Theme Palette</p>
                             <div className="flex items-center relative z-[200]">
                                 <button 
                                     onClick={() => setPickers({color: !pickers.color, icon: false})} 
-                                    className="w-24 h-24 rounded-full border-[12px] border-white shadow-2xl z-10 shrink-0 transition-transform active:scale-90" 
-                                    style={{ backgroundColor: form.color }} 
+                                    className="w-28 h-28 rounded-full border-[16px] border-white shadow-2xl z-10 shrink-0 transition-transform active:scale-90" 
+                                    style={{ backgroundColor: form.color, width: '112px', height: '112px' }} 
                                 />
                                 {pickers.color && (
-                                    <div className="scroll-wrapper no-scrollbar ml-5 bg-white/90 p-4 rounded-full animate-fade shadow-2xl border-2 border-white">
-                                        <div className="scroll-inner px-8">
-                                            {colorPalette.map(hex => (
+                                    <div className="scroll-wrapper no-scrollbar ml-6 bg-white/90 p-5 rounded-full animate-view shadow-2xl border-4 border-white">
+                                        <div className="scroll-inner px-10">
+                                            {paletteColors.map(hexStringValue => (
                                                 <button 
-                                                    key={hex} 
-                                                    onClick={() => {setForm({...form, color: hex}); setPickers({color: false})}} 
-                                                    className="w-16 h-16 rounded-full shrink-0 shadow-xl transition-all duration-400 active:scale-75 hover:scale-125 border-[6px] border-white" 
-                                                    style={{ backgroundColor: hex }} 
+                                                    key={hexStringValue} 
+                                                    onClick={() => {setForm({...form, color: hexStringValue}); setPickers({color: false})}} 
+                                                    className="color-picker-item border-[8px] border-white hover:scale-125 transition-transform active:scale-75 shadow-lg" 
+                                                    style={{ backgroundColor: hexStringValue }} 
                                                 />
                                             ))}
                                         </div>
@@ -784,26 +860,28 @@
                             </div>
                         </div>
 
-                        {/* ICON PICKER SYSTEM (FIXED Z-INDEX) */}
-                        <div className="flex flex-col gap-5">
-                            <p className="text-[12px] font-black uppercase tracking-[0.4em] ml-8 text-slate-400">Visual Symbol</p>
+                        {/* ICON SELECTION SYSTEM */}
+                        <div className="flex flex-col gap-6">
+                            <p className="text-[13px] font-black uppercase tracking-[0.4em] ml-12 text-slate-400">Visual Symbol</p>
                             <div className="flex items-center relative z-[180]">
                                 <button 
                                     onClick={() => setPickers({icon: !pickers.icon, color: false})} 
-                                    className="w-24 h-24 rounded-[40px] bg-white flex items-center justify-center text-5xl shadow-2xl z-10 border border-black/5 shrink-0 text-black transition-transform active:scale-90"
+                                    className="w-28 h-28 rounded-[48px] bg-white flex items-center justify-center text-6xl shadow-2xl z-10 border border-black/5 shrink-0 text-black transition-transform active:scale-90"
+                                    style={{ width: '112px', height: '112px' }}
                                 >
                                     {form.icon}
                                 </button>
                                 {pickers.icon && (
-                                    <div className="scroll-wrapper no-scrollbar ml-5 bg-white/90 p-4 rounded-[44px] animate-fade shadow-2xl border-2 border-white">
-                                        <div className="scroll-inner px-8">
-                                            {iconLibrary.map(symbol => (
+                                    <div className="scroll-wrapper no-scrollbar ml-6 bg-white/90 p-6 rounded-[56px] animate-view shadow-2xl border-4 border-white">
+                                        <div className="scroll-inner px-10">
+                                            {libraryIcons.map(symbolStringChar => (
                                                 <button 
-                                                    key={symbol} 
-                                                    onClick={() => {setForm({...form, icon: symbol}); setPickers({icon: false})}} 
-                                                    className="w-18 h-18 rounded-3xl bg-white flex items-center justify-center text-3xl shrink-0 border border-black/5 shadow-lg transition-all duration-400 active:scale-75 hover:scale-125"
+                                                    key={symbolStringChar} 
+                                                    onClick={() => {setForm({...form, icon: symbolStringChar}); setPickers({icon: false})}} 
+                                                    className="w-20 h-20 rounded-3xl bg-white flex items-center justify-center text-4xl shrink-0 border border-black/5 shadow-md transition-all duration-500 hover:scale-125 active:scale-75"
+                                                    style={{ width: '80px', height: '80px' }}
                                                 >
-                                                    {symbol}
+                                                    {symbolStringChar}
                                                 </button>
                                             ))}
                                         </div>
@@ -813,79 +891,80 @@
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-8 mt-8">
-                        <div className="space-y-4">
-                            <p className="text-[11px] font-black uppercase text-slate-400 ml-8 tracking-[0.3em]">Category</p>
+                    {/* SELECTOR GRID */}
+                    <div className="grid grid-cols-2 gap-10 mt-10">
+                        <div className="space-y-5">
+                            <p className="text-[12px] font-black uppercase text-slate-400 ml-10 tracking-[0.4em]">Category</p>
                             <div className="relative">
                                 <select 
-                                    className="w-full p-9 rounded-[40px] bg-white font-black text-sm shadow-sm outline-none appearance-none text-black border-4 border-transparent focus:border-black/5 cursor-pointer" 
+                                    className="w-full p-11 rounded-[56px] bg-white font-black text-sm shadow-sm outline-none appearance-none text-black border-4 border-transparent focus:border-black/5 cursor-pointer" 
                                     value={form.category} 
                                     onChange={e => setForm({...form, category: e.target.value})}
                                 >
-                                    <option value="Category" disabled>Select Pillar</option>
+                                    <option value="Category" disabled>Type</option>
                                     <option>Body</option><option>Mind</option><option>Work</option><option>Growth</option><option>Social</option><option>Finance</option>
                                 </select>
-                                <i className="fa-solid fa-angle-down absolute right-10 top-1/2 -translate-y-1/2 text-slate-200"></i>
+                                <i className="fa-solid fa-angle-down absolute right-12 top-1/2 -translate-y-1/2 text-slate-300 text-xl"></i>
                             </div>
                         </div>
-                        <div className="space-y-4">
-                            <p className="text-[11px] font-black uppercase text-slate-400 ml-8 tracking-[0.3em]">Frequency</p>
+                        <div className="space-y-5">
+                            <p className="text-[12px] font-black uppercase text-slate-400 ml-10 tracking-[0.4em]">Frequency</p>
                             <div className="relative">
                                 <select 
-                                    className="w-full p-9 rounded-[40px] bg-white font-black text-sm shadow-sm outline-none appearance-none text-black border-4 border-transparent focus:border-black/5 cursor-pointer" 
+                                    className="w-full p-11 rounded-[56px] bg-white font-black text-sm shadow-sm outline-none appearance-none text-black border-4 border-transparent focus:border-black/5 cursor-pointer" 
                                     value={form.frequency} 
                                     onChange={e => setForm({...form, frequency: e.target.value})}
                                 >
-                                    <option value="Frequency" disabled>Select Cadence</option>
+                                    <option value="Frequency" disabled>Cadence</option>
                                     <option>Daily</option>
                                     <option>Specific Days of Week</option>
                                     <option>Specific Days of Month</option>
                                     <option>Customise Days</option>
                                 </select>
-                                <i className="fa-solid fa-repeat absolute right-10 top-1/2 -translate-y-1/2 text-slate-200"></i>
+                                <i className="fa-solid fa-repeat absolute right-12 top-1/2 -translate-y-1/2 text-slate-300 text-xl"></i>
                             </div>
                         </div>
                     </div>
 
-                    {/* FREQUENCY LOGIC: SPECIFIC WEEKDAYS MODULE */}
+                    {/* FREQUENCY SUB-ENGINES */}
                     {form.frequency === 'Specific Days of Week' && (
-                        <div className="flex justify-between gap-3 animate-fade p-4 bg-white/60 rounded-[48px] shadow-inner border border-white">
-                            {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(day => {
-                                const active = form.weekDays.includes(day);
+                        <div className="flex justify-between gap-4 animate-view p-5 bg-white/60 rounded-[60px] shadow-inner border-2 border-white">
+                            {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(dayTitleString => {
+                                const isDayActive = form.weekDays.includes(dayTitleString);
                                 return (
                                     <button 
-                                        key={day} 
+                                        key={dayTitleString} 
                                         onClick={() => {
-                                            const currentArr = active ? form.weekDays.filter(d => d !== day) : [...form.weekDays, day];
-                                            setForm({...form, weekDays: currentArr});
+                                            const updatedWeekArray = isDayActive ? form.weekDays.filter(d => d !== dayTitleString) : [...form.weekDays, dayTitleString];
+                                            setForm({...form, weekDays: updatedWeekArray});
                                         }} 
-                                        className={`w-15 h-15 rounded-[26px] text-[12px] font-black transition-all duration-500 ${active ? 'bg-black text-white shadow-2xl scale-110' : 'bg-white text-slate-300'}`}
-                                        style={{ width: '62px', height: '62px' }}
+                                        className={`w-18 h-18 rounded-[32px] text-[14px] font-black transition-all duration-700 ${isDayActive ? 'bg-black text-white shadow-2xl scale-110' : 'bg-white text-slate-300'}`}
+                                        style={{ width: '64px', height: '64px' }}
                                     >
-                                        {day[0]}
+                                        {dayTitleString[0]}
                                     </button>
                                 );
                             })}
                         </div>
                     )}
 
-                    {/* FREQUENCY LOGIC: MONTH DATES GRID MODULE */}
                     {form.frequency === 'Specific Days of Month' && (
-                        <div className="month-picker-container animate-fade">
+                        <div className="month-picker-container animate-view shadow-2xl">
                             <div className="month-picker-grid">
-                                {[...Array(31)].map((_, i) => {
-                                    const dValue = i + 1;
-                                    const selected = form.monthDays.includes(dValue);
+                                {[...Array(31)].map((_, dateIdxValue) => {
+                                    const dateNumberValue = dateIdxValue + 1;
+                                    const isDateSelectedValue = form.monthDays.includes(dateNumberValue);
                                     return (
                                         <button 
-                                            key={dValue} 
+                                            key={dateNumberValue} 
                                             onClick={() => {
-                                                const currentArr = selected ? form.monthDays.filter(v => v !== dValue) : [...form.monthDays, dValue];
-                                                setForm({...form, monthDays: currentArr});
+                                                const updatedMonthArrayValue = isDateSelectedValue ? form.monthDays.filter(val => val !== dateNumberValue) : [...form.monthDays, dateNumberValue];
+                                                setForm({...form, monthDays: updatedMonthArrayValue});
                                             }} 
-                                            className={`w-11 h-11 rounded-2xl text-[12px] font-black transition-all duration-300 ${selected ? 'bg-black text-white shadow-2xl scale-110' : 'bg-white text-slate-300 border border-black/5 hover:border-black/20'}`}
+                                            className={`w-12 h-12 rounded-2xl text-[14px] font-black transition-all duration-400 ${isDateSelectedValue ? 'bg-black text-white shadow-2xl scale-110' : 'bg-white text-slate-300 border border-black/5 hover:border-black/20'}`}
+                                            style={{ width: '48px', height: '48px' }}
                                         >
-                                            {dValue}
+                                            {dateNumberValue}
                                         </button>
                                     );
                                 })}
@@ -893,22 +972,21 @@
                         </div>
                     )}
 
-                    {/* FREQUENCY LOGIC: CUSTOM COUNTER MODULE */}
                     {form.frequency === 'Customise Days' && (
-                        <div className="flex items-center gap-10 bg-white/90 p-12 rounded-[56px] animate-fade shadow-2xl border-2 border-white">
+                        <div className="flex items-center gap-12 bg-white/90 p-14 rounded-[64px] animate-view shadow-2xl border-4 border-white">
                             <div className="flex flex-col">
-                                <p className="text-[10px] font-black text-slate-300 uppercase mb-5 ml-3 text-center">Hits</p>
+                                <p className="text-[12px] font-black text-slate-300 uppercase mb-6 ml-4 text-center tracking-widest">Intensity</p>
                                 <input 
                                     type="number" 
-                                    className="w-28 font-black text-5xl text-center outline-none border-b-8 border-amber-400 bg-transparent text-black" 
+                                    className="w-32 font-black text-6xl text-center outline-none border-b-8 border-amber-400 bg-transparent text-black" 
                                     value={form.customCount} 
                                     onChange={e => setForm({...form, customCount: e.target.value})} 
                                 />
                             </div>
                             <div className="flex flex-col flex-1">
-                                <p className="font-black text-[11px] text-slate-300 uppercase tracking-[0.3em] mb-5">Frequency</p>
+                                <p className="font-black text-[12px] text-slate-300 uppercase tracking-[0.4em] mb-6">Time Frame</p>
                                 <select 
-                                    className="font-black text-3xl outline-none bg-transparent text-black cursor-pointer" 
+                                    className="font-black text-4xl outline-none bg-transparent text-black cursor-pointer" 
                                     value={form.customPeriod} 
                                     onChange={e => setForm({...form, customPeriod: e.target.value})}
                                 >
@@ -920,17 +998,17 @@
                     )}
 
                     <button 
-                        onClick={handleRitualStorage} 
-                        className="w-full py-10 rounded-[52px] logo-gradient text-white font-black text-2xl shadow-[0_20px_50px_rgba(0,0,0,0.2)] active:scale-95 transition-all duration-500 flex items-center justify-center gap-6 group overflow-hidden relative"
+                        onClick={onSaveHabitAction} 
+                        className="w-full py-12 rounded-[64px] logo-gradient text-white font-black text-3xl shadow-[0_30px_70px_rgba(0,0,0,0.35)] active:scale-95 transition-all duration-700 flex items-center justify-center gap-8 group overflow-hidden relative"
                     >
-                        <i className="fa-solid fa-bolt-lightning text-amber-400 text-3xl group-hover:rotate-12 transition-transform"></i>
-                        <span>{editingId ? 'Update Discipline' : 'Forge Ritual'}</span>
+                        <i className="fa-solid fa-bolt-lightning text-amber-400 text-4xl group-hover:rotate-12 transition-transform duration-700"></i>
+                        <span>{editingId ? 'Update Ritual' : 'Forge Ritual'}</span>
                     </button>
                     
                     {editingId && (
                         <button 
                             onClick={() => { setEditingId(null); setForm(defaultFormState); setCurrentPage('habits'); }} 
-                            className="w-full text-slate-400 font-black text-[11px] py-6 hover:text-black transition-colors tracking-[0.4em] uppercase"
+                            className="w-full text-slate-400 font-black text-[13px] py-8 hover:text-black transition-colors tracking-[0.5em] uppercase"
                         >
                             Discard Modifications
                         </button>
@@ -938,54 +1016,55 @@
                 </div>
             );
 
-            const CalendarHistoryView = () => (
-                <div className="animate-fade flex flex-col h-full relative">
-                    <div className="flex justify-between items-end mb-12 px-4">
+            const PageCalendar = () => (
+                <div className="animate-view flex flex-col h-full relative">
+                    <div className="flex justify-between items-end mb-14 px-8">
                         <div>
-                            <h2 className="text-5xl font-black italic text-black leading-tight tracking-tighter">
+                            <h2 className="text-6xl font-black italic text-black leading-tight tracking-tighter">
                                 {viewDate.toLocaleString('default', { month: 'long' })}
                             </h2>
-                            <p className="text-slate-400 text-[11px] font-black uppercase tracking-[0.4em] mt-3">Discipline Archives • {viewDate.getFullYear()}</p>
+                            <p className="text-slate-400 text-[13px] font-black uppercase tracking-[0.5em] mt-5">History Archives • {viewDate.getFullYear()}</p>
                         </div>
-                        <div className="flex gap-5">
-                            <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1))} className="w-14 h-14 bg-white rounded-3xl shadow-sm border border-black/5 text-black hover:bg-slate-50 active:scale-90 transition-all flex items-center justify-center"><i className="fa-solid fa-chevron-left text-xl"></i></button>
-                            <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1))} className="w-14 h-14 bg-white rounded-3xl shadow-sm border border-black/5 text-black hover:bg-slate-50 active:scale-90 transition-all flex items-center justify-center"><i className="fa-solid fa-chevron-right text-xl"></i></button>
+                        <div className="flex gap-6">
+                            <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1))} className="w-16 h-16 bg-white rounded-3xl border-2 border-black/5 text-black flex items-center justify-center active:scale-90 transition-all duration-500 shadow-sm"><i className="fa-solid fa-chevron-left text-2xl"></i></button>
+                            <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1))} className="w-16 h-16 bg-white rounded-3xl border-2 border-black/5 text-black flex items-center justify-center active:scale-90 transition-all duration-500 shadow-sm"><i className="fa-solid fa-chevron-right text-2xl"></i></button>
                         </div>
                     </div>
                     
-                    <div className="bg-white p-12 rounded-[64px] border border-black/5 shadow-2xl">
+                    <div className="bg-white p-14 rounded-[80px] border border-black/5 shadow-2xl relative z-10">
                         <div className="calendar-grid">
-                            {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(dayTitle => (
-                                <div key={dayTitle} className="text-center text-[11px] font-black text-slate-200 mb-10 uppercase tracking-widest">{dayTitle}</div>
+                            {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(dayHeaderName => (
+                                <div key={dayHeaderName} className="text-center text-[12px] font-black text-slate-200 mb-12 uppercase tracking-[0.2em]">{dayHeaderName}</div>
                             ))}
                             
-                            {[...Array(new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay())].map((_, i) => (
-                                <div key={`empty-${i}`}></div>
+                            {[...Array(new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay())].map((_, spaceIdx) => (
+                                <div key={`calendar-space-${spaceIdx}`}></div>
                             ))}
                             
-                            {[...Array(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate())].map((_, i) => {
-                                const dNum = i + 1;
-                                const dsKey = `${viewDate.getFullYear()}-${String(viewDate.getMonth() + 1).padStart(2, '0')}-${String(dNum).padStart(2, '0')}`;
-                                const completedCount = (logs[dsKey] || []).length;
-                                const percentOnDay = habits.length > 0 ? (completedCount / habits.length) * 100 : 0;
+                            {[...Array(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate())].map((_, dateValueIdx) => {
+                                const dayLoopValue = dateValueIdx + 1;
+                                const dsKeyStringValue = `${viewDate.getFullYear()}-${String(viewDate.getMonth() + 1).padStart(2, '0')}-${String(dayLoopValue).padStart(2, '0')}`;
+                                const checksOnThatDate = (logs[dsKeyStringValue] || []).length;
+                                const scoreOnThatDate = habits.length > 0 ? (checksOnThatDate / habits.length) * 100 : 0;
                                 
-                                let styleClass = 'bg-slate-50 text-slate-300';
-                                if (percentOnDay > 0) styleClass = 'bg-amber-100 text-amber-700 font-black';
-                                if (percentOnDay === 100) styleClass = 'bg-black text-amber-400 shadow-2xl scale-110 z-10 font-black';
+                                let cellStyleClassName = 'bg-slate-50 text-slate-300';
+                                if (scoreOnThatDate > 0) cellStyleClassName = 'bg-amber-100 text-amber-700 font-black shadow-inner';
+                                if (scoreOnThatDate === 100) cellStyleClassName = 'bg-black text-amber-400 shadow-2xl scale-110 z-10 font-black';
                                 
                                 return (
-                                    <div key={dNum} className={`calendar-day transition-all duration-700 ${styleClass}`}>
-                                        {dNum}
+                                    <div key={dayLoopValue} className={`calendar-day transition-all duration-1000 ${cellStyleClassName}`}>
+                                        {dayLoopValue}
                                     </div>
                                 );
                             })}
                         </div>
                     </div>
                     
-                    <div className="flex justify-center items-center py-10">
+                    {/* FIXED: TODAYS BUTTON PLACEMENT */}
+                    <div className="flex justify-center items-center py-20 relative z-20">
                         <button 
                             onClick={() => { setViewDate(new Date()); setCurrentPage('home'); }} 
-                            className="back-today-action"
+                            className="btn-today-legacy animate-view"
                         >
                             Return to Today
                         </button>
@@ -993,66 +1072,97 @@
                 </div>
             );
 
-            const NavigationInterface = () => (
-                <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-3xl px-2 py-12 flex justify-around items-center z-[100] border-t border-black/5 shadow-[0_-15px_50px_rgba(0,0,0,0.04)]">
+            // =========================================================
+            // VII. NAVIGATION INTERFACE (FIXED TAB BUTTONS)
+            // =========================================================
+            const MainNavbar = () => (
+                <nav className="fixed-navbar">
                     <button 
                         onClick={() => { setEditingId(null); setForm(defaultFormState); setCurrentPage('home'); }} 
-                        className={`flex flex-col items-center w-16 transition-all duration-500 ${currentPage === 'home' ? 'text-black scale-125' : 'text-slate-300'}`}
+                        className={`flex flex-col items-center w-18 transition-all duration-700 ${currentPage === 'home' ? 'text-black scale-125 rotate-3' : 'text-slate-300 hover:text-slate-500'}`}
                     >
-                        <i className="fa-solid fa-house-chimney text-2xl"></i>
+                        <i className="fa-solid fa-house-chimney text-3xl"></i>
                         <span className="nav-text">Home</span>
                     </button>
                     
                     <button 
                         onClick={() => { setEditingId(null); setForm(defaultFormState); setCurrentPage('habits'); }} 
-                        className={`flex flex-col items-center w-16 transition-all duration-500 ${currentPage === 'habits' ? 'text-black scale-125' : 'text-slate-300'}`}
+                        className={`flex flex-col items-center w-18 transition-all duration-700 ${currentPage === 'habits' ? 'text-black scale-125 -rotate-3' : 'text-slate-300 hover:text-slate-500'}`}
                     >
-                        <i className="fa-solid fa-dna text-2xl"></i>
+                        <i className="fa-solid fa-dna text-3xl"></i>
                         <span className="nav-text">Rituals</span>
                     </button>
                     
                     <button 
                         onClick={() => { setForm(defaultFormState); setEditingId(null); setCurrentPage('add'); }} 
-                        className="w-20 h-20 logo-gradient rounded-[36px] flex items-center justify-center text-white -mt-24 border-[10px] border-white shadow-2xl active:scale-90 transition-all duration-700 hover:rotate-180"
+                        className="w-22 h-22 logo-gradient rounded-[44px] flex items-center justify-center text-white -mt-28 border-[12px] border-white shadow-2xl active:scale-90 transition-all duration-1000 hover:rotate-180"
+                        style={{ width: '92px', height: '92px' }}
                     >
-                        <i className="fa-solid fa-plus text-3xl text-amber-400"></i>
+                        <i className="fa-solid fa-plus text-4xl text-amber-400"></i>
                     </button>
                     
                     <button 
                         onClick={() => { setEditingId(null); setCurrentPage('growth'); }} 
-                        className={`flex flex-col items-center w-16 transition-all duration-500 ${currentPage === 'growth' ? 'text-black scale-125' : 'text-slate-300'}`}
+                        className={`flex flex-col items-center w-18 transition-all duration-700 ${currentPage === 'growth' ? 'text-black scale-125 rotate-3' : 'text-slate-300 hover:text-slate-500'}`}
                     >
-                        <i className="fa-solid fa-chart-pie text-2xl"></i>
+                        <i className="fa-solid fa-chart-pie text-3xl"></i>
                         <span className="nav-text">Growth</span>
                     </button>
                     
                     <button 
                         onClick={() => { setEditingId(null); setCurrentPage('coach'); }} 
-                        className={`flex flex-col items-center w-16 transition-all duration-500 ${currentPage === 'coach' ? 'text-black scale-125' : 'text-slate-300'}`}
+                        className={`flex flex-col items-center w-18 transition-all duration-700 ${currentPage === 'coach' ? 'text-black scale-125 -rotate-3' : 'text-slate-300 hover:text-slate-500'}`}
                     >
-                        <i className="fa-solid fa-wand-magic-sparkles text-2xl"></i>
+                        <i className="fa-solid fa-wand-magic-sparkles text-3xl"></i>
                         <span className="nav-text">Coach</span>
                     </button>
                 </nav>
             );
 
-            // --- 7. MAIN RENDER ENGINE ---
+            // --- 9. MASTER ROUTING SWITCH ---
             return (
                 <div className="app-shell">
-                    <div className="content-area">
-                        {currentPage === 'home' && <HomeView />}
-                        {currentPage === 'growth' && <GrowthView />}
-                        {currentPage === 'habits' && <RitualLibraryView />}
-                        {currentPage === 'add' && <ForgeRitualView />}
-                        {currentPage === 'calendar_full' && <CalendarHistoryView />}
+                    <div className={`overlay-screen ${overlayStage === 'none' ? 'hide-overlay' : ''}`}>
+                        <div className="flex flex-col items-center animate-view text-center px-12">
+                            {overlayStage === 'logo' ? (
+                                <Fragment>
+                                    <div className="w-44 h-44 mb-14 p-10 bg-white rounded-[64px] shadow-2xl flex items-center justify-center border-2 border-black/5">
+                                        <img src="./logo512.png" alt="Icon" className="w-full h-full object-contain" />
+                                    </div>
+                                    <h1 className="text-6xl font-black text-black italic tracking-tighter">Routiq</h1>
+                                    <div className="mt-10 w-20 h-2 bg-amber-400 rounded-full animate-pulse"></div>
+                                </Fragment>
+                            ) : (
+                                <Fragment>
+                                    <i className="fa-solid fa-quote-left text-amber-200 text-8xl mb-14"></i>
+                                    <p className="text-4xl font-black italic text-black leading-tight">"{activeQuote}"</p>
+                                    <div className="mt-20 flex gap-5">
+                                        <div className="w-3 h-3 rounded-full bg-slate-100"></div>
+                                        <div className="w-3 h-3 rounded-full bg-slate-200"></div>
+                                        <div className="w-3 h-3 rounded-full bg-slate-100"></div>
+                                    </div>
+                                </Fragment>
+                            )}
+                        </div>
                     </div>
-                    <NavigationInterface />
+
+                    <div className="content-area" ref={contentRef}>
+                        {currentPage === 'home' && <PageHome />}
+                        {currentPage === 'growth' && <PageGrowth />}
+                        {currentPage === 'habits' && <PageRituals />}
+                        {currentPage === 'add' && <PageForge />}
+                        {currentPage === 'calendar_full' && <PageCalendar />}
+                    </div>
+
+                    <MainNavbar />
                 </div>
             );
         };
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+        // --- 10. BOOTSTRAP ---
+        const rootElementInstance = document.getElementById('root');
+        const reactRootInstance = ReactDOM.createRoot(rootElementInstance);
+        reactRootInstance.render(<RoutiqApp />);
     </script>
 </body>
 </html>
