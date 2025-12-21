@@ -43,6 +43,7 @@
             overflow-y: auto;
         }
 
+        /* Center everything inside the empty state */
         .empty-state-container {
             flex: 1;
             display: flex;
@@ -50,10 +51,8 @@
             align-items: center;
             justify-content: center;
             opacity: 0.2;
-            animation: fadeIn 1s ease-in;
         }
         
-        /* Overlay / Splash Styles */
         .overlay-screen { 
             position: fixed; inset: 0; background: #FFFFFF; 
             display: flex; align-items: center; justify-content: center; 
@@ -67,7 +66,8 @@
         .nav-text { font-size: 9px; font-weight: 800; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.1em; }
         .gold-accent { color: var(--logo-gold); }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 0.2; } }
+        .picker-scroll::-webkit-scrollbar { height: 4px; }
+        .picker-scroll::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -77,20 +77,26 @@
         const { useState, useEffect } = React;
 
         const App = () => {
-            const [overlayStage, setOverlayStage] = useState('logo'); // logo -> quote -> none
+            const [overlayStage, setOverlayStage] = useState('logo');
             const [currentPage, setCurrentPage] = useState('home');
             const [showMenu, setShowMenu] = useState(false);
+            const [viewDate, setViewDate] = useState(new Date());
+
             const [habits, setHabits] = useState(() => JSON.parse(localStorage.getItem('habits')) || []);
             const [logs, setLogs] = useState(() => JSON.parse(localStorage.getItem('habitLogs')) || {});
             
-            const quotes = [
-                "Small habits lead to big changes.",
-                "Consistency is your signature.",
-                "Discipline is freedom.",
-                "Your routine is your future.",
-                "Quality is a habit, not an act."
-            ];
+            // Full Form State
+            const [newHabit, setNewHabit] = useState({
+                name: '', description: '', color: '#1A1A1A', icon: '✨', category: 'General', frequency: 'Daily'
+            });
+
+            const quotes = ["Small habits lead to big changes.", "Consistency is your signature.", "Quality is a habit."];
             const [activeQuote] = useState(() => quotes[Math.floor(Math.random() * quotes.length)]);
+
+            const colors = ['#1A1A1A', '#D4AF37', '#6366F1', '#EC4899', '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6'];
+            const emojis = ['✨', '🏃‍♂️', '💧', '📚', '🧘‍♂️', '🍎', '💪', '🧠', '🌙', '☀️', '💼', '🎨'];
+            const categories = ['Health', 'Work', 'Mind', 'Finance', 'Growth', 'General'];
+            const freqOptions = ['Daily', 'Specific Days of Week', 'Specific Days of Month', 'Customise Days'];
 
             useEffect(() => {
                 const logoTimer = setTimeout(() => setOverlayStage('quote'), 1500);
@@ -105,9 +111,49 @@
 
             const todayStr = new Date().toISOString().split('T')[0];
 
+            const AddHabitPage = () => (
+                <div className="animate-in slide-in-from-bottom-6 pb-10">
+                    <h2 className="text-2xl font-black mb-8 italic">New Ritual</h2>
+                    <div className="space-y-6">
+                        <input className="w-full p-5 rounded-2xl border-none bg-white font-bold outline-none shadow-sm" placeholder="Habit Name" value={newHabit.name} onChange={(e) => setNewHabit({...newHabit, name: e.target.value})} />
+                        <textarea className="w-full p-5 rounded-2xl border-none bg-white font-medium text-sm outline-none shadow-sm" placeholder="Description (Optional)" rows="2" value={newHabit.description} onChange={(e) => setNewHabit({...newHabit, description: e.target.value})} />
+                        
+                        <div>
+                            <p className="text-[10px] font-black uppercase tracking-widest mb-3 ml-2 opacity-50">Theme Color</p>
+                            <div className="flex gap-3 overflow-x-auto pb-2 picker-scroll">
+                                {colors.map(c => <button key={c} onClick={() => setNewHabit({...newHabit, color: c})} className={`w-10 h-10 rounded-full shrink-0 border-4 transition-all ${newHabit.color === c ? 'border-white scale-110 shadow-md' : 'border-transparent opacity-60'}`} style={{ backgroundColor: c }} />)}
+                            </div>
+                        </div>
+
+                        <div>
+                            <p className="text-[10px] font-black uppercase tracking-widest mb-3 ml-2 opacity-50">Select Icon</p>
+                            <div className="flex gap-3 overflow-x-auto pb-2 picker-scroll">
+                                {emojis.map(e => <button key={e} onClick={() => setNewHabit({...newHabit, icon: e})} className={`w-12 h-12 rounded-2xl shrink-0 bg-white flex items-center justify-center text-xl transition-all ${newHabit.icon === e ? 'ring-2 ring-black scale-110' : 'opacity-40'}`}>{e}</button>)}
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <select className="p-4 rounded-2xl bg-white font-bold outline-none shadow-sm border-none text-sm appearance-none" value={newHabit.category} onChange={(e) => setNewHabit({...newHabit, category: e.target.value})}>
+                                {categories.map(cat => <option key={cat}>{cat}</option>)}
+                            </select>
+                            <select className="p-4 rounded-2xl bg-white font-bold outline-none shadow-sm border-none text-sm appearance-none" value={newHabit.frequency} onChange={(e) => setNewHabit({...newHabit, frequency: e.target.value})}>
+                                {freqOptions.map(f => <option key={f}>{f}</option>)}
+                            </select>
+                        </div>
+
+                        <button onClick={() => {
+                            if(newHabit.name) { 
+                                setHabits([...habits, {...newHabit, id: Date.now()}]); 
+                                setCurrentPage('home');
+                                setNewHabit({name: '', description: '', color: '#1A1A1A', icon: '✨', category: 'General', frequency: 'Daily'});
+                            }
+                        }} className="w-full py-5 rounded-[32px] logo-gradient text-white font-black text-lg shadow-xl">Confirm Ritual</button>
+                    </div>
+                </div>
+            );
+
             return (
                 <div className="app-shell max-w-lg mx-auto">
-                    {/* Splash Overlay with Quote Restore */}
                     <div className={`overlay-screen ${overlayStage === 'none' ? 'hide-overlay' : ''}`}>
                         {overlayStage === 'logo' && (
                             <div className="branding-wrapper">
@@ -115,31 +161,30 @@
                                 <h1 className="text-4xl font-black text-black mt-4 italic tracking-tighter">Routiq</h1>
                             </div>
                         )}
-                        {overlayStage === 'quote' && (
-                            <div className="px-12 text-center animate-pulse">
-                                <p className="text-xl font-bold text-black italic leading-relaxed">"{activeQuote}"</p>
-                            </div>
-                        )}
+                        {overlayStage === 'quote' && <p className="px-12 text-center text-xl font-bold text-black italic">"{activeQuote}"</p>}
                     </div>
 
                     <div className="content-area">
-                        <header className="flex justify-between items-center mb-10 w-full">
-                            <div>
-                                <h1 className="text-3xl font-black italic tracking-tighter">Routiq</h1>
-                                <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mt-1">Daily Discipline</p>
-                            </div>
-                            <div className="flex gap-3 relative z-50">
-                                <button className="w-11 h-11 flex items-center justify-center rounded-2xl bg-white border border-black/5 text-black shadow-sm"><i className="fa-solid fa-calendar-day"></i></button>
-                                <button onClick={() => setShowMenu(!showMenu)} className="w-11 h-11 flex items-center justify-center rounded-2xl bg-black text-white shadow-lg"><i className="fa-solid fa-ellipsis-vertical gold-accent"></i></button>
-                                {showMenu && (
-                                    <div className="absolute right-0 top-14 w-48 bg-white border border-black/5 rounded-3xl shadow-2xl z-[60] overflow-hidden p-2">
-                                        <button onClick={() => {localStorage.clear(); window.location.reload();}} className="w-full px-5 py-4 text-left text-xs font-bold text-rose-500 hover:bg-rose-50 flex items-center gap-3 rounded-2xl">
-                                            <i className="fa-solid fa-trash-can opacity-50"></i> Clear All Data
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
-                        </header>
+                        {/* Header Controls */}
+                        {currentPage === 'home' && (
+                            <header className="flex justify-between items-center mb-10 w-full">
+                                <div>
+                                    <h1 className="text-3xl font-black italic tracking-tighter">Routiq</h1>
+                                    <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mt-1">Daily Discipline</p>
+                                </div>
+                                <div className="flex gap-3 relative z-50">
+                                    <button className="w-11 h-11 flex items-center justify-center rounded-2xl bg-white border border-black/5 text-black shadow-sm"><i className="fa-solid fa-calendar-day"></i></button>
+                                    <button onClick={() => setShowMenu(!showMenu)} className="w-11 h-11 flex items-center justify-center rounded-2xl bg-black text-white shadow-lg"><i className="fa-solid fa-ellipsis-vertical gold-accent"></i></button>
+                                    {showMenu && (
+                                        <div className="absolute right-0 top-14 w-48 bg-white border border-black/5 rounded-3xl shadow-2xl z-[60] overflow-hidden p-2">
+                                            <button onClick={() => {localStorage.clear(); window.location.reload();}} className="w-full px-5 py-4 text-left text-xs font-bold text-rose-500 hover:bg-rose-50 flex items-center gap-3 rounded-2xl">
+                                                <i className="fa-solid fa-trash-can opacity-50"></i> Clear All Data
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            </header>
+                        )}
 
                         {currentPage === 'home' && (
                             <div className="flex-1 flex flex-col">
@@ -148,9 +193,9 @@
                                         {habits.map(h => {
                                             const isDone = (logs[todayStr] || []).includes(h.id);
                                             return (
-                                                <div key={h.id} className="card-standard flex justify-between items-center" style={{ borderLeft: `6px solid ${h.color || '#1A1A1A'}` }}>
+                                                <div key={h.id} className="card-standard flex justify-between items-center" style={{ borderLeft: `6px solid ${h.color}` }}>
                                                     <div className="flex items-center gap-4">
-                                                        <span className="text-2xl">{h.icon || '✨'}</span>
+                                                        <span className="text-2xl">{h.icon}</span>
                                                         <span className={`font-bold text-lg ${isDone ? 'text-slate-300 line-through' : 'text-slate-700'}`}>{h.name}</span>
                                                     </div>
                                                     <button onClick={() => {
@@ -171,21 +216,10 @@
                             </div>
                         )}
 
-                        {currentPage === 'add' && (
-                            <div className="animate-in slide-in-from-bottom-6">
-                                <h2 className="text-2xl font-black mb-8 italic text-black">New Ritual</h2>
-                                <div className="space-y-6">
-                                    <input id="hIn" type="text" className="w-full p-6 rounded-3xl border-none bg-white font-bold outline-none shadow-sm" placeholder="Habit Name" />
-                                    <button onClick={() => {
-                                        const v = document.getElementById('hIn').value;
-                                        if(v) { setHabits([...habits, {id: Date.now(), name: v, color: '#1A1A1A', icon: '✨'}]); setCurrentPage('home'); }
-                                    }} className="w-full py-5 rounded-[32px] logo-gradient text-white font-black text-lg shadow-xl">Confirm Ritual</button>
-                                </div>
-                            </div>
-                        )}
+                        {currentPage === 'add' && <AddHabitPage />}
                     </div>
 
-                    <nav className="fixed bottom-0 left-0 right-0 bg-white px-2 py-6 flex justify-around items-center z-40 border-t border-black/5">
+                    <nav className="fixed bottom-0 left-0 right-0 bg-white px-2 py-6 flex justify-around items-center z-40">
                         <button onClick={() => setCurrentPage('home')} className={`flex flex-col items-center w-14 ${currentPage === 'home' ? 'text-black' : 'text-slate-300'}`}><i className="fa-solid fa-house"></i><span className="nav-text">Home</span></button>
                         <button onClick={() => setCurrentPage('habits')} className={`flex flex-col items-center w-14 ${currentPage === 'habits' ? 'text-black' : 'text-slate-300'}`}><i className="fa-solid fa-list-check"></i><span className="nav-text">Habits</span></button>
                         <button onClick={() => setCurrentPage('add')} className="w-14 h-14 logo-gradient rounded-[20px] flex items-center justify-center text-white -mt-14 border-4 border-white shadow-xl"><i className="fa-solid fa-plus text-xl gold-accent"></i></button>
