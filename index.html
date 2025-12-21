@@ -36,15 +36,14 @@
             display: flex; 
             flex-direction: column; 
             position: relative; 
-            max-width: 500px;
-            margin: 0 auto;
         }
         
         .content-area { 
             flex: 1; 
             display: flex; 
             flex-direction: column; 
-            padding: 28px 28px 140px 28px; 
+            /* INCREASED BOTTOM PADDING TO PREVENT OVERLAP */
+            padding: 28px 28px 180px 28px; 
             overflow-y: auto; 
             scrollbar-width: none;
         }
@@ -128,15 +127,13 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* FIXED: Button centered and sleek size */
+        /* floating action button engine */
         .fixed-bottom-btn { 
             position: absolute; 
             bottom: 110px; 
-            left: 0; 
-            right: 0; 
+            left: 28px; 
+            right: 28px; 
             z-index: 40; 
-            display: flex;
-            justify-content: center;
         }
 
         /* data visualization components */
@@ -187,6 +184,23 @@
         }
         .animate-fade { 
             animation: fadeInScale 0.5s ease-out forwards; 
+        }
+        
+        /* ADJUSTED NAV BAR FOR BETTER SPACING */
+        .rout-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-blur: 20px;
+            padding: 15px 10px 35px 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 1000;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.02);
         }
     </style>
 </head>
@@ -264,21 +278,17 @@
 
             const todayStr = new Date().toISOString().split('T')[0];
 
-            // --- 3. ANALYTICS CALCULATION (Explicit Decimal Handling & Flipped Heatmap) ---
+            // --- 3. ANALYTICS CALCULATION ---
             const stats = useMemo(() => {
                 const totalRituals = habits.length;
                 const completedToday = (logs[todayStr] || []).length;
                 
-                // Win Rate with 2-Decimal Precision
                 const winRateString = totalRituals === 0 ? "0.00" : ((completedToday / totalRituals) * 100).toFixed(2);
                 
-                // Consistency Analysis
                 let rangeChecksCount = 0;
                 let rangePossibilities = totalRituals * growthRange;
                 const heatmapDataArray = [];
 
-                // REVERSED LOOP ENGINE: Oldest (Start of range) to Newest (Today)
-                // Ensures correct top-left to bottom-right visualization
                 for (let i = growthRange; i >= 0; i--) {
                     const targetDate = new Date();
                     targetDate.setDate(targetDate.getDate() - i);
@@ -352,7 +362,7 @@
                     <header className="flex justify-between items-center mb-10 w-full relative z-[60]">
                         <div>
                             <h1 className="text-3xl font-black italic tracking-tighter text-black">Routiq</h1>
-                            <p className="text-slate-500 text-[10px] font-extrabold uppercase tracking-[0.2em] mt-1">Daily Discipline</p>
+                            <p className="text-slate-500 text-[10px] font-extrabold uppercase tracking-[0.2em] mt-1">Discipline Engine</p>
                         </div>
                         <div className="flex gap-4 relative">
                             <button 
@@ -397,6 +407,7 @@
                                         <img src="./logo512.png" alt="Routiq Logo" className="w-full h-full object-contain" />
                                     </div>
                                     <h1 className="text-4xl font-black text-black italic tracking-tighter">Routiq</h1>
+                                    <div className="mt-4 w-12 h-1 bg-amber-400 rounded-full"></div>
                                 </Fragment>
                             ) : (
                                 <Fragment>
@@ -421,7 +432,6 @@
                                         </div>
                                         <div className="card-standard text-center py-8 border-b-4 border-black/5 overflow-hidden">
                                             <p className="text-[10px] font-extrabold uppercase text-slate-400 tracking-widest mb-2">Daily Score</p>
-                                            {/* REDUCED SIZE TO text-2xl TO ENSURE "100.00%" FITS */}
                                             <h2 className="text-2xl font-black text-black">{stats.winRate}%</h2>
                                         </div>
                                     </div>
@@ -489,7 +499,6 @@
                                     </div>
                                 </div>
 
-                                {/* MASTER CIRCULAR GAUGE */}
                                 <div className="card-standard flex flex-col items-center py-12 relative overflow-hidden">
                                     <div className="absolute top-0 left-0 w-full h-1 bg-slate-50"></div>
                                     <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-300 mb-10">Strength Index</p>
@@ -667,7 +676,7 @@
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-4 mt-4">
+                                <div className="grid grid-cols-2 gap-5 mt-4">
                                     <div className="space-y-2">
                                         <p className="text-[9px] font-black uppercase text-slate-400 ml-4 tracking-widest">Type</p>
                                         <select 
@@ -812,9 +821,878 @@
                                 </div>
                                 
                                 <div className="fixed-bottom-btn">
+                                    {/* FIXED: Reduced button size for return to today */}
                                     <button 
                                         onClick={() => { setViewDate(new Date()); setCurrentPage('home'); }} 
-                                        className="py-4 px-10 rounded-[100px] bg-black text-white font-black text-xs uppercase tracking-widest shadow-2xl active:scale-95 transition-all mx-auto block"
+                                        className="mx-auto block px-12 py-5 rounded-[100px] bg-black text-white font-black text-xs uppercase tracking-widest shadow-2xl active:scale-95 transition-all"
+                                    >
+                                        Return to Today
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* PERMANENT NAV ENGINE */}
+                    <nav className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl px-2 py-10 flex justify-around items-center z-50 border-t border-black/5 shadow-[0_-10px_40px_rgba(0,0,0,0.03)]">
+                        <button onClick={() => { setEditingId(null); setForm(defaultForm); setCurrentPage('home'); }} className={`flex flex-col items-center w-14 transition-all duration-300 ${currentPage === 'home' ? 'text-black scale-110' : 'text-slate-300'}`}>
+                            <i className="fa-solid fa-house-chimney text-xl"></i>
+                            <span className="nav-text">Home</span>
+                        </button>
+                        <button onClick={() => { setEditingId(null); setForm(defaultForm); setCurrentPage('habits'); }} className={`flex flex-col items-center w-14 transition-all duration-300 ${currentPage === 'habits' ? 'text-black scale-110' : 'text-slate-300'}`}>
+                            <i className="fa-solid fa-dna text-xl"></i>
+                            <span className="nav-text">Rituals</span>
+                        </button>
+                        <button 
+                            onClick={() => { setForm(defaultForm); setEditingId(null); setCurrentPage('add'); }} 
+                            className="w-16 h-16 logo-gradient rounded-[28px] flex items-center justify-center text-white -mt-20 border-8 border-white shadow-2xl active:scale-90 transition-all duration-500 hover:rotate-90"
+                        >
+                            <i className="fa-solid fa-plus text-2xl text-amber-400"></i>
+                        </button>
+                        <button onClick={() => { setEditingId(null); setCurrentPage('growth'); }} className={`flex flex-col items-center w-14 transition-all duration-300 ${currentPage === 'growth' ? 'text-black scale-110' : 'text-slate-300'}`}>
+                            <i className="fa-solid fa-chart-pie text-xl"></i>
+                            <span className="nav-text">Growth</span>
+                        </button>
+                        <button onClick={() => { setEditingId(null); setCurrentPage('coach'); }} className={`flex flex-col items-center w-14 transition-all duration-300 ${currentPage === 'coach' ? 'text-black scale-110' : 'text-slate-300'}`}>
+                            <i className="fa-solid fa-wand-magic-sparkles text-xl"></i>
+                            <span className="nav-text">Coach</span>
+                        </button>
+                    </nav>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Routiq Master Pro Build</title>
+    
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        
+        :root {
+            --logo-gold: #D4AF37;   
+            --logo-black: #1A1A1A;  
+            --logo-peach: #F5E6D3;  
+        }
+
+        body, html, #root { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: var(--logo-peach) !important; 
+            margin: 0; 
+            height: 100vh; 
+            width: 100vw; 
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* structural components */
+        .app-shell { 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+        }
+        
+        .content-area { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            /* INCREASED BOTTOM PADDING TO PREVENT OVERLAP */
+            padding: 28px 28px 180px 28px; 
+            overflow-y: auto; 
+            scrollbar-width: none;
+        }
+        .content-area::-webkit-scrollbar { display: none; }
+
+        /* Splash Sequence Logic */
+        .overlay-screen { 
+            position: fixed; 
+            inset: 0; 
+            background: #FFFFFF; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            z-index: 9999; 
+            transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+        .hide-overlay { 
+            opacity: 0; 
+            pointer-events: none; 
+        }
+        
+        .logo-gradient { 
+            background: linear-gradient(135deg, #1A1A1A 0%, #444444 100%); 
+        }
+        
+        .card-standard { 
+            background: #FFFFFF; 
+            border-radius: 32px; 
+            padding: 24px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.04); 
+            border: none; 
+        }
+        
+        .nav-text { 
+            font-size: 9px; 
+            font-weight: 800; 
+            margin-top: 6px; 
+            text-transform: uppercase; 
+            letter-spacing: 0.12em; 
+        }
+
+        /* empty state containers */
+        .centered-container { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            text-align: center; 
+        }
+        
+        /* calendar framework components */
+        .calendar-grid { 
+            display: grid; 
+            grid-template-columns: repeat(7, 1fr); 
+            gap: 8px; 
+        }
+        .calendar-day { 
+            aspect-ratio: 1; 
+            border-radius: 14px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 11px; 
+            font-weight: 800; 
+        }
+
+        /* advanced scrolling systems */
+        .scroll-wrapper { 
+            overflow-x: auto; 
+            width: 100%; 
+            -webkit-overflow-scrolling: touch; 
+            padding: 8px 0; 
+        }
+        .scroll-inner { 
+            display: flex; 
+            gap: 14px; 
+            width: max-content; 
+            padding-right: 30px; 
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* floating action button engine */
+        .fixed-bottom-btn { 
+            position: absolute; 
+            bottom: 110px; 
+            left: 28px; 
+            right: 28px; 
+            z-index: 40; 
+        }
+
+        /* data visualization components */
+        .meter-svg { transform: rotate(-90deg); }
+        .meter-bg { fill: none; stroke: #F8FAFC; stroke-width: 10; }
+        .meter-progress { 
+            fill: none; 
+            stroke: var(--logo-gold); 
+            stroke-width: 10; 
+            stroke-linecap: round; 
+            transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+
+        /* heatmap matrix engine */
+        .heatmap-grid { 
+            display: grid; 
+            grid-template-columns: repeat(10, 1fr); 
+            gap: 7px; 
+        }
+        .heatmap-cell { 
+            aspect-ratio: 1; 
+            border-radius: 7px; 
+            transition: transform 0.3s ease; 
+            border: 1.5px solid rgba(0,0,0,0.02); 
+        }
+        .heatmap-cell:hover { transform: scale(1.1); z-index: 10; }
+        
+        .filter-chip { 
+            padding: 10px 18px; 
+            border-radius: 24px; 
+            font-size: 10px; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            cursor: pointer; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* month picker logic grid */
+        .month-picker-grid { 
+            display: grid; 
+            grid-template-columns: repeat(7, 1fr); 
+            gap: 7px; 
+        }
+
+        @keyframes fadeInScale { 
+            from { opacity: 0; transform: translateY(15px) scale(0.98); } 
+            to { opacity: 1; transform: translateY(0) scale(1); } 
+        }
+        .animate-fade { 
+            animation: fadeInScale 0.5s ease-out forwards; 
+        }
+        
+        /* ADJUSTED NAV BAR FOR BETTER SPACING */
+        .rout-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-blur: 20px;
+            padding: 15px 10px 35px 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 1000;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.02);
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo, Fragment } = React;
+
+        const App = () => {
+            // --- 1. CORE STATE ARCHITECTURE ---
+            const [overlayStage, setOverlayStage] = useState('logo');
+            const [currentPage, setCurrentPage] = useState('home');
+            const [showMenu, setShowMenu] = useState(false);
+            const [viewDate, setViewDate] = useState(new Date());
+            const [editingId, setEditingId] = useState(null);
+            const [growthRange, setGrowthRange] = useState(30); 
+            const [pickers, setPickers] = useState({ color: false, icon: false });
+
+            // Persistence Management
+            const [habits, setHabits] = useState(() => {
+                try {
+                    const savedHabits = localStorage.getItem('habits');
+                    return savedHabits ? JSON.parse(savedHabits) : [];
+                } catch (e) { return []; }
+            });
+            
+            const [logs, setLogs] = useState(() => {
+                try {
+                    const savedLogs = localStorage.getItem('habitLogs');
+                    return savedLogs ? JSON.parse(savedLogs) : {};
+                } catch (e) { return {}; }
+            });
+            
+            // Default Data Structure
+            const defaultForm = {
+                name: '', 
+                description: '', 
+                color: '#1A1A1A', 
+                icon: '✨', 
+                category: 'Category', 
+                frequency: 'Frequency', 
+                weekDays: [], 
+                monthDays: [],
+                customCount: 1, 
+                customPeriod: 'Week'
+            };
+
+            const [form, setForm] = useState(defaultForm);
+
+            // UI Asset Libraries
+            const quotes = [
+                "Consistency is your signature.", 
+                "Discipline equals freedom.", 
+                "Quality is a habit.",
+                "Small steps lead to big results.",
+                "The secret is in your routine."
+            ];
+            const [activeQuote] = useState(() => quotes[Math.floor(Math.random() * quotes.length)]);
+
+            const colorPalette = ['#1A1A1A', '#D4AF37', '#6366F1', '#EC4899', '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6', '#FF6B6B', '#4ECDC4', '#A8E6CF', '#FFD3B6', '#FFAAA5', '#88D8B0'];
+            const iconLibrary = ['✨', '🏃‍♂️', '💧', '📚', '🧘‍♂️', '🍎', '💪', '🧠', '☀️', '💼', '🎨', '🔥', '🧗', '🔋', '🧘', '🛌', '🚶', '🚴', '🥗', '🥛', '🎧', '⚡'];
+
+            // --- 2. LIFECYCLE & SYNC ---
+            useEffect(() => {
+                const timer1 = setTimeout(() => setOverlayStage('quote'), 1400);
+                const timer2 = setTimeout(() => setOverlayStage('none'), 3800);
+                return () => { clearTimeout(timer1); clearTimeout(timer2); };
+            }, []);
+
+            useEffect(() => {
+                localStorage.setItem('habits', JSON.stringify(habits));
+                localStorage.setItem('habitLogs', JSON.stringify(logs));
+            }, [habits, logs]);
+
+            const todayStr = new Date().toISOString().split('T')[0];
+
+            // --- 3. ANALYTICS CALCULATION ---
+            const stats = useMemo(() => {
+                const totalRituals = habits.length;
+                const completedToday = (logs[todayStr] || []).length;
+                
+                const winRateString = totalRituals === 0 ? "0.00" : ((completedToday / totalRituals) * 100).toFixed(2);
+                
+                let rangeChecksCount = 0;
+                let rangePossibilities = totalRituals * growthRange;
+                const heatmapDataArray = [];
+
+                for (let i = growthRange; i >= 0; i--) {
+                    const targetDate = new Date();
+                    targetDate.setDate(targetDate.getDate() - i);
+                    const dsKey = targetDate.toISOString().split('T')[0];
+                    
+                    const dailyChecks = (logs[dsKey] || []).length;
+                    rangeChecksCount += dailyChecks;
+                    
+                    heatmapDataArray.push({ 
+                        date: dsKey, 
+                        pct: totalRituals === 0 ? 0 : dailyChecks / totalRituals 
+                    });
+                }
+
+                const masteryLevelString = rangePossibilities === 0 ? "0.00" : ((rangeChecksCount / rangePossibilities) * 100).toFixed(2);
+                
+                return { 
+                    totalCount: totalRituals, 
+                    doneCount: completedToday, 
+                    winRate: winRateString, 
+                    mastery: masteryLevelString, 
+                    heatmap: heatmapDataArray 
+                };
+            }, [habits, logs, todayStr, growthRange]);
+
+            // --- 4. SYSTEM HANDLERS ---
+            const processHabitSave = () => {
+                if(!form.name.trim()) return;
+                
+                if (editingId) {
+                    const updatedHabits = habits.map(h => h.id === editingId ? { ...form, id: editingId } : h);
+                    setHabits(updatedHabits);
+                    setEditingId(null);
+                } else {
+                    const newHabit = { ...form, id: Date.now() };
+                    setHabits([...habits, newHabit]);
+                }
+                
+                setForm(defaultForm);
+                setPickers({ color: false, icon: false });
+                setCurrentPage('habits');
+            };
+
+            const toggleHabitAction = (id) => {
+                const currentDayList = logs[todayStr] || [];
+                let newList;
+                if (currentDayList.includes(id)) {
+                    newList = currentDayList.filter(item => item !== id);
+                } else {
+                    newList = [...currentDayList, id];
+                }
+                setLogs({ ...logs, [todayStr]: newList });
+            };
+
+            const triggerEditMode = (habit) => {
+                setForm(habit);
+                setEditingId(habit.id);
+                setCurrentPage('add');
+            };
+
+            const triggerDelete = (id) => {
+                if(confirm("Confirm: Are you sure you want to delete this ritual? This cannot be undone.")) {
+                    const remainingHabits = habits.filter(h => h.id !== id);
+                    setHabits(remainingHabits);
+                }
+            };
+
+            // --- 5. COMPONENT: NAVIGATIONAL HEADER ---
+            const DynamicHeader = () => {
+                return (
+                    <header className="flex justify-between items-center mb-10 w-full relative z-[60]">
+                        <div>
+                            <h1 className="text-3xl font-black italic tracking-tighter text-black">Routiq</h1>
+                            <p className="text-slate-500 text-[10px] font-extrabold uppercase tracking-[0.2em] mt-1">Discipline Engine</p>
+                        </div>
+                        <div className="flex gap-4 relative">
+                            <button 
+                                onClick={() => setCurrentPage('calendar_full')} 
+                                className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white border border-black/5 text-black shadow-sm active:scale-90 transition-all duration-300"
+                            >
+                                <i className="fa-solid fa-calendar-day"></i>
+                            </button>
+                            <button 
+                                onClick={() => setShowMenu(!showMenu)} 
+                                className="w-12 h-12 flex items-center justify-center rounded-2xl bg-black text-white shadow-xl active:scale-90 transition-all duration-300"
+                            >
+                                <i className="fa-solid fa-ellipsis-vertical text-[--logo-gold]"></i>
+                            </button>
+                            
+                            {showMenu && (
+                                <div className="absolute right-0 top-16 w-56 bg-white border border-black/5 rounded-[32px] shadow-2xl z-[70] p-3 animate-fade overflow-hidden">
+                                    <button 
+                                        onClick={() => { localStorage.clear(); window.location.reload(); }} 
+                                        className="w-full px-5 py-4 text-left text-xs font-black text-rose-500 hover:bg-rose-50 flex items-center gap-4 rounded-2xl transition-all"
+                                    >
+                                        <i className="fa-solid fa-trash-can opacity-50"></i>
+                                        <span>Factory Reset App</span>
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    </header>
+                );
+            };
+
+            // --- 6. MAIN RENDER LOGIC ---
+            return (
+                <div className="app-shell max-w-lg mx-auto">
+                    
+                    {/* SYSTEM OVERLAY / SPLASH */}
+                    <div className={`overlay-screen ${overlayStage === 'none' ? 'hide-overlay' : ''}`}>
+                        <div className="flex flex-col items-center animate-fade text-center px-10">
+                            {overlayStage === 'logo' ? (
+                                <Fragment>
+                                    <div className="w-36 h-36 mb-8 p-5 bg-white rounded-[40px] shadow-2xl flex items-center justify-center border border-black/5">
+                                        <img src="./logo512.png" alt="Routiq Logo" className="w-full h-full object-contain" />
+                                    </div>
+                                    <h1 className="text-4xl font-black text-black italic tracking-tighter">Routiq</h1>
+                                    <div className="mt-4 w-12 h-1 bg-amber-400 rounded-full"></div>
+                                </Fragment>
+                            ) : (
+                                <Fragment>
+                                    <i className="fa-solid fa-quote-left text-amber-200 text-4xl mb-6"></i>
+                                    <p className="text-2xl font-black italic text-black leading-tight">"{activeQuote}"</p>
+                                </Fragment>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="content-area">
+                        {(currentPage === 'home' || currentPage === 'habits' || currentPage === 'growth') && <DynamicHeader />}
+
+                        {/* --- DASHBOARD: HOME --- */}
+                        {currentPage === 'home' && (
+                            <div className="flex-1 flex flex-col gap-8 animate-fade">
+                                {habits.length > 0 && (
+                                    <div className="grid grid-cols-2 gap-5">
+                                        <div className="card-standard text-center py-8 border-b-4 border-black/5">
+                                            <p className="text-[10px] font-extrabold uppercase text-slate-400 tracking-widest mb-2">Rituals Done</p>
+                                            <h2 className="text-3xl font-black text-black">{stats.doneCount}/{stats.totalCount}</h2>
+                                        </div>
+                                        <div className="card-standard text-center py-8 border-b-4 border-black/5 overflow-hidden">
+                                            <p className="text-[10px] font-extrabold uppercase text-slate-400 tracking-widest mb-2">Daily Score</p>
+                                            <h2 className="text-2xl font-black text-black">{stats.winRate}%</h2>
+                                        </div>
+                                    </div>
+                                )}
+                                
+                                {habits.length > 0 ? (
+                                    <div className="space-y-5">
+                                        <p className="text-[11px] font-black uppercase text-slate-400 tracking-[0.2em] ml-2">Due Today</p>
+                                        {habits.map(h => {
+                                            const ritualDone = (logs[todayStr] || []).includes(h.id);
+                                            return (
+                                                <div key={h.id} className="card-standard flex justify-between items-center transition-all duration-300 active:scale-[0.97]" style={{ borderLeft: `8px solid ${h.color}` }}>
+                                                    <div className="flex items-center gap-5">
+                                                        <div className="text-3xl grayscale-[0.5]">{h.icon}</div>
+                                                        <div className="flex flex-col">
+                                                            <span className={`font-bold text-lg leading-tight ${ritualDone ? 'text-slate-300 line-through' : 'text-black'}`}>{h.name}</span>
+                                                            <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest mt-1">{h.category}</span>
+                                                        </div>
+                                                    </div>
+                                                    <button 
+                                                        onClick={() => toggleHabitAction(h.id)} 
+                                                        className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 ${ritualDone ? 'bg-black text-amber-400 shadow-2xl rotate-[360deg]' : 'bg-slate-50 border border-slate-100 text-slate-200'}`}
+                                                    >
+                                                        <i className={`fa-solid ${ritualDone ? 'fa-check-double' : 'fa-check'} text-xl`}></i>
+                                                    </button>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                ) : (
+                                    <div className="centered-container opacity-20 py-20">
+                                        <i className="fa-solid fa-feather-pointed text-8xl mb-6 text-black"></i>
+                                        <p className="font-black uppercase tracking-[0.5em] text-[14px] text-black">Forge Rituals</p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* --- ANALYTICS: GROWTH --- */}
+                        {currentPage === 'growth' && (
+                            <div className="animate-fade space-y-10 pb-10">
+                                <div>
+                                    <h2 className="text-2xl font-black italic text-black leading-none">Mastery Hub</h2>
+                                    <p className="text-slate-400 text-xs font-bold mt-2 uppercase tracking-widest">Time-Based Progress</p>
+                                </div>
+                                
+                                <div className="scroll-wrapper no-scrollbar">
+                                    <div className="scroll-inner gap-3">
+                                        {[
+                                            {label:'7 Days', days:7}, 
+                                            {label:'1 Month', days:30}, 
+                                            {label:'3 Months', days:90}, 
+                                            {label:'6 Months', days:180}, 
+                                            {label:'9 Months', days:270}, 
+                                            {label:'12 Months', days:365}
+                                        ].map(range => (
+                                            <button 
+                                                key={range.label} 
+                                                onClick={() => setGrowthRange(range.days)} 
+                                                className={`filter-chip ${growthRange === range.days ? 'bg-black text-white shadow-xl scale-105' : 'bg-white text-slate-400 border border-black/5 hover:border-black/20'}`}
+                                            >
+                                                {range.label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="card-standard flex flex-col items-center py-12 relative overflow-hidden">
+                                    <div className="absolute top-0 left-0 w-full h-1 bg-slate-50"></div>
+                                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-300 mb-10">Strength Index</p>
+                                    <div className="relative w-48 h-48 flex items-center justify-center">
+                                        <svg className="meter-svg w-full h-full" viewBox="0 0 100 100">
+                                            <circle className="meter-bg" cx="50" cy="50" r="42" />
+                                            <circle 
+                                                className="meter-progress" 
+                                                cx="50" cy="50" r="42" 
+                                                style={{ strokeDasharray: '263.9', strokeDashoffset: 263.9 - (263.9 * parseFloat(stats.mastery)) / 100 }} 
+                                            />
+                                        </svg>
+                                        <div className="absolute flex flex-col items-center animate-fade">
+                                            <span className="text-2xl font-black text-black leading-none">{stats.mastery}%</span>
+                                            <span className="text-[7px] font-black uppercase text-amber-500 mt-1 tracking-widest">Mastery</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="card-standard">
+                                    <p className="text-xs font-black uppercase tracking-widest text-slate-400 mb-8 text-center">Consistency Matrix</p>
+                                    <div className={`heatmap-grid ${growthRange > 100 ? 'grid-cols-10' : 'grid-cols-7'}`}>
+                                        {stats.heatmap.map((cell, idx) => {
+                                            let intensity = '#F8FAFC';
+                                            if (cell.pct > 0) intensity = '#FFF4CC';
+                                            if (cell.pct > 0.5) intensity = '#D4AF37';
+                                            if (cell.pct === 1) intensity = '#1A1A1A';
+                                            return (
+                                                <div 
+                                                    key={idx} 
+                                                    className="heatmap-cell shadow-sm" 
+                                                    style={{ backgroundColor: intensity }} 
+                                                />
+                                            );
+                                        })}
+                                    </div>
+                                    <div className="flex justify-between mt-6 px-1">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-2 h-2 rounded-full bg-slate-100"></div>
+                                            <span className="text-[9px] font-black text-slate-300 uppercase tracking-tighter">Start</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-[9px] font-black text-slate-300 uppercase tracking-tighter">Present</span>
+                                            <div className="w-2 h-2 rounded-full bg-black"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* --- LIBRARY: RITUALS --- */}
+                        {currentPage === 'habits' && (
+                            <div className="flex-1 flex flex-col animate-fade">
+                                <div className="mb-10">
+                                    <h2 className="text-2xl font-black italic text-black">Active Rituals</h2>
+                                    <p className="text-slate-400 text-xs font-bold mt-2 uppercase tracking-widest">Library Management</p>
+                                </div>
+                                
+                                {habits.length > 0 ? (
+                                    <div className="space-y-6">
+                                        {habits.map(h => (
+                                            <div key={h.id} className="card-standard relative overflow-hidden" style={{ borderTop: `6px solid ${h.color}` }}>
+                                                <div className="flex justify-between items-start mb-4">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="w-14 h-14 rounded-2xl bg-slate-50 flex items-center justify-center text-3xl shadow-inner border border-black/5">{h.icon}</div>
+                                                        <div className="flex flex-col">
+                                                            <h3 className="font-black text-xl text-black leading-tight">{h.name}</h3>
+                                                            <p className="text-[10px] font-black uppercase text-amber-500 tracking-[0.15em] mt-1">{h.category}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex gap-2">
+                                                        <button onClick={() => triggerEditMode(h)} className="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 hover:text-black hover:bg-slate-100 transition-all flex items-center justify-center"><i className="fa-solid fa-pen-nib"></i></button>
+                                                        <button onClick={() => triggerDelete(h.id)} className="w-10 h-10 rounded-xl bg-rose-50 text-rose-400 hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center"><i className="fa-solid fa-trash-can"></i></button>
+                                                    </div>
+                                                </div>
+                                                <div className="bg-slate-50/50 p-4 rounded-2xl">
+                                                    <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest flex items-center gap-2">
+                                                        <i className="fa-solid fa-repeat text-slate-300"></i>
+                                                        {
+                                                            h.frequency === 'Specific Days of Week' ? h.weekDays.join(', ') : 
+                                                            h.frequency === 'Specific Days of Month' ? `Scheduled: ${h.monthDays.join(', ')}` : 
+                                                            h.frequency === 'Customise Days' ? `${h.customCount} times per ${h.customPeriod}` : h.frequency
+                                                        }
+                                                    </p>
+                                                    {h.description && (
+                                                        <p className="text-slate-500 text-sm mt-3 font-semibold leading-relaxed italic border-l-2 border-slate-200 pl-3">
+                                                            "{h.description}"
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="centered-container opacity-20 py-20">
+                                        <i className="fa-solid fa-leaf text-8xl mb-4 text-black"></i>
+                                        <p className="font-black uppercase tracking-[0.5em] text-[14px] text-black">Pure Mind</p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* --- ENGINE: ADD / EDIT RITUAL --- */}
+                        {currentPage === 'add' && (
+                            <div className="animate-fade space-y-8 pb-20">
+                                <div className="mb-4">
+                                    <h2 className="text-2xl font-black italic text-black">{editingId ? 'Modify Ritual' : 'Forge Ritual'}</h2>
+                                    <p className="text-slate-400 text-xs font-bold mt-2 uppercase tracking-widest">Define Your Discipline</p>
+                                </div>
+                                
+                                <div className="space-y-4">
+                                    <input 
+                                        className="w-full p-7 rounded-[32px] bg-white font-black text-lg outline-none shadow-sm text-black placeholder:text-slate-200 border border-transparent focus:border-black/5 transition-all" 
+                                        placeholder="Ritual Name" 
+                                        value={form.name} 
+                                        onChange={e => setForm({...form, name: e.target.value})} 
+                                    />
+                                    
+                                    <textarea 
+                                        className="w-full p-7 rounded-[32px] bg-white font-bold text-sm outline-none shadow-sm text-black placeholder:text-slate-200 border border-transparent focus:border-black/5 transition-all" 
+                                        placeholder="Why is this important? (Optional)" 
+                                        rows="3" 
+                                        value={form.description} 
+                                        onChange={e => setForm({...form, description: e.target.value})} 
+                                    />
+                                </div>
+                                
+                                <div className="flex flex-col gap-8">
+                                    <div className="flex flex-col gap-3">
+                                        <p className="text-[10px] font-black uppercase tracking-[0.2em] ml-4 text-slate-400">Signature Color</p>
+                                        <div className="flex items-center">
+                                            <button onClick={() => setPickers({color: !pickers.color, icon: false})} className="w-16 h-16 rounded-full border-8 border-white shadow-2xl z-10 shrink-0 transition-transform active:scale-90" style={{ backgroundColor: form.color }} />
+                                            {pickers.color && (
+                                                <div className="scroll-wrapper no-scrollbar ml-3 bg-white/60 p-2 rounded-full animate-fade">
+                                                    <div className="scroll-inner px-4">
+                                                        {colorPalette.map(colorCode => (
+                                                            <button 
+                                                                key={colorCode} 
+                                                                onClick={() => {setForm({...form, color: colorCode}); setPickers({color: false})}} 
+                                                                className="w-11 h-11 rounded-full shrink-0 shadow-md transition-transform active:scale-75 hover:scale-110" 
+                                                                style={{ backgroundColor: colorCode }} 
+                                                            />
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="flex flex-col gap-3">
+                                        <p className="text-[10px] font-black uppercase tracking-[0.2em] ml-4 text-slate-400">Ritual Symbol</p>
+                                        <div className="flex items-center">
+                                            <button 
+                                                onClick={() => setPickers({icon: !pickers.icon, color: false})} 
+                                                className="w-16 h-16 rounded-[24px] bg-white flex items-center justify-center text-3xl shadow-xl z-10 border border-black/5 shrink-0 text-black transition-transform active:scale-90"
+                                            >
+                                                {form.icon}
+                                            </button>
+                                            {pickers.icon && (
+                                                <div className="scroll-wrapper no-scrollbar ml-3 bg-white/60 p-2 rounded-[28px] animate-fade">
+                                                    <div className="scroll-inner px-4">
+                                                        {iconLibrary.map(sym => (
+                                                            <button 
+                                                                key={sym} 
+                                                                onClick={() => {setForm({...form, icon: sym}); setPickers({icon: false})}} 
+                                                                className="w-13 h-13 rounded-2xl bg-white flex items-center justify-center text-xl shrink-0 border border-black/5 shadow-sm transition-transform active:scale-75 hover:scale-110"
+                                                            >
+                                                                {sym}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-5 mt-4">
+                                    <div className="space-y-2">
+                                        <p className="text-[9px] font-black uppercase text-slate-400 ml-4 tracking-widest">Type</p>
+                                        <select 
+                                            className="w-full p-6 rounded-[28px] bg-white font-black text-xs shadow-sm outline-none appearance-none text-black border border-transparent focus:border-black/5" 
+                                            value={form.category} 
+                                            onChange={e => setForm({...form, category: e.target.value})}
+                                        >
+                                            <option value="Category" disabled>Category</option>
+                                            <option>Body</option><option>Mind</option><option>Work</option><option>Growth</option><option>Finance</option><option>Social</option>
+                                        </select>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <p className="text-[9px] font-black uppercase text-slate-400 ml-4 tracking-widest">Schedule</p>
+                                        <select 
+                                            className="w-full p-6 rounded-[28px] bg-white font-black text-xs shadow-sm outline-none appearance-none text-black border border-transparent focus:border-black/5" 
+                                            value={form.frequency} 
+                                            onChange={e => setForm({...form, frequency: e.target.value})}
+                                        >
+                                            <option value="Frequency" disabled>Frequency</option>
+                                            <option>Daily</option>
+                                            <option>Specific Days of Week</option>
+                                            <option>Specific Days of Month</option>
+                                            <option>Customise Days</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                {form.frequency === 'Specific Days of Week' && (
+                                    <div className="flex justify-between gap-2 animate-fade p-2 bg-white rounded-[32px] shadow-sm">
+                                        {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(day => {
+                                            const isSelected = form.weekDays.includes(day);
+                                            return (
+                                                <button 
+                                                    key={day} 
+                                                    onClick={() => {
+                                                        const current = isSelected ? form.weekDays.filter(d => d !== day) : [...form.weekDays, day];
+                                                        setForm({...form, weekDays: current});
+                                                    }} 
+                                                    className={`w-12 h-12 rounded-2xl text-[10px] font-black transition-all duration-300 ${isSelected ? 'bg-black text-white shadow-xl scale-110' : 'bg-slate-50 text-slate-300'}`}
+                                                >
+                                                    {day[0]}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+
+                                {form.frequency === 'Specific Days of Month' && (
+                                    <div className="month-picker-grid bg-white p-7 rounded-[40px] animate-fade shadow-sm border border-black/5">
+                                        {[...Array(31)].map((_, i) => {
+                                            const dNum = i + 1;
+                                            const isSel = form.monthDays.includes(dNum);
+                                            return (
+                                                <button 
+                                                    key={dNum} 
+                                                    onClick={() => {
+                                                        const current = isSel ? form.monthDays.filter(d => d !== dNum) : [...form.monthDays, dNum];
+                                                        setForm({...form, monthDays: current});
+                                                    }} 
+                                                    className={`w-10 h-10 rounded-xl text-[10px] font-black transition-all duration-300 ${isSel ? 'bg-black text-white shadow-lg' : 'bg-slate-50 text-slate-300'}`}
+                                                >
+                                                    {dNum}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+
+                                {form.frequency === 'Customise Days' && (
+                                    <div className="flex items-center gap-6 bg-white p-8 rounded-[40px] animate-fade shadow-sm border border-black/5">
+                                        <div className="flex flex-col">
+                                            <input 
+                                                type="number" 
+                                                className="w-20 font-black text-3xl text-center outline-none border-b-4 border-amber-400 bg-transparent text-black" 
+                                                value={form.customCount} 
+                                                onChange={e => setForm({...form, customCount: e.target.value})} 
+                                            />
+                                        </div>
+                                        <div className="flex flex-col flex-1">
+                                            <span className="font-black text-[10px] opacity-30 uppercase tracking-[0.2em] mb-2">Repetitions per</span>
+                                            <select 
+                                                className="font-black text-lg outline-none bg-transparent text-black" 
+                                                value={form.customPeriod} 
+                                                onChange={e => setForm({...form, customPeriod: e.target.value})}
+                                            >
+                                                <option>Week</option>
+                                                <option>Month</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                )}
+
+                                <button 
+                                    onClick={processHabitSave} 
+                                    className="w-full py-8 rounded-[40px] logo-gradient text-white font-black text-xl shadow-2xl active:scale-95 transition-all duration-300 flex items-center justify-center gap-4"
+                                >
+                                    <i className="fa-solid fa-bolt text-amber-400"></i>
+                                    {editingId ? 'Update Discipline' : 'Forge Ritual'}
+                                </button>
+                                
+                                {editingId && (
+                                    <button 
+                                        onClick={() => { setEditingId(null); setForm(defaultForm); setCurrentPage('habits'); }} 
+                                        className="w-full text-slate-400 font-bold text-sm py-2 hover:text-black transition-colors"
+                                    >
+                                        Discard Changes
+                                    </button>
+                                )}
+                            </div>
+                        )}
+
+                        {/* --- CALENDAR: FULL VIEW --- */}
+                        {currentPage === 'calendar_full' && (
+                            <div className="animate-fade flex flex-col h-full relative">
+                                <div className="flex justify-between items-center mb-10">
+                                    <div>
+                                        <h2 className="text-3xl font-black italic text-black leading-tight">{viewDate.toLocaleString('default', { month: 'long' })}</h2>
+                                        <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">{viewDate.getFullYear()}</p>
+                                    </div>
+                                    <div className="flex gap-3">
+                                        <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1))} className="w-12 h-12 bg-white rounded-2xl shadow-sm border border-black/5 text-black hover:bg-slate-50 transition-all"><i className="fa-solid fa-chevron-left"></i></button>
+                                        <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1))} className="w-12 h-12 bg-white rounded-2xl shadow-sm border border-black/5 text-black hover:bg-slate-50 transition-all"><i className="fa-solid fa-chevron-right"></i></button>
+                                    </div>
+                                </div>
+                                <div className="bg-white p-8 rounded-[48px] border border-black/5 shadow-2xl mb-24">
+                                    <div className="calendar-grid">
+                                        {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(dName => <div key={dName} className="text-center text-[10px] font-black text-slate-200 mb-6 uppercase tracking-tighter">{dName}</div>)}
+                                        {[...Array(new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay())].map((_, i) => <div key={`empty-${i}`}></div>)}
+                                        {[...Array(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate())].map((_, i) => {
+                                            const dayNum = i + 1;
+                                            const dsString = `${viewDate.getFullYear()}-${String(viewDate.getMonth() + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
+                                            const dayCount = (logs[dsString] || []).length;
+                                            const dayPct = habits.length > 0 ? (dayCount / habits.length) * 100 : 0;
+                                            
+                                            let bgStatus = 'bg-slate-50 text-slate-300';
+                                            if (dayPct > 0) bgStatus = 'bg-amber-100 text-amber-700 font-black';
+                                            if (dayPct === 100) bgStatus = 'bg-black text-amber-400 shadow-xl scale-105 z-10 font-black';
+                                            
+                                            return <div key={dayNum} className={`calendar-day transition-all duration-500 ${bgStatus}`}>{dayNum}</div>
+                                        })}
+                                    </div>
+                                </div>
+                                
+                                <div className="fixed-bottom-btn">
+                                    {/* FIXED: Reduced button size for return to today */}
+                                    <button 
+                                        onClick={() => { setViewDate(new Date()); setCurrentPage('home'); }} 
+                                        className="mx-auto block px-12 py-5 rounded-[100px] bg-black text-white font-black text-xs uppercase tracking-widest shadow-2xl active:scale-95 transition-all"
                                     >
                                         Return to Today
                                     </button>
