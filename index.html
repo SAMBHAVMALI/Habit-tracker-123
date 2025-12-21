@@ -129,15 +129,17 @@
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
         /* floating action button engine */
-        .fixed-bottom-btn { 
-            position: absolute; 
-            bottom: 110px; 
-            left: 0; 
-            right: 0; 
-            z-index: 40; 
-            display: flex;
-            justify-content: center;
-        }
+.fixed-bottom-btn { 
+    position: absolute; 
+    bottom: 85px;  
+    left: 0; 
+    right: 0; 
+    z-index: 40; 
+    display: flex;
+    justify-content: center;
+    /* Isse button thoda smooth screen par upar utha hua dikhega */
+    filter: drop-shadow(0 15px 15px rgba(0,0,0,0.1));
+}
 
         /* data visualization components */
         .meter-svg { transform: rotate(-90deg); }
@@ -848,14 +850,14 @@
                                 </div>
                                 
                                 <div className="fixed-bottom-btn">
-                                    {/* FIXED: Reduced button size for return to today */}
-                                    <button 
-                                        onClick={() => { setViewDate(new Date()); setCurrentPage('home'); }} 
-                                        className="mx-auto block px-12 py-5 rounded-[100px] bg-black text-white font-black text-xs uppercase tracking-widest shadow-2xl active:scale-95 transition-all"
-                                    >
-                                        Return to Today
-                                    </button>
-                                </div>
+    <button 
+        onClick={() => { setViewDate(new Date()); setCurrentPage('home'); }} 
+        className="mx-auto block px-10 py-4 rounded-full bg-black text-white font-bold text-[10px] uppercase tracking-[0.2em] shadow-2xl active:scale-95 transition-all border border-white/10"
+    >
+        <i className="fa-solid fa-arrow-rotate-left mr-2 opacity-60"></i>
+        Return to Today
+    </button>
+</div>
                             </div>
                         )}
                     </div>
