@@ -18,10 +18,10 @@
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; color: #1E293B; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; color: #1E293B; margin: 0; }
         
-        /* Premium Splash Screen */
-        .splash-container {
+        /* Splash & Quote Logic */
+        .overlay-screen {
             position: fixed;
             inset: 0;
             background: #FFFFFF;
@@ -30,21 +30,27 @@
             align-items: center;
             justify-content: center;
             z-index: 9999;
-            transition: opacity 0.6s cubic-bezier(0.45, 0, 0.55, 1);
+            transition: opacity 0.8s ease-in-out;
         }
         .splash-logo {
             width: 140px;
             height: 140px;
-            animation: logo-pop 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: logo-pop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
         @keyframes logo-pop {
             0% { transform: scale(0.6); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
-        .loading-bar-bg { width: 120px; height: 3px; background: #F1F5F9; border-radius: 10px; margin-top: 24px; overflow: hidden; }
-        .loading-bar-fill { height: 100%; background: #6366F1; width: 0%; animation: load 1.8s ease-in-out forwards; }
-        @keyframes load { to { width: 100%; } }
-        .hide-splash { opacity: 0; pointer-events: none; }
+        .quote-text {
+            max-width: 80%;
+            text-align: center;
+            animation: fadeIn 1s ease-in-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .hide-overlay { opacity: 0; pointer-events: none; }
 
         .coach-gradient { background: linear-gradient(135deg, #6366F1 0%, #A855F7 100%); }
         .card-standard { background: #FFFFFF; border: 1px solid #F1F5F9; border-radius: 24px; padding: 20px; transition: all 0.2s ease; }
@@ -57,25 +63,53 @@
         const { useState, useEffect } = React;
 
         const App = () => {
-            const [isSplashing, setIsSplashing] = useState(true);
+            const [overlayStage, setOverlayStage] = useState('logo'); // 'logo', 'quote', 'none'
             const [currentPage, setCurrentPage] = useState('home');
             const [habits, setHabits] = useState(() => JSON.parse(localStorage.getItem('habits')) || []);
             const [logs, setLogs] = useState(() => JSON.parse(localStorage.getItem('habitLogs')) || {});
+            
+            const quotes = [
+                "Discipline is choosing between what you want now and what you want most.",
+                "Small habits lead to big changes.",
+                "Your future is created by what you do today, not tomorrow.",
+                "Consistency is the companion of success.",
+                "The secret of your future is hidden in your daily routine.",
+                "Don't stop until you're proud.",
+                "Quality is not an act, it is a habit."
+            ];
+
+            const [activeQuote] = useState(() => quotes[Math.floor(Math.random() * quotes.length)]);
 
             useEffect(() => {
-                const timer = setTimeout(() => setIsSplashing(false), 2000);
+                // Sequence: Logo (1.2s) -> Quote (2s) -> App
+                const logoTimer = setTimeout(() => setOverlayStage('quote'), 1200);
+                const quoteTimer = setTimeout(() => setOverlayStage('none'), 3500);
+
                 localStorage.setItem('habits', JSON.stringify(habits));
                 localStorage.setItem('habitLogs', JSON.stringify(logs));
-                return () => clearTimeout(timer);
+                
+                return () => {
+                    clearTimeout(logoTimer);
+                    clearTimeout(quoteTimer);
+                };
             }, [habits, logs]);
 
             const today = new Date().toISOString().split('T')[0];
 
-            const SplashScreen = () => (
-                <div className={`splash-container ${!isSplashing ? 'hide-splash' : ''}`}>
-                    <img src="./logo512.png" alt="Routiq" className="splash-logo object-contain" />
-                    <h1 className="text-3xl font-bold tracking-tight text-slate-900 mt-4 italic">Routiq</h1>
-                    <div className="loading-bar-bg"><div className="loading-bar-fill"></div></div>
+            const Overlay = () => (
+                <div className={`overlay-screen ${overlayStage === 'none' ? 'hide-overlay' : ''}`}>
+                    {overlayStage === 'logo' && (
+                        <div className="flex flex-col items-center">
+                            <img src="./logo512.png" alt="Routiq" className="splash-logo object-contain" />
+                            <h1 className="text-3xl font-bold tracking-tight text-slate-900 mt-4 italic">Routiq</h1>
+                        </div>
+                    )}
+                    {overlayStage === 'quote' && (
+                        <div className="quote-text px-6">
+                            <p className="text-xl font-medium text-slate-700 italic leading-relaxed">"{activeQuote}"</p>
+                            <div className="w-12 h-1 bg-indigo-500 rounded-full mx-auto mt-6 opacity-30"></div>
+                        </div>
+                    )}
                 </div>
             );
 
@@ -91,29 +125,29 @@
 
             return (
                 <div className="min-h-screen bg-slate-50 max-w-lg mx-auto shadow-2xl overflow-hidden relative">
-                    <SplashScreen />
+                    <Overlay />
                     
                     {currentPage === 'home' && (
                         <div className="p-7 pb-28">
                             <header className="mb-8">
-                                <h1 className="text-2xl font-bold tracking-tight text-slate-800">My Routines</h1>
-                                <p className="text-slate-400 text-sm">Organize your daily habits.</p>
+                                <h1 className="text-2xl font-bold tracking-tight text-slate-800">Routiq</h1>
+                                <p className="text-slate-400 text-sm">Elevate your daily rituals.</p>
                             </header>
                             <div className="space-y-4">
                                 {habits.length === 0 ? (
                                     <div className="text-center py-20">
-                                        <i className="fa-solid fa-leaf text-slate-200 text-5xl mb-4"></i>
-                                        <p className="text-slate-400 font-medium text-sm px-10">Your routine is empty. Tap the + to start your Routiq journey.</p>
+                                        <i className="fa-solid fa-hand-holding-heart text-slate-200 text-5xl mb-4"></i>
+                                        <p className="text-slate-400 font-medium text-sm">Ready to build your first routine?</p>
                                     </div>
                                 ) : (
                                     habits.map(h => (
-                                        <div key={h.id} className="card-standard flex justify-between items-center group active:scale-[0.98]">
+                                        <div key={h.id} className="card-standard flex justify-between items-center group">
                                             <span className="font-bold text-slate-700">{h.name}</span>
                                             <button onClick={() => {
                                                 const currentLogs = logs[today] || [];
                                                 const newLogs = currentLogs.includes(h.id) ? currentLogs.filter(id => id !== h.id) : [...currentLogs, h.id];
                                                 setLogs({...logs, [today]: newLogs});
-                                            }} className={`w-10 h-10 rounded-xl transition-all flex items-center justify-center ${logs[today]?.includes(h.id) ? 'bg-indigo-500 text-white' : 'bg-slate-100 text-transparent'}`}>
+                                            }} className={`w-10 h-10 rounded-xl transition-all flex items-center justify-center ${logs[today]?.includes(h.id) ? 'bg-indigo-500 text-white shadow-md shadow-indigo-200' : 'bg-slate-100 text-transparent'}`}>
                                                 <i className="fa-solid fa-check"></i>
                                             </button>
                                         </div>
@@ -124,15 +158,13 @@
                     )}
 
                     {currentPage === 'add' && (
-                        <div className="p-7 animate-in slide-in-from-bottom-4 duration-500">
-                            <h2 className="text-2xl font-bold mb-6">New Ritual</h2>
-                            <div className="space-y-6">
-                                <input id="hInput" type="text" className="w-full p-5 rounded-2xl border border-slate-100 bg-white shadow-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all" placeholder="Enter habit name..." />
-                                <button onClick={() => {
-                                    const val = document.getElementById('hInput').value;
-                                    if(val) { setHabits([...habits, {id: Date.now(), name: val}]); setCurrentPage('home'); }
-                                }} className="w-full coach-gradient text-white font-bold py-5 rounded-2xl shadow-lg shadow-indigo-100">Add to Routiq</button>
-                            </div>
+                        <div className="p-7">
+                            <h2 className="text-2xl font-bold mb-6">New Habit</h2>
+                            <input id="hInput" type="text" className="w-full p-5 rounded-2xl border border-slate-100 bg-white shadow-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all" placeholder="E.g. Morning Meditation" />
+                            <button onClick={() => {
+                                const val = document.getElementById('hInput').value;
+                                if(val) { setHabits([...habits, {id: Date.now(), name: val}]); setCurrentPage('home'); }
+                            }} className="w-full coach-gradient text-white font-bold py-5 rounded-2xl shadow-lg shadow-indigo-100 mt-4">Add Habit</button>
                         </div>
                     )}
 
