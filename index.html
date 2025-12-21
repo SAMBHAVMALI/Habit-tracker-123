@@ -128,13 +128,15 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* floating action button engine */
+        /* FIXED: Button centered and sleek size */
         .fixed-bottom-btn { 
             position: absolute; 
             bottom: 110px; 
-            left: 28px; 
-            right: 28px; 
+            left: 0; 
+            right: 0; 
             z-index: 40; 
+            display: flex;
+            justify-content: center;
         }
 
         /* data visualization components */
@@ -262,7 +264,7 @@
 
             const todayStr = new Date().toISOString().split('T')[0];
 
-            // --- 3. ANALYTICS CALCULATION ---
+            // --- 3. ANALYTICS CALCULATION (Explicit Decimal Handling & Flipped Heatmap) ---
             const stats = useMemo(() => {
                 const totalRituals = habits.length;
                 const completedToday = (logs[todayStr] || []).length;
@@ -275,10 +277,11 @@
                 let rangePossibilities = totalRituals * growthRange;
                 const heatmapDataArray = [];
 
-                // Fixed Forward Heatmap loop
-                for (let i = 0; i <= growthRange; i++) {
+                // REVERSED LOOP ENGINE: Oldest (Start of range) to Newest (Today)
+                // Ensures correct top-left to bottom-right visualization
+                for (let i = growthRange; i >= 0; i--) {
                     const targetDate = new Date();
-                    targetDate.setDate(targetDate.getDate() - (growthRange - i));
+                    targetDate.setDate(targetDate.getDate() - i);
                     const dsKey = targetDate.toISOString().split('T')[0];
                     
                     const dailyChecks = (logs[dsKey] || []).length;
@@ -394,7 +397,6 @@
                                         <img src="./logo512.png" alt="Routiq Logo" className="w-full h-full object-contain" />
                                     </div>
                                     <h1 className="text-4xl font-black text-black italic tracking-tighter">Routiq</h1>
-                                    <div className="mt-4 w-12 h-1 bg-amber-400 rounded-full"></div>
                                 </Fragment>
                             ) : (
                                 <Fragment>
@@ -500,8 +502,7 @@
                                                 style={{ strokeDasharray: '263.9', strokeDashoffset: 263.9 - (263.9 * parseFloat(stats.mastery)) / 100 }} 
                                             />
                                         </svg>
-                                        <div className="absolute flex flex-col items-center">
-                                            {/* REDUCED SIZE FROM text-4xl TO text-2xl TO ENSURE IT FITS CIRCLE */}
+                                        <div className="absolute flex flex-col items-center animate-fade">
                                             <span className="text-2xl font-black text-black leading-none">{stats.mastery}%</span>
                                             <span className="text-[7px] font-black uppercase text-amber-500 mt-1 tracking-widest">Mastery</span>
                                         </div>
@@ -666,7 +667,7 @@
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-5 mt-4">
+                                <div className="grid grid-cols-2 gap-4 mt-4">
                                     <div className="space-y-2">
                                         <p className="text-[9px] font-black uppercase text-slate-400 ml-4 tracking-widest">Type</p>
                                         <select 
@@ -803,7 +804,7 @@
                                             
                                             let bgStatus = 'bg-slate-50 text-slate-300';
                                             if (dayPct > 0) bgStatus = 'bg-amber-100 text-amber-700 font-black';
-                                            if (dayPct === 100) bgStatus = 'bg-black text-amber-400 shadow-xl scale-110 z-10 font-black';
+                                            if (dayPct === 100) bgStatus = 'bg-black text-amber-400 shadow-xl scale-105 z-10 font-black';
                                             
                                             return <div key={dayNum} className={`calendar-day transition-all duration-500 ${bgStatus}`}>{dayNum}</div>
                                         })}
@@ -813,7 +814,7 @@
                                 <div className="fixed-bottom-btn">
                                     <button 
                                         onClick={() => { setViewDate(new Date()); setCurrentPage('home'); }} 
-                                        className="w-full py-7 rounded-[40px] bg-black text-white font-black text-lg shadow-2xl shadow-black/40 active:scale-95 transition-all"
+                                        className="py-4 px-10 rounded-[100px] bg-black text-white font-black text-xs uppercase tracking-widest shadow-2xl active:scale-95 transition-all mx-auto block"
                                     >
                                         Return to Today
                                     </button>
