@@ -20,38 +20,13 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; color: #1E293B; margin: 0; }
         
-        .overlay-screen {
-            position: fixed;
-            inset: 0;
-            background: #FFFFFF;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            transition: opacity 0.8s ease-in-out;
-        }
-        .splash-logo {
-            width: 140px;
-            height: 140px;
-            animation: logo-pop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-        @keyframes logo-pop {
-            0% { transform: scale(0.6); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        .quote-text {
-            max-width: 80%;
-            text-align: center;
-            animation: fadeIn 1s ease-in-out forwards;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .overlay-screen { position: fixed; inset: 0; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.8s ease-in-out; }
         .hide-overlay { opacity: 0; pointer-events: none; }
         .coach-gradient { background: linear-gradient(135deg, #6366F1 0%, #A855F7 100%); }
         .card-standard { background: #FFFFFF; border: 1px solid #F1F5F9; border-radius: 24px; padding: 20px; }
+        
+        /* Nav Item Styles */
+        .nav-text { font-size: 10px; font-weight: 700; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
     </style>
 </head>
 <body>
@@ -66,28 +41,15 @@
             const [habits, setHabits] = useState(() => JSON.parse(localStorage.getItem('habits')) || []);
             const [logs, setLogs] = useState(() => JSON.parse(localStorage.getItem('habitLogs')) || {});
             
-            const quotes = [
-                "Discipline is choosing between what you want now and what you want most.",
-                "Small habits lead to big changes.",
-                "Your future is created by what you do today, not tomorrow.",
-                "Consistency is the companion of success.",
-                "The secret of your future is hidden in your daily routine."
-            ];
-
+            const quotes = ["Small habits lead to big changes.", "Consistency is key.", "Focus on the process."];
             const [activeQuote] = useState(() => quotes[Math.floor(Math.random() * quotes.length)]);
 
-            // FIX: The empty array [] at the end of this useEffect 
-            // ensures it ONLY runs once when the app starts.
             useEffect(() => {
                 const logoTimer = setTimeout(() => setOverlayStage('quote'), 1200);
                 const quoteTimer = setTimeout(() => setOverlayStage('none'), 3500);
-                return () => {
-                    clearTimeout(logoTimer);
-                    clearTimeout(quoteTimer);
-                };
+                return () => { clearTimeout(logoTimer); clearTimeout(quoteTimer); };
             }, []); 
 
-            // Separate useEffect to handle data saving so it doesn't trigger the splash
             useEffect(() => {
                 localStorage.setItem('habits', JSON.stringify(habits));
                 localStorage.setItem('habitLogs', JSON.stringify(logs));
@@ -95,66 +57,78 @@
 
             const today = new Date().toISOString().split('T')[0];
 
-            const toggleHabit = (id) => {
-                const currentLogs = logs[today] || [];
-                const newLogs = currentLogs.includes(id) 
-                    ? currentLogs.filter(item => item !== id) 
-                    : [...currentLogs, id];
-                setLogs({...logs, [today]: newLogs});
-            };
+            // --- Navigation Bar ---
+            const Nav = () => (
+                <nav className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-slate-100 px-2 py-4 flex justify-around items-center z-50">
+                    {/* 1. Home */}
+                    <button onClick={() => setCurrentPage('home')} className={`flex flex-col items-center w-16 ${currentPage === 'home' ? 'text-indigo-600' : 'text-slate-300'}`}>
+                        <i className="fa-solid fa-house text-lg"></i>
+                        <span className="nav-text">Home</span>
+                    </button>
 
-            const Overlay = () => (
-                <div className={`overlay-screen ${overlayStage === 'none' ? 'hide-overlay' : ''}`}>
-                    {overlayStage === 'logo' && (
-                        <div className="flex flex-col items-center">
-                            <img src="./logo512.png" alt="Routiq" className="splash-logo object-contain" />
-                            <h1 className="text-3xl font-bold tracking-tight text-slate-900 mt-4 italic">Routiq</h1>
-                        </div>
-                    )}
-                    {overlayStage === 'quote' && (
-                        <div className="quote-text px-6">
-                            <p className="text-xl font-medium text-slate-700 italic leading-relaxed">"{activeQuote}"</p>
-                            <div className="w-12 h-1 bg-indigo-500 rounded-full mx-auto mt-6 opacity-30"></div>
-                        </div>
-                    )}
-                </div>
+                    {/* 2. Habits */}
+                    <button onClick={() => setCurrentPage('habits')} className={`flex flex-col items-center w-16 ${currentPage === 'habits' ? 'text-indigo-600' : 'text-slate-300'}`}>
+                        <i className="fa-solid fa-list-check text-lg"></i>
+                        <span className="nav-text">Habits</span>
+                    </button>
+
+                    {/* 3. Add Habit (Center) */}
+                    <div className="relative w-16 flex justify-center">
+                        <button onClick={() => setCurrentPage('add')} className="w-14 h-14 coach-gradient rounded-2xl flex items-center justify-center text-white -mt-14 border-4 border-white shadow-xl active:scale-90 transition-transform">
+                            <i className="fa-solid fa-plus text-xl"></i>
+                        </button>
+                    </div>
+
+                    {/* 4. Insights */}
+                    <button onClick={() => setCurrentPage('insights')} className={`flex flex-col items-center w-16 ${currentPage === 'insights' ? 'text-indigo-600' : 'text-slate-300'}`}>
+                        <i className="fa-solid fa-chart-pie text-lg"></i>
+                        <span className="nav-text">Insights</span>
+                    </button>
+
+                    {/* 5. AI Coach */}
+                    <button onClick={() => setCurrentPage('coach')} className={`flex flex-col items-center w-16 ${currentPage === 'coach' ? 'text-indigo-600' : 'text-slate-300'}`}>
+                        <i className="fa-solid fa-wand-magic-sparkles text-lg"></i>
+                        <span className="nav-text">Coach</span>
+                    </button>
+                </nav>
             );
 
             return (
                 <div className="min-h-screen bg-slate-50 max-w-lg mx-auto shadow-2xl relative overflow-hidden">
-                    <Overlay />
+                    {/* Overlay Stage */}
+                    <div className={`overlay-screen ${overlayStage === 'none' ? 'hide-overlay' : ''}`}>
+                        {overlayStage === 'logo' && <img src="./logo512.png" alt="Routiq" className="w-32 h-32 object-contain" />}
+                        {overlayStage === 'quote' && <p className="text-xl font-medium text-slate-700 italic px-10 text-center">"{activeQuote}"</p>}
+                    </div>
                     
-                    <div className="p-7 pb-28">
-                        <header className="mb-8">
-                            <h1 className="text-2xl font-bold tracking-tight text-slate-800">Routiq</h1>
-                            <p className="text-slate-400 text-sm">Elevate your daily rituals.</p>
-                        </header>
-                        
-                        <div className="space-y-4">
-                            {habits.map(h => (
-                                <div key={h.id} className="card-standard flex justify-between items-center">
-                                    <span className="font-bold text-slate-700">{h.name}</span>
-                                    <button 
-                                        onClick={() => toggleHabit(h.id)}
-                                        className={`w-10 h-10 rounded-xl transition-all flex items-center justify-center ${logs[today]?.includes(h.id) ? 'bg-indigo-500 text-white shadow-md' : 'bg-slate-100 text-transparent'}`}
-                                    >
-                                        <i className="fa-solid fa-check"></i>
-                                    </button>
+                    {/* Page Content */}
+                    <div className="p-7 pb-32">
+                        {currentPage === 'home' && (
+                            <div>
+                                <h1 className="text-2xl font-bold mb-6 tracking-tight">Today's Rituals</h1>
+                                <div className="space-y-4">
+                                    {habits.map(h => (
+                                        <div key={h.id} className="card-standard flex justify-between items-center">
+                                            <span className="font-bold text-slate-700">{h.name}</span>
+                                            <button onClick={() => {
+                                                const currentLogs = logs[today] || [];
+                                                const newLogs = currentLogs.includes(h.id) ? currentLogs.filter(id => id !== h.id) : [...currentLogs, h.id];
+                                                setLogs({...logs, [today]: newLogs});
+                                            }} className={`w-10 h-10 rounded-xl flex items-center justify-center ${logs[today]?.includes(h.id) ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-transparent'}`}>
+                                                <i className="fa-solid fa-check"></i>
+                                            </button>
+                                        </div>
+                                    ))}
                                 </div>
-                            ))}
-                        </div>
+                            </div>
+                        )}
+                        {currentPage === 'habits' && <h1 className="text-2xl font-bold">Habit Library</h1>}
+                        {currentPage === 'add' && <h1 className="text-2xl font-bold">New Habit</h1>}
+                        {currentPage === 'insights' && <h1 className="text-2xl font-bold">Growth Insights</h1>}
+                        {currentPage === 'coach' && <h1 className="text-2xl font-bold">AI Adaptive Coach</h1>}
                     </div>
 
-                    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 p-6 flex justify-around items-center">
-                        <i className="fa-solid fa-house text-indigo-600 text-lg"></i>
-                        <div onClick={() => {
-                            const n = prompt("New Habit Name:");
-                            if(n) setHabits([...habits, {id: Date.now(), name: n}]);
-                        }} className="w-12 h-12 coach-gradient rounded-2xl flex items-center justify-center text-white -mt-12 border-4 border-white shadow-xl cursor-pointer">
-                            <i className="fa-solid fa-plus"></i>
-                        </div>
-                        <i className="fa-solid fa-chart-pie text-slate-300 text-lg"></i>
-                    </nav>
+                    <Nav />
                 </div>
             );
         };
@@ -164,4 +138,3 @@
     </script>
 </body>
 </html>
-
