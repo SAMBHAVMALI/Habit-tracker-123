@@ -25,38 +25,48 @@
             --logo-peach: #F5E6D3;  
         }
 
-        /* Forces the entire app to use the peach color from your logo */
         body, html, #root { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
             background-color: var(--logo-peach) !important; 
             color: var(--logo-black); 
             margin: 0; 
-            height: 100%;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
         }
-        
-        .overlay-screen { 
-            position: fixed; inset: 0; background: #FFFFFF; 
-            display: flex; align-items: center; justify-content: center; 
-            z-index: 9999; transition: opacity 0.8s ease-in-out; 
-        }
-        .hide-overlay { opacity: 0; pointer-events: none; }
-        .branding-wrapper { display: flex; flex-direction: column; align-items: center; text-align: center; }
-        .splash-logo { width: 160px; height: 160px; object-fit: contain; animation: logo-pop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        
-        .logo-gradient { background: linear-gradient(135deg, #1A1A1A 0%, #444444 100%); }
-        .gold-accent { color: var(--logo-gold); }
-        
-        /* Habits cards stay white for readability, but the main page is peach */
-        .card-standard { background: #FFFFFF; border-radius: 28px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
-        .nav-text { font-size: 9px; font-weight: 800; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.1em; }
-        
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
-        .calendar-day { aspect-ratio: 1; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; transition: all 0.2s; }
-        
-        .picker-scroll::-webkit-scrollbar { height: 4px; }
-        .picker-scroll::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 10px; }
 
-        @keyframes logo-pop { 0% { transform: scale(0.6); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        /* The trick for centering: The main container fills the screen */
+        .app-shell {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 28px 28px 100px 28px; /* Extra bottom padding for nav */
+            overflow-y: auto;
+        }
+
+        /* Center everything inside the empty state */
+        .empty-state-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.2;
+        }
+        
+        .overlay-screen { position: fixed; inset: 0; background: #FFFFFF; display: flex; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.8s ease-in-out; }
+        .hide-overlay { opacity: 0; pointer-events: none; }
+        .logo-gradient { background: linear-gradient(135deg, #1A1A1A 0%, #444444 100%); }
+        .card-standard { background: #FFFFFF; border-radius: 28px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: none; }
+        .nav-text { font-size: 9px; font-weight: 800; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.1em; }
+        .gold-accent { color: var(--logo-gold); }
     </style>
 </head>
 <body>
@@ -69,27 +79,17 @@
             const [overlayStage, setOverlayStage] = useState('logo');
             const [currentPage, setCurrentPage] = useState('home');
             const [showMenu, setShowMenu] = useState(false);
-            const [viewDate, setViewDate] = useState(new Date());
             
             const [habits, setHabits] = useState(() => JSON.parse(localStorage.getItem('habits')) || []);
             const [logs, setLogs] = useState(() => JSON.parse(localStorage.getItem('habitLogs')) || {});
             
-            const quotes = ["Small habits lead to big changes.", "Consistency is your signature."];
-            const [activeQuote] = useState(() => quotes[Math.floor(Math.random() * quotes.length)]);
-
             const [newHabit, setNewHabit] = useState({
                 name: '', description: '', color: '#1A1A1A', icon: '✨', category: 'General', frequency: 'Daily'
             });
 
-            const colors = ['#1A1A1A', '#D4AF37', '#6366F1', '#EC4899', '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6'];
-            const emojis = ['✨', '🏃‍♂️', '💧', '📚', '🧘‍♂️', '🍎', '💪', '🧠', '🌙', '☀️', '💼', '🎨'];
-            const categories = ['Health', 'Work', 'Mind', 'Finance', 'Growth', 'General'];
-            const freqOptions = ['Daily', 'Specific Days of Week', 'Specific Days of Month', 'Customise Days'];
-
             useEffect(() => {
-                const logoTimer = setTimeout(() => setOverlayStage('quote'), 1500);
-                const quoteTimer = setTimeout(() => setOverlayStage('none'), 3500);
-                return () => { clearTimeout(logoTimer); clearTimeout(quoteTimer); };
+                const timer = setTimeout(() => setOverlayStage('none'), 1500);
+                return () => clearTimeout(timer);
             }, []);
 
             useEffect(() => {
@@ -100,46 +100,32 @@
             const todayStr = new Date().toISOString().split('T')[0];
 
             return (
-                <div className="min-h-screen max-w-lg mx-auto relative overflow-hidden flex flex-col">
+                <div className="app-shell max-w-lg mx-auto">
                     {/* Splash Overlay */}
                     <div className={`overlay-screen ${overlayStage === 'none' ? 'hide-overlay' : ''}`}>
-                        {overlayStage === 'logo' && (
-                            <div className="branding-wrapper">
-                                <img src="./logo512.png" alt="Routiq" className="splash-logo" />
-                                <h1 className="text-4xl font-black text-black mt-4 italic tracking-tighter">Routiq</h1>
-                            </div>
-                        )}
-                        {overlayStage === 'quote' && <p className="px-12 text-center text-xl font-bold text-black italic leading-relaxed">"{activeQuote}"</p>}
+                        <div className="flex flex-col items-center">
+                            <img src="./logo512.png" alt="Routiq" className="w-40 h-40 object-contain" />
+                            <h1 className="text-4xl font-black text-black mt-4 italic tracking-tighter">Routiq</h1>
+                        </div>
                     </div>
 
-                    <div className="flex-1 p-7 pb-32">
-                        {/* Header Controls */}
+                    <div className="content-area">
+                        {/* Header stays at the top */}
                         {(currentPage === 'home' || currentPage === 'habits') && (
-                            <header className="flex justify-between items-center mb-10 relative">
+                            <header className="flex justify-between items-center mb-10 w-full">
                                 <div>
                                     <h1 className="text-3xl font-black italic tracking-tighter">Routiq</h1>
                                     <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mt-1">Daily Discipline</p>
                                 </div>
                                 <div className="flex gap-3 relative z-50">
-                                    <button onClick={() => setCurrentPage('calendar_full')} className="w-11 h-11 flex items-center justify-center rounded-2xl bg-white border border-black/5 text-black shadow-sm">
-                                        <i className="fa-solid fa-calendar-day"></i>
-                                    </button>
-                                    <button onClick={() => setShowMenu(!showMenu)} className="w-11 h-11 flex items-center justify-center rounded-2xl bg-black text-white shadow-lg">
-                                        <i className="fa-solid fa-ellipsis-vertical gold-accent"></i>
-                                    </button>
-                                    {showMenu && (
-                                        <div className="absolute right-0 top-14 w-48 bg-white border border-black/5 rounded-3xl shadow-2xl z-[60] overflow-hidden p-2">
-                                            <button onClick={() => {localStorage.clear(); window.location.reload();}} className="w-full px-5 py-4 text-left text-xs font-bold text-rose-500 hover:bg-rose-50 flex items-center gap-3 rounded-2xl">
-                                                <i className="fa-solid fa-trash-can opacity-50"></i> Clear All Data
-                                            </button>
-                                        </div>
-                                    )}
+                                    <button className="w-11 h-11 flex items-center justify-center rounded-2xl bg-white border border-black/5 text-black shadow-sm"><i className="fa-solid fa-calendar-day"></i></button>
+                                    <button onClick={() => setShowMenu(!showMenu)} className="w-11 h-11 flex items-center justify-center rounded-2xl bg-black text-white shadow-lg"><i className="fa-solid fa-ellipsis-vertical gold-accent"></i></button>
                                 </div>
                             </header>
                         )}
 
                         {currentPage === 'home' && (
-                            <div className="h-full flex flex-col">
+                            <>
                                 {habits.length > 0 ? (
                                     <div className="space-y-4">
                                         {habits.map(h => {
@@ -160,76 +146,30 @@
                                         })}
                                     </div>
                                 ) : (
-                                    /* Fixed Empty State: Matches your Screenshot_2025-12-21-17-34-46-39... */
-                                    <div className="flex-1 flex flex-col items-center justify-center -mt-20">
-                                        <i className="fa-solid fa-feather text-6xl mb-4 text-black/10"></i>
-                                        <p className="font-bold uppercase tracking-widest text-[10px] text-black/20">No Rituals</p>
+                                    /* Centered Empty State */
+                                    <div className="empty-state-container">
+                                        <i className="fa-solid fa-feather text-7xl mb-4"></i>
+                                        <p className="font-bold uppercase tracking-[0.3em] text-[12px]">No Rituals</p>
                                     </div>
                                 )}
-                            </div>
-                        )}
-
-                        {currentPage === 'calendar_full' && (
-                            <div className="animate-in fade-in">
-                                <h2 className="text-xl font-bold mb-6">{viewDate.toLocaleString('default', { month: 'long' })} {viewDate.getFullYear()}</h2>
-                                <div className="calendar-grid bg-white p-5 rounded-[32px] border border-black/5">
-                                    {['S','M','T','W','T','F','S'].map(d => <div key={d} className="text-center text-[10px] font-black text-slate-300 mb-2">{d}</div>)}
-                                    {[...Array(new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay())].map((_, i) => <div key={`e-${i}`}></div>)}
-                                    {[...Array(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate())].map((_, i) => {
-                                        const d = i + 1;
-                                        const dateStr = `${viewDate.getFullYear()}-${String(viewDate.getMonth() + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-                                        const completed = (logs[dateStr] || []).length;
-                                        const pct = habits.length > 0 ? (completed / habits.length) * 100 : 0;
-                                        let style = 'bg-slate-50 text-slate-300';
-                                        if (pct > 0) style = 'bg-amber-100 text-amber-700';
-                                        if (pct === 100) style = 'bg-black text-amber-400';
-                                        return <div key={d} className={`calendar-day ${style}`}>{d}</div>
-                                    })}
-                                </div>
-                                <button onClick={() => setCurrentPage('home')} className="w-full mt-6 py-4 rounded-2xl bg-black text-white font-bold text-sm">Return Home</button>
-                            </div>
+                            </>
                         )}
 
                         {currentPage === 'add' && (
-                            <div className="animate-in slide-in-from-bottom-6 pb-10">
+                            <div className="animate-in slide-in-from-bottom-6">
                                 <h2 className="text-2xl font-black mb-8 italic">New Ritual</h2>
                                 <div className="space-y-6">
-                                    <input className="w-full p-5 rounded-2xl border-none bg-white font-bold outline-none shadow-sm" placeholder="Habit Name" value={newHabit.name} onChange={(e) => setNewHabit({...newHabit, name: e.target.value})} />
-                                    <textarea className="w-full p-5 rounded-2xl border-none bg-white font-medium text-sm outline-none shadow-sm" placeholder="Description (Optional)" rows="2" value={newHabit.description} onChange={(e) => setNewHabit({...newHabit, description: e.target.value})} />
-                                    
-                                    <div>
-                                        <p className="text-[10px] font-black uppercase tracking-widest mb-3 ml-2 opacity-50">Theme Color</p>
-                                        <div className="flex gap-3 overflow-x-auto pb-2 picker-scroll">
-                                            {colors.map(c => <button key={c} onClick={() => setNewHabit({...newHabit, color: c})} className={`w-10 h-10 rounded-full shrink-0 border-4 transition-all ${newHabit.color === c ? 'border-white scale-110 shadow-md' : 'border-transparent opacity-60'}`} style={{ backgroundColor: c }} />)}
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <p className="text-[10px] font-black uppercase tracking-widest mb-3 ml-2 opacity-50">Select Icon</p>
-                                        <div className="flex gap-3 overflow-x-auto pb-2 picker-scroll">
-                                            {emojis.map(e => <button key={e} onClick={() => setNewHabit({...newHabit, icon: e})} className={`w-12 h-12 rounded-2xl shrink-0 bg-white flex items-center justify-center text-xl transition-all ${newHabit.icon === e ? 'ring-2 ring-black scale-110' : 'opacity-40'}`}>{e}</button>)}
-                                        </div>
-                                    </div>
-
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <select className="p-4 rounded-2xl bg-white font-bold outline-none shadow-sm appearance-none border-none text-sm" value={newHabit.category} onChange={(e) => setNewHabit({...newHabit, category: e.target.value})}>
-                                            {categories.map(cat => <option key={cat}>{cat}</option>)}
-                                        </select>
-                                        <select className="p-4 rounded-2xl bg-white font-bold outline-none shadow-sm appearance-none border-none text-sm" value={newHabit.frequency} onChange={(e) => setNewHabit({...newHabit, frequency: e.target.value})}>
-                                            {freqOptions.map(f => <option key={f}>{f}</option>)}
-                                        </select>
-                                    </div>
-
+                                    <input className="w-full p-6 rounded-3xl border-none bg-white font-bold outline-none shadow-sm" placeholder="Habit Name" value={newHabit.name} onChange={(e) => setNewHabit({...newHabit, name: e.target.value})} />
                                     <button onClick={() => {
-                                        if(newHabit.name) { setHabits([...habits, {...newHabit, id: Date.now()}]); setCurrentPage('home'); setNewHabit({name: '', description: '', color: '#1A1A1A', icon: '✨', category: 'General', frequency: 'Daily'}); }
+                                        if(newHabit.name) { setHabits([...habits, {...newHabit, id: Date.now()}]); setCurrentPage('home'); }
                                     }} className="w-full py-5 rounded-[32px] logo-gradient text-white font-black text-lg shadow-xl">Confirm Ritual</button>
                                 </div>
                             </div>
                         )}
                     </div>
 
-                    {/* Navbar matching Screenshot 2025-12-21 180147.png */}
-                    <nav className="fixed bottom-0 left-0 right-0 bg-white px-2 py-6 flex justify-around items-center z-40">
+                    {/* Bottom Nav */}
+                    <nav className="absolute bottom-0 left-0 right-0 bg-white px-2 py-6 flex justify-around items-center z-40">
                         <button onClick={() => setCurrentPage('home')} className={`flex flex-col items-center w-14 ${currentPage === 'home' ? 'text-black' : 'text-slate-300'}`}><i className="fa-solid fa-house"></i><span className="nav-text">Home</span></button>
                         <button onClick={() => setCurrentPage('habits')} className={`flex flex-col items-center w-14 ${currentPage === 'habits' ? 'text-black' : 'text-slate-300'}`}><i className="fa-solid fa-list-check"></i><span className="nav-text">Habits</span></button>
                         <button onClick={() => setCurrentPage('add')} className="w-14 h-14 logo-gradient rounded-[20px] flex items-center justify-center text-white -mt-14 border-4 border-white shadow-xl"><i className="fa-solid fa-plus text-xl gold-accent"></i></button>
