@@ -262,7 +262,7 @@
 
             const todayStr = new Date().toISOString().split('T')[0];
 
-            // --- 3. ANALYTICS CALCULATION (Explicit Decimal Handling & Flipped Heatmap) ---
+            // --- 3. ANALYTICS CALCULATION ---
             const stats = useMemo(() => {
                 const totalRituals = habits.length;
                 const completedToday = (logs[todayStr] || []).length;
@@ -275,10 +275,10 @@
                 let rangePossibilities = totalRituals * growthRange;
                 const heatmapDataArray = [];
 
-                // REVERSED LOOP ENGINE: Oldest (Start of range) to Newest (Today)
-                for (let i = growthRange; i >= 0; i--) {
+                // Fixed Forward Heatmap loop
+                for (let i = 0; i <= growthRange; i++) {
                     const targetDate = new Date();
-                    targetDate.setDate(targetDate.getDate() - i);
+                    targetDate.setDate(targetDate.getDate() - (growthRange - i));
                     const dsKey = targetDate.toISOString().split('T')[0];
                     
                     const dailyChecks = (logs[dsKey] || []).length;
@@ -349,7 +349,7 @@
                     <header className="flex justify-between items-center mb-10 w-full relative z-[60]">
                         <div>
                             <h1 className="text-3xl font-black italic tracking-tighter text-black">Routiq</h1>
-                            <p className="text-slate-500 text-[10px] font-extrabold uppercase tracking-[0.2em] mt-1">Discipline Engine</p>
+                            <p className="text-slate-500 text-[10px] font-extrabold uppercase tracking-[0.2em] mt-1">Daily Discipline</p>
                         </div>
                         <div className="flex gap-4 relative">
                             <button 
@@ -394,6 +394,7 @@
                                         <img src="./logo512.png" alt="Routiq Logo" className="w-full h-full object-contain" />
                                     </div>
                                     <h1 className="text-4xl font-black text-black italic tracking-tighter">Routiq</h1>
+                                    <div className="mt-4 w-12 h-1 bg-amber-400 rounded-full"></div>
                                 </Fragment>
                             ) : (
                                 <Fragment>
@@ -416,9 +417,9 @@
                                             <p className="text-[10px] font-extrabold uppercase text-slate-400 tracking-widest mb-2">Rituals Done</p>
                                             <h2 className="text-3xl font-black text-black">{stats.doneCount}/{stats.totalCount}</h2>
                                         </div>
-                                        <div className="card-standard text-center py-8 border-b-4 border-black/5">
+                                        <div className="card-standard text-center py-8 border-b-4 border-black/5 overflow-hidden">
                                             <p className="text-[10px] font-extrabold uppercase text-slate-400 tracking-widest mb-2">Daily Score</p>
-                                            {/* REDUCED TEXT SIZE FOR 100% COMPATIBILITY */}
+                                            {/* REDUCED SIZE TO text-2xl TO ENSURE "100.00%" FITS */}
                                             <h2 className="text-2xl font-black text-black">{stats.winRate}%</h2>
                                         </div>
                                     </div>
@@ -499,20 +500,16 @@
                                                 style={{ strokeDasharray: '263.9', strokeDashoffset: 263.9 - (263.9 * parseFloat(stats.mastery)) / 100 }} 
                                             />
                                         </svg>
-                                        <div className="absolute flex flex-col items-center animate-fade">
-                                            {/* REDUCED TEXT SIZE FROM 4xl TO 3xl */}
-                                            <span className="text-3xl font-black text-black leading-none">{stats.mastery}%</span>
-                                            <span className="text-[8px] font-black uppercase text-amber-500 mt-1 tracking-widest">Mastery</span>
+                                        <div className="absolute flex flex-col items-center">
+                                            {/* REDUCED SIZE FROM text-4xl TO text-2xl TO ENSURE IT FITS CIRCLE */}
+                                            <span className="text-2xl font-black text-black leading-none">{stats.mastery}%</span>
+                                            <span className="text-[7px] font-black uppercase text-amber-500 mt-1 tracking-widest">Mastery</span>
                                         </div>
                                     </div>
                                 </div>
 
-                                {/* MATRIX GRID (Oldest -> Newest) */}
                                 <div className="card-standard">
-                                    <div className="flex justify-between items-center mb-8">
-                                        <p className="text-xs font-black uppercase tracking-widest text-slate-400">Consistency Matrix</p>
-                                        <span className="bg-slate-50 px-3 py-1 rounded-full text-[9px] font-black text-slate-400 uppercase tracking-tighter">{growthRange} Days Tracking</span>
-                                    </div>
+                                    <p className="text-xs font-black uppercase tracking-widest text-slate-400 mb-8 text-center">Consistency Matrix</p>
                                     <div className={`heatmap-grid ${growthRange > 100 ? 'grid-cols-10' : 'grid-cols-7'}`}>
                                         {stats.heatmap.map((cell, idx) => {
                                             let intensity = '#F8FAFC';
@@ -620,7 +617,6 @@
                                 </div>
                                 
                                 <div className="flex flex-col gap-8">
-                                    {/* DYNAMIC COLOR PICKER */}
                                     <div className="flex flex-col gap-3">
                                         <p className="text-[10px] font-black uppercase tracking-[0.2em] ml-4 text-slate-400">Signature Color</p>
                                         <div className="flex items-center">
@@ -642,7 +638,6 @@
                                         </div>
                                     </div>
 
-                                    {/* DYNAMIC ICON PICKER */}
                                     <div className="flex flex-col gap-3">
                                         <p className="text-[10px] font-black uppercase tracking-[0.2em] ml-4 text-slate-400">Ritual Symbol</p>
                                         <div className="flex items-center">
@@ -671,7 +666,7 @@
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-4 mt-4">
+                                <div className="grid grid-cols-2 gap-5 mt-4">
                                     <div className="space-y-2">
                                         <p className="text-[9px] font-black uppercase text-slate-400 ml-4 tracking-widest">Type</p>
                                         <select 
@@ -699,7 +694,6 @@
                                     </div>
                                 </div>
 
-                                {/* FREQUENCY LOGIC: SPECIFIC WEEKDAYS */}
                                 {form.frequency === 'Specific Days of Week' && (
                                     <div className="flex justify-between gap-2 animate-fade p-2 bg-white rounded-[32px] shadow-sm">
                                         {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(day => {
@@ -720,7 +714,6 @@
                                     </div>
                                 )}
 
-                                {/* FREQUENCY LOGIC: SPECIFIC MONTH DATES (1-31) */}
                                 {form.frequency === 'Specific Days of Month' && (
                                     <div className="month-picker-grid bg-white p-7 rounded-[40px] animate-fade shadow-sm border border-black/5">
                                         {[...Array(31)].map((_, i) => {
@@ -742,7 +735,6 @@
                                     </div>
                                 )}
 
-                                {/* FREQUENCY LOGIC: CUSTOM REPETITION */}
                                 {form.frequency === 'Customise Days' && (
                                     <div className="flex items-center gap-6 bg-white p-8 rounded-[40px] animate-fade shadow-sm border border-black/5">
                                         <div className="flex flex-col">
@@ -811,7 +803,7 @@
                                             
                                             let bgStatus = 'bg-slate-50 text-slate-300';
                                             if (dayPct > 0) bgStatus = 'bg-amber-100 text-amber-700 font-black';
-                                            if (dayPct === 100) bgStatus = 'bg-black text-amber-400 shadow-xl scale-105 z-10 font-black';
+                                            if (dayPct === 100) bgStatus = 'bg-black text-amber-400 shadow-xl scale-110 z-10 font-black';
                                             
                                             return <div key={dayNum} className={`calendar-day transition-all duration-500 ${bgStatus}`}>{dayNum}</div>
                                         })}
