@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Routiq Master Pro Build</title>
+    <title>Routiq Master Build</title>
     
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
@@ -12,43 +12,58 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
     <style>
+        /* 1. FONT DEFINITIONS 
+        */
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
         
+        /* 2. GLOBAL THEME VARIABLES 
+        */
         :root {
             --logo-gold: #D4AF37;   
             --logo-black: #1A1A1A;  
             --logo-peach: #F5E6D3;  
+            --card-shadow: 0 10px 40px rgba(0,0,0,0.04);
         }
 
+        /* 3. BASE BODY RESET 
+        */
         body, html, #root { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
             background-color: var(--logo-peach) !important; 
             margin: 0; 
+            padding: 0;
             height: 100vh; 
             width: 100vw; 
             overflow: hidden;
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* structural components */
+        /* 4. STRUCTURAL SHELL 
+        */
         .app-shell { 
             height: 100vh; 
             display: flex; 
             flex-direction: column; 
             position: relative; 
+            max-width: 500px;
+            margin: 0 auto;
         }
         
         .content-area { 
             flex: 1; 
             display: flex; 
             flex-direction: column; 
-            padding: 28px 28px 140px 28px; 
+            padding: 28px 28px 150px 28px; 
             overflow-y: auto; 
             scrollbar-width: none;
+            -ms-overflow-style: none;
         }
-        .content-area::-webkit-scrollbar { display: none; }
+        .content-area::-webkit-scrollbar { 
+            display: none; 
+        }
 
-        /* Splash Sequence Logic */
+        /* 5. SPLASH & OVERLAY ANIMATIONS 
+        */
         .overlay-screen { 
             position: fixed; 
             inset: 0; 
@@ -72,7 +87,7 @@
             background: #FFFFFF; 
             border-radius: 32px; 
             padding: 24px; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.04); 
+            box-shadow: var(--card-shadow); 
             border: none; 
         }
         
@@ -84,7 +99,8 @@
             letter-spacing: 0.12em; 
         }
 
-        /* empty state containers */
+        /* 6. CENTERING LOGIC 
+        */
         .centered-container { 
             flex: 1; 
             display: flex; 
@@ -94,7 +110,8 @@
             text-align: center; 
         }
         
-        /* calendar framework components */
+        /* 7. CALENDAR SYSTEM 
+        */
         .calendar-grid { 
             display: grid; 
             grid-template-columns: repeat(7, 1fr); 
@@ -108,36 +125,41 @@
             justify-content: center; 
             font-size: 11px; 
             font-weight: 800; 
+            transition: all 0.3s ease;
         }
 
-        /* advanced scrolling systems */
+        /* 8. HORIZONTAL SCROLL ENGINES 
+        */
         .scroll-wrapper { 
             overflow-x: auto; 
             width: 100%; 
             -webkit-overflow-scrolling: touch; 
-            padding: 8px 0; 
+            padding: 10px 0; 
         }
         .scroll-inner { 
             display: flex; 
             gap: 14px; 
             width: max-content; 
-            padding-right: 30px; 
+            padding-right: 40px; 
         }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        /* floating action button engine */
-        .fixed-bottom-btn { 
-            position: absolute; 
-            bottom: 110px; 
-            left: 28px; 
-            right: 28px; 
-            z-index: 40; 
+        .no-scrollbar::-webkit-scrollbar { 
+            display: none; 
+        }
+        .no-scrollbar { 
+            -ms-overflow-style: none; 
+            scrollbar-width: none; 
         }
 
-        /* data visualization components */
-        .meter-svg { transform: rotate(-90deg); }
-        .meter-bg { fill: none; stroke: #F8FAFC; stroke-width: 10; }
+        /* 9. GROWTH DATA VISUALIZATION 
+        */
+        .meter-svg { 
+            transform: rotate(-90deg); 
+        }
+        .meter-bg { 
+            fill: none; 
+            stroke: #F8FAFC; 
+            stroke-width: 10; 
+        }
         .meter-progress { 
             fill: none; 
             stroke: var(--logo-gold); 
@@ -146,7 +168,8 @@
             transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1); 
         }
 
-        /* heatmap matrix engine */
+        /* 10. HEATMAP ENGINE (GITHUB STYLE) 
+        */
         .heatmap-grid { 
             display: grid; 
             grid-template-columns: repeat(10, 1fr); 
@@ -155,34 +178,60 @@
         .heatmap-cell { 
             aspect-ratio: 1; 
             border-radius: 7px; 
-            transition: transform 0.3s ease; 
+            transition: transform 0.3s ease, background 0.5s ease; 
             border: 1.5px solid rgba(0,0,0,0.02); 
         }
-        .heatmap-cell:hover { transform: scale(1.1); z-index: 10; }
+        .heatmap-cell:hover { 
+            transform: scale(1.15); 
+            z-index: 10; 
+        }
         
         .filter-chip { 
-            padding: 10px 18px; 
+            padding: 10px 20px; 
             border-radius: 24px; 
             font-size: 10px; 
             font-weight: 800; 
             text-transform: uppercase; 
             cursor: pointer; 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* month picker logic grid */
+        /* 11. FLOATING NAVIGATION CONTROLS 
+        */
+        .fixed-bottom-btn { 
+            position: absolute; 
+            bottom: 110px; 
+            left: 28px; 
+            right: 28px; 
+            z-index: 40; 
+        }
+        
+        /* 12. MONTH PICKER REFINEMENT 
+        */
         .month-picker-grid { 
             display: grid; 
             grid-template-columns: repeat(7, 1fr); 
-            gap: 7px; 
+            gap: 6px; 
+            width: 100%;
+            max-width: 330px;
+            margin: 0 auto;
         }
 
+        /* 13. KEYFRAME DEFINITIONS 
+        */
         @keyframes fadeInScale { 
-            from { opacity: 0; transform: translateY(15px) scale(0.98); } 
-            to { opacity: 1; transform: translateY(0) scale(1); } 
+            from { 
+                opacity: 0; 
+                transform: translateY(20px) scale(0.95); 
+            } 
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
+            } 
         }
+        
         .animate-fade { 
-            animation: fadeInScale 0.5s ease-out forwards; 
+            animation: fadeInScale 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards; 
         }
     </style>
 </head>
@@ -190,10 +239,13 @@
     <div id="root"></div>
 
     <script type="text/babel">
+        // ---------------------------------------------------------
+        // REACT APPLICATION MODULE
+        // ---------------------------------------------------------
         const { useState, useEffect, useMemo, Fragment } = React;
 
         const App = () => {
-            // --- 1. CORE STATE ARCHITECTURE ---
+            // --- A. STATE ARCHITECTURE ---
             const [overlayStage, setOverlayStage] = useState('logo');
             const [currentPage, setCurrentPage] = useState('home');
             const [showMenu, setShowMenu] = useState(false);
@@ -202,22 +254,36 @@
             const [growthRange, setGrowthRange] = useState(30); 
             const [pickers, setPickers] = useState({ color: false, icon: false });
 
-            // Persistence Management
+            // B. DATA PERSISTENCE LAYER
             const [habits, setHabits] = useState(() => {
                 try {
-                    const savedHabits = localStorage.getItem('habits');
-                    return savedHabits ? JSON.parse(savedHabits) : [];
-                } catch (e) { return []; }
+                    const saved = localStorage.getItem('habits');
+                    if (saved) {
+                        return JSON.parse(saved);
+                    } else {
+                        return [];
+                    }
+                } catch (err) {
+                    console.error("Habit loading failed", err);
+                    return [];
+                }
             });
             
             const [logs, setLogs] = useState(() => {
                 try {
                     const savedLogs = localStorage.getItem('habitLogs');
-                    return savedLogs ? JSON.parse(savedLogs) : {};
-                } catch (e) { return {}; }
+                    if (savedLogs) {
+                        return JSON.parse(savedLogs);
+                    } else {
+                        return {};
+                    }
+                } catch (err) {
+                    console.error("Logs loading failed", err);
+                    return {};
+                }
             });
             
-            // Default Data Structure
+            // C. FORM DEFAULTS
             const defaultForm = {
                 name: '', 
                 description: '', 
@@ -233,84 +299,140 @@
 
             const [form, setForm] = useState(defaultForm);
 
-            // UI Asset Libraries
-            const quotes = [
+            // D. ASSET DEFINITIONS
+            const quotesArray = [
                 "Consistency is your signature.", 
                 "Discipline equals freedom.", 
                 "Quality is a habit.",
                 "Small steps lead to big results.",
-                "The secret is in your routine."
+                "The secret is in your routine.",
+                "Forge your character daily."
             ];
-            const [activeQuote] = useState(() => quotes[Math.floor(Math.random() * quotes.length)]);
+            
+            const [activeQuote] = useState(() => {
+                const randomIndex = Math.floor(Math.random() * quotesArray.length);
+                return quotesArray[randomIndex];
+            });
 
-            const colorPalette = ['#1A1A1A', '#D4AF37', '#6366F1', '#EC4899', '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6', '#FF6B6B', '#4ECDC4', '#A8E6CF', '#FFD3B6', '#FFAAA5', '#88D8B0'];
-            const iconLibrary = ['✨', '🏃‍♂️', '💧', '📚', '🧘‍♂️', '🍎', '💪', '🧠', '☀️', '💼', '🎨', '🔥', '🧗', '🔋', '🧘', '🛌', '🚶', '🚴', '🥗', '🥛', '🎧', '⚡'];
+            const colorPalette = [
+                '#1A1A1A', '#D4AF37', '#6366F1', '#EC4899', 
+                '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6', 
+                '#FF6B6B', '#4ECDC4', '#A8E6CF', '#FFD3B6', 
+                '#FFAAA5', '#88D8B0'
+            ];
+            
+            const iconLibrary = [
+                '✨', '🏃‍♂️', '💧', '📚', '🧘‍♂️', '🍎', '💪', '🧠', 
+                '☀️', '💼', '🎨', '🔥', '🧗', '🔋', '🧘', '🛌', 
+                '🚶', '🚴', '🥗', '🥛', '🎧', '⚡', '⏳', '🏆'
+            ];
 
-            // --- 2. LIFECYCLE & SYNC ---
+            // --- E. LIFECYCLE HOOKS ---
             useEffect(() => {
-                const timer1 = setTimeout(() => setOverlayStage('quote'), 1400);
-                const timer2 = setTimeout(() => setOverlayStage('none'), 3800);
-                return () => { clearTimeout(timer1); clearTimeout(timer2); };
+                // Initialize Splash Sequence
+                const timerLogo = setTimeout(() => {
+                    setOverlayStage('quote');
+                }, 1400);
+
+                const timerMain = setTimeout(() => {
+                    setOverlayStage('none');
+                }, 3800);
+
+                return () => {
+                    clearTimeout(timerLogo);
+                    clearTimeout(timerMain);
+                };
             }, []);
 
             useEffect(() => {
-                localStorage.setItem('habits', JSON.stringify(habits));
-                localStorage.setItem('habitLogs', JSON.stringify(logs));
+                // Synchronize Storage
+                const habitData = JSON.stringify(habits);
+                localStorage.setItem('habits', habitData);
+                
+                const logData = JSON.stringify(logs);
+                localStorage.setItem('habitLogs', logData);
             }, [habits, logs]);
 
             const todayStr = new Date().toISOString().split('T')[0];
 
-            // --- 3. ANALYTICS CALCULATION (Explicit Decimal Handling & Flipped Heatmap) ---
-            const stats = useMemo(() => {
-                const totalRituals = habits.length;
-                const completedToday = (logs[todayStr] || []).length;
+            // --- F. STATISTICAL COMPONENT LOGIC ---
+            const statsEngine = useMemo(() => {
+                const totalActiveRituals = habits.length;
+                const completedTodayCount = (logs[todayStr] || []).length;
                 
-                // Win Rate with 2-Decimal Precision
-                const winRateString = totalRituals === 0 ? "0.00" : ((completedToday / totalRituals) * 100).toFixed(2);
+                // 1. Precise Daily Score (2 Decimals)
+                let currentWinRate;
+                if (totalActiveRituals === 0) {
+                    currentWinRate = "0.00";
+                } else {
+                    currentWinRate = ((completedTodayCount / totalActiveRituals) * 100).toFixed(2);
+                }
                 
-                // Consistency Analysis
-                let rangeChecksCount = 0;
-                let rangePossibilities = totalRituals * growthRange;
-                const heatmapDataArray = [];
+                // 2. Historical Aggregation
+                let totalSuccessfulChecks = 0;
+                let totalAvailableSlots = totalActiveRituals * growthRange;
+                const finalHeatmapArray = [];
 
-                // REVERSED LOOP ENGINE: Oldest (Start of range) to Newest (Today)
-                // Ensures correct top-left to bottom-right visualization
-                for (let i = growthRange; i >= 0; i--) {
-                    const targetDate = new Date();
-                    targetDate.setDate(targetDate.getDate() - i);
-                    const dsKey = targetDate.toISOString().split('T')[0];
+                // CORRECTED LOOP ENGINE:
+                // From oldest (growthRange days ago) to Newest (Today)
+                // Ensures top-left to bottom-right visualization
+                for (let dayIndex = 0; dayIndex <= growthRange; dayIndex++) {
+                    const tempDate = new Date();
+                    const offset = growthRange - dayIndex;
+                    tempDate.setDate(tempDate.getDate() - offset);
                     
-                    const dailyChecks = (logs[dsKey] || []).length;
-                    rangeChecksCount += dailyChecks;
+                    const dateString = tempDate.toISOString().split('T')[0];
+                    const countForDay = (logs[dateString] || []).length;
                     
-                    heatmapDataArray.push({ 
-                        date: dsKey, 
-                        pct: totalRituals === 0 ? 0 : dailyChecks / totalRituals 
+                    totalSuccessfulChecks += countForDay;
+                    
+                    let dayPercentage;
+                    if (totalActiveRituals === 0) {
+                        dayPercentage = 0;
+                    } else {
+                        dayPercentage = countForDay / totalActiveRituals;
+                    }
+
+                    finalHeatmapArray.push({ 
+                        date: dateString, 
+                        pct: dayPercentage 
                     });
                 }
 
-                const masteryLevelString = rangePossibilities === 0 ? "0.00" : ((rangeChecksCount / rangePossibilities) * 100).toFixed(2);
+                // 3. Aggregate Mastery Score
+                let aggregateMastery;
+                if (totalAvailableSlots === 0) {
+                    aggregateMastery = "0.00";
+                } else {
+                    aggregateMastery = ((totalSuccessfulChecks / totalAvailableSlots) * 100).toFixed(2);
+                }
                 
                 return { 
-                    totalCount: totalRituals, 
-                    doneCount: completedToday, 
-                    winRate: winRateString, 
-                    mastery: masteryLevelString, 
-                    heatmap: heatmapDataArray 
+                    countTotal: totalActiveRituals, 
+                    countDone: completedTodayCount, 
+                    winRate: currentWinRate, 
+                    mastery: aggregateMastery, 
+                    heatmap: finalHeatmapArray 
                 };
             }, [habits, logs, todayStr, growthRange]);
 
-            // --- 4. SYSTEM HANDLERS ---
-            const processHabitSave = () => {
-                if(!form.name.trim()) return;
+            // --- G. CORE HANDLERS ---
+            const onSaveRitual = () => {
+                if (!form.name.trim()) return;
                 
                 if (editingId) {
-                    const updatedHabits = habits.map(h => h.id === editingId ? { ...form, id: editingId } : h);
-                    setHabits(updatedHabits);
+                    const modifiedList = habits.map((h) => {
+                        if (h.id === editingId) {
+                            return { ...form, id: editingId };
+                        } else {
+                            return h;
+                        }
+                    });
+                    setHabits(modifiedList);
                     setEditingId(null);
                 } else {
-                    const newHabit = { ...form, id: Date.now() };
-                    setHabits([...habits, newHabit]);
+                    const freshHabit = { ...form, id: Date.now() };
+                    setHabits([...habits, freshHabit]);
                 }
                 
                 setForm(defaultForm);
@@ -318,32 +440,35 @@
                 setCurrentPage('habits');
             };
 
-            const toggleHabitAction = (id) => {
-                const currentDayList = logs[todayStr] || [];
-                let newList;
-                if (currentDayList.includes(id)) {
-                    newList = currentDayList.filter(item => item !== id);
+            const onToggleCheck = (habitId) => {
+                const existingLogs = logs[todayStr] || [];
+                let updatedList;
+                
+                if (existingLogs.includes(habitId)) {
+                    updatedList = existingLogs.filter(id => id !== habitId);
                 } else {
-                    newList = [...currentDayList, id];
+                    updatedList = [...existingLogs, habitId];
                 }
-                setLogs({ ...logs, [todayStr]: newList });
+                
+                setLogs({ ...logs, [todayStr]: updatedList });
             };
 
-            const triggerEditMode = (habit) => {
-                setForm(habit);
-                setEditingId(habit.id);
+            const onTriggerEdit = (habitObj) => {
+                setForm(habitObj);
+                setEditingId(habitObj.id);
                 setCurrentPage('add');
             };
 
-            const triggerDelete = (id) => {
-                if(confirm("Confirm: Are you sure you want to delete this ritual? This cannot be undone.")) {
-                    const remainingHabits = habits.filter(h => h.id !== id);
-                    setHabits(remainingHabits);
+            const onTriggerDelete = (id) => {
+                const message = "Confirm Ritual Deletion: This action is permanent and history will be hidden.";
+                if(window.confirm(message)) {
+                    const filtered = habits.filter(h => h.id !== id);
+                    setHabits(filtered);
                 }
             };
 
-            // --- 5. COMPONENT: NAVIGATIONAL HEADER ---
-            const DynamicHeader = () => {
+            // --- H. REUSABLE UI: HEADER ---
+            const AppHeader = () => {
                 return (
                     <header className="flex justify-between items-center mb-10 w-full relative z-[60]">
                         <div>
@@ -365,13 +490,16 @@
                             </button>
                             
                             {showMenu && (
-                                <div className="absolute right-0 top-16 w-56 bg-white border border-black/5 rounded-[32px] shadow-2xl z-[70] p-3 animate-fade overflow-hidden">
+                                <div className="absolute right-0 top-16 w-60 bg-white border border-black/5 rounded-[32px] shadow-2xl z-[70] p-3 animate-fade">
+                                    <div className="p-4 mb-2 border-b border-slate-50">
+                                        <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Settings</p>
+                                    </div>
                                     <button 
                                         onClick={() => { localStorage.clear(); window.location.reload(); }} 
                                         className="w-full px-5 py-4 text-left text-xs font-black text-rose-500 hover:bg-rose-50 flex items-center gap-4 rounded-2xl transition-all"
                                     >
-                                        <i className="fa-solid fa-trash-can opacity-50"></i>
-                                        <span>Factory Reset App</span>
+                                        <i className="fa-solid fa-trash-can opacity-60"></i>
+                                        <span>Reset System Data</span>
                                     </button>
                                 </div>
                             )}
@@ -380,203 +508,298 @@
                 );
             };
 
-            // --- 6. MAIN RENDER LOGIC ---
+            // --- I. NAVIGATION BAR LOGIC ---
+            const AppNavBar = () => {
+                return (
+                    <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl px-2 py-10 flex justify-around items-center z-50 border-t border-black/5 shadow-[0_-10px_40px_rgba(0,0,0,0.03)]">
+                        <button 
+                            onClick={() => { setEditingId(null); setForm(defaultForm); setCurrentPage('home'); }} 
+                            className={`flex flex-col items-center w-14 transition-all duration-300 ${currentPage === 'home' ? 'text-black scale-110' : 'text-slate-300'}`}
+                        >
+                            <i className="fa-solid fa-house-chimney text-xl"></i>
+                            <span className="nav-text">Home</span>
+                        </button>
+                        
+                        <button 
+                            onClick={() => { setEditingId(null); setForm(defaultForm); setCurrentPage('habits'); }} 
+                            className={`flex flex-col items-center w-14 transition-all duration-300 ${currentPage === 'habits' ? 'text-black scale-110' : 'text-slate-300'}`}
+                        >
+                            <i className="fa-solid fa-dna text-xl"></i>
+                            <span className="nav-text">Rituals</span>
+                        </button>
+                        
+                        <button 
+                            onClick={() => { setForm(defaultForm); setEditingId(null); setCurrentPage('add'); }} 
+                            className="w-16 h-16 logo-gradient rounded-3xl flex items-center justify-center text-white -mt-20 border-[6px] border-white shadow-2xl active:scale-90 transition-all duration-500 hover:rotate-90"
+                        >
+                            <i className="fa-solid fa-plus text-2xl text-amber-400"></i>
+                        </button>
+                        
+                        <button 
+                            onClick={() => { setEditingId(null); setForm(defaultForm); setCurrentPage('growth'); }} 
+                            className={`flex flex-col items-center w-14 transition-all duration-300 ${currentPage === 'growth' ? 'text-black scale-110' : 'text-slate-300'}`}
+                        >
+                            <i className="fa-solid fa-chart-pie text-xl"></i>
+                            <span className="nav-text">Growth</span>
+                        </button>
+                        
+                        <button 
+                            onClick={() => { setEditingId(null); setForm(defaultForm); setCurrentPage('coach'); }} 
+                            className={`flex flex-col items-center w-14 transition-all duration-300 ${currentPage === 'coach' ? 'text-black scale-110' : 'text-slate-300'}`}
+                        >
+                            <i className="fa-solid fa-wand-magic-sparkles text-xl"></i>
+                            <span className="nav-text">Coach</span>
+                        </button>
+                    </nav>
+                );
+            };
+
+            // --- J. MAIN PAGE ROUTER ---
             return (
-                <div className="app-shell max-w-lg mx-auto">
+                <div className="app-shell">
                     
-                    {/* SYSTEM OVERLAY / SPLASH */}
+                    {/* 1. SPLASH SCREEN COMPONENT */}
                     <div className={`overlay-screen ${overlayStage === 'none' ? 'hide-overlay' : ''}`}>
-                        <div className="flex flex-col items-center animate-fade text-center px-10">
+                        <div className="flex flex-col items-center animate-fade text-center px-12">
                             {overlayStage === 'logo' ? (
                                 <Fragment>
-                                    <div className="w-36 h-36 mb-8 p-5 bg-white rounded-[40px] shadow-2xl flex items-center justify-center border border-black/5">
-                                        <img src="./logo512.png" alt="Routiq Logo" className="w-full h-full object-contain" />
+                                    <div className="w-36 h-36 mb-10 p-6 bg-white rounded-[44px] shadow-2xl flex items-center justify-center border border-black/5">
+                                        <img src="./logo512.png" alt="Icon" className="w-full h-full object-contain" />
                                     </div>
-                                    <h1 className="text-4xl font-black text-black italic tracking-tighter">Routiq</h1>
-                                    <div className="mt-4 w-12 h-1 bg-amber-400 rounded-full"></div>
+                                    <h1 className="text-5xl font-black text-black italic tracking-tighter">Routiq</h1>
+                                    <div className="mt-6 w-16 h-1.5 bg-amber-400 rounded-full"></div>
                                 </Fragment>
                             ) : (
                                 <Fragment>
-                                    <i className="fa-solid fa-quote-left text-amber-200 text-4xl mb-6"></i>
-                                    <p className="text-2xl font-black italic text-black leading-tight">"{activeQuote}"</p>
+                                    <i className="fa-solid fa-quote-left text-amber-200 text-5xl mb-8"></i>
+                                    <p className="text-3xl font-black italic text-black leading-tight">"{activeQuote}"</p>
+                                    <div className="mt-10 flex gap-2">
+                                        <div className="w-2 h-2 rounded-full bg-slate-100"></div>
+                                        <div className="w-2 h-2 rounded-full bg-slate-200"></div>
+                                        <div className="w-2 h-2 rounded-full bg-slate-100"></div>
+                                    </div>
                                 </Fragment>
                             )}
                         </div>
                     </div>
 
                     <div className="content-area">
-                        {(currentPage === 'home' || currentPage === 'habits' || currentPage === 'growth') && <DynamicHeader />}
+                        {(currentPage === 'home' || currentPage === 'habits' || currentPage === 'growth') && <AppHeader />}
 
-                        {/* --- DASHBOARD: HOME --- */}
+                        {/* --- 2. PAGE: HOME (DAILY TRACKER) --- */}
                         {currentPage === 'home' && (
-                            <div className="flex-1 flex flex-col gap-8 animate-fade">
+                            <div className="flex-1 flex flex-col gap-10 animate-fade">
                                 {habits.length > 0 && (
                                     <div className="grid grid-cols-2 gap-5">
-                                        <div className="card-standard text-center py-8 border-b-4 border-black/5">
-                                            <p className="text-[10px] font-extrabold uppercase text-slate-400 tracking-widest mb-2">Rituals Done</p>
-                                            <h2 className="text-3xl font-black text-black">{stats.doneCount}/{stats.totalCount}</h2>
+                                        <div className="card-standard text-center py-10 relative overflow-hidden">
+                                            <div className="absolute top-0 right-0 w-12 h-12 bg-slate-50/50 rounded-bl-full"></div>
+                                            <p className="text-[10px] font-extrabold uppercase text-slate-400 tracking-widest mb-3">Rituals Done</p>
+                                            <h2 className="text-4xl font-black text-black">{statsEngine.countDone}/{statsEngine.countTotal}</h2>
                                         </div>
-                                        <div className="card-standard text-center py-8 border-b-4 border-black/5">
-                                            <p className="text-[10px] font-extrabold uppercase text-slate-400 tracking-widest mb-2">Daily Score</p>
-                                            <h2 className="text-3xl font-black text-black">{stats.winRate}%</h2>
+                                        <div className="card-standard text-center py-10 relative overflow-hidden">
+                                            <div className="absolute top-0 left-0 w-12 h-12 bg-slate-50/50 rounded-br-full"></div>
+                                            <p className="text-[10px] font-extrabold uppercase text-slate-400 tracking-widest mb-3">Daily Score</p>
+                                            <h2 className="text-2xl font-black text-black leading-[2.5rem]">{statsEngine.winRate}%</h2>
                                         </div>
                                     </div>
                                 )}
                                 
                                 {habits.length > 0 ? (
-                                    <div className="space-y-5">
-                                        <p className="text-[11px] font-black uppercase text-slate-400 tracking-[0.2em] ml-2">Due Today</p>
-                                        {habits.map(h => {
-                                            const ritualDone = (logs[todayStr] || []).includes(h.id);
+                                    <div className="space-y-6">
+                                        <div className="flex justify-between items-center px-2">
+                                            <p className="text-[12px] font-black uppercase text-slate-400 tracking-[0.25em]">Due Today</p>
+                                            <span className="text-[10px] font-bold text-slate-300 italic">{todayStr}</span>
+                                        </div>
+                                        {habits.map(ritual => {
+                                            const isChecked = (logs[todayStr] || []).includes(ritual.id);
                                             return (
-                                                <div key={h.id} className="card-standard flex justify-between items-center transition-all duration-300 active:scale-[0.97]" style={{ borderLeft: `8px solid ${h.color}` }}>
-                                                    <div className="flex items-center gap-5">
-                                                        <div className="text-3xl grayscale-[0.5]">{h.icon}</div>
+                                                <div 
+                                                    key={ritual.id} 
+                                                    className="card-standard flex justify-between items-center transition-all duration-500 hover:shadow-2xl active:scale-[0.96]" 
+                                                    style={{ borderLeft: `10px solid ${ritual.color}` }}
+                                                >
+                                                    <div className="flex items-center gap-6">
+                                                        <div className="text-4xl filter drop-shadow-sm">{ritual.icon}</div>
                                                         <div className="flex flex-col">
-                                                            <span className={`font-bold text-lg leading-tight ${ritualDone ? 'text-slate-300 line-through' : 'text-black'}`}>{h.name}</span>
-                                                            <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest mt-1">{h.category}</span>
+                                                            <span className={`font-bold text-xl leading-tight transition-all duration-500 ${isChecked ? 'text-slate-300 line-through italic' : 'text-black'}`}>
+                                                                {ritual.name}
+                                                            </span>
+                                                            <span className="text-[10px] font-black uppercase text-amber-500 tracking-[0.15em] mt-2">
+                                                                {ritual.category}
+                                                            </span>
                                                         </div>
                                                     </div>
                                                     <button 
-                                                        onClick={() => toggleHabitAction(h.id)} 
-                                                        className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 ${ritualDone ? 'bg-black text-amber-400 shadow-2xl rotate-[360deg]' : 'bg-slate-50 border border-slate-100 text-slate-200'}`}
+                                                        onClick={() => onToggleCheck(ritual.id)} 
+                                                        className={`w-16 h-16 rounded-[22px] flex items-center justify-center transition-all duration-700 ${isChecked ? 'bg-black text-amber-400 shadow-2xl rotate-[360deg]' : 'bg-slate-50 border border-slate-100 text-slate-200'}`}
                                                     >
-                                                        <i className={`fa-solid ${ritualDone ? 'fa-check-double' : 'fa-check'} text-xl`}></i>
+                                                        <i className={`fa-solid ${isChecked ? 'fa-check-double' : 'fa-check'} text-2xl`}></i>
                                                     </button>
                                                 </div>
                                             );
                                         })}
                                     </div>
                                 ) : (
-                                    <div className="centered-container opacity-20 py-20">
-                                        <i className="fa-solid fa-feather-pointed text-8xl mb-6 text-black"></i>
-                                        <p className="font-black uppercase tracking-[0.5em] text-[14px] text-black">Forge Rituals</p>
+                                    <div className="centered-container opacity-20 py-28">
+                                        <i className="fa-solid fa-feather-pointed text-9xl mb-8 text-black"></i>
+                                        <p className="font-black uppercase text-center leading-relaxed tracking-[0.6em] text-[16px] text-black">
+                                            Empty Space<br/>Forge Rituals
+                                        </p>
                                     </div>
                                 )}
                             </div>
                         )}
 
-                        {/* --- ANALYTICS: GROWTH --- */}
+                        {/* --- 3. PAGE: GROWTH (CONSISTENCY ANALYTICS) --- */}
                         {currentPage === 'growth' && (
-                            <div className="animate-fade space-y-10 pb-10">
+                            <div className="animate-fade space-y-12 pb-12">
                                 <div>
-                                    <h2 className="text-2xl font-black italic text-black leading-none">Mastery Hub</h2>
-                                    <p className="text-slate-400 text-xs font-bold mt-2 uppercase tracking-widest">Time-Based Progress</p>
+                                    <h2 className="text-3xl font-black italic text-black leading-none">Mastery Hub</h2>
+                                    <p className="text-slate-400 text-xs font-bold mt-3 uppercase tracking-[0.25em]">Track Your Transformation</p>
                                 </div>
                                 
-                                <div className="scroll-wrapper no-scrollbar">
-                                    <div className="scroll-inner gap-3">
+                                <div className="scroll-wrapper no-scrollbar px-1">
+                                    <div className="scroll-inner gap-4">
                                         {[
-                                            {label:'7 Days', days:7}, 
-                                            {label:'1 Month', days:30}, 
-                                            {label:'3 Months', days:90}, 
-                                            {label:'6 Months', days:180}, 
-                                            {label:'9 Months', days:270}, 
-                                            {label:'12 Months', days:365}
-                                        ].map(range => (
+                                            {name:'7 Days', val:7}, 
+                                            {name:'1 Month', val:30}, 
+                                            {name:'3 Months', val:90}, 
+                                            {name:'6 Months', val:180}, 
+                                            {name:'9 Months', val:270}, 
+                                            {name:'12 Months', val:365}
+                                        ].map(option => (
                                             <button 
-                                                key={range.label} 
-                                                onClick={() => setGrowthRange(range.days)} 
-                                                className={`filter-chip ${growthRange === range.days ? 'bg-black text-white shadow-xl scale-105' : 'bg-white text-slate-400 border border-black/5 hover:border-black/20'}`}
+                                                key={option.name} 
+                                                onClick={() => setGrowthRange(option.val)} 
+                                                className={`filter-chip ${growthRange === option.val ? 'bg-black text-white shadow-2xl scale-110' : 'bg-white text-slate-400 border border-black/5 hover:border-black/20'}`}
                                             >
-                                                {range.label}
+                                                {option.name}
                                             </button>
                                         ))}
                                     </div>
                                 </div>
 
-                                {/* MASTER CIRCULAR GAUGE */}
-                                <div className="card-standard flex flex-col items-center py-12 relative overflow-hidden">
-                                    <div className="absolute top-0 left-0 w-full h-1 bg-slate-50"></div>
-                                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-300 mb-10">Strength Index</p>
-                                    <div className="relative w-48 h-48 flex items-center justify-center">
+                                {/* GROWTH CIRCULAR METER */}
+                                <div className="card-standard flex flex-col items-center py-16 relative overflow-hidden">
+                                    <div className="absolute top-0 left-0 w-full h-1.5 bg-slate-50"></div>
+                                    <p className="text-[11px] font-black uppercase tracking-[0.4em] text-slate-300 mb-12">Discipline Index</p>
+                                    <div className="relative w-52 h-52 flex items-center justify-center">
                                         <svg className="meter-svg w-full h-full" viewBox="0 0 100 100">
-                                            <circle className="meter-bg" cx="50" cy="50" r="42" />
+                                            <circle className="meter-bg" cx="50" cy="50" r="43" />
                                             <circle 
                                                 className="meter-progress" 
-                                                cx="50" cy="50" r="42" 
-                                                style={{ strokeDasharray: '263.9', strokeDashoffset: 263.9 - (263.9 * parseFloat(stats.mastery)) / 100 }} 
+                                                cx="50" cy="50" r="43" 
+                                                style={{ 
+                                                    strokeDasharray: '270.2', 
+                                                    strokeDashoffset: 270.2 - (270.2 * parseFloat(statsEngine.mastery)) / 100 
+                                                }} 
                                             />
                                         </svg>
                                         <div className="absolute flex flex-col items-center animate-fade">
-                                            <span className="text-4xl font-black text-black leading-none">{stats.mastery}%</span>
-                                            <span className="text-[9px] font-black uppercase text-amber-500 mt-2 tracking-widest">Mastery</span>
+                                            <span className="text-5xl font-black text-black leading-none">{statsEngine.mastery}%</span>
+                                            <span className="text-[10px] font-black uppercase text-amber-500 mt-3 tracking-[0.2em]">Mastery</span>
                                         </div>
+                                    </div>
+                                    <div className="mt-12 text-center px-4">
+                                        <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">
+                                            Calculated over the last <span className="text-black">{growthRange} days</span>
+                                        </p>
                                     </div>
                                 </div>
 
-                                {/* MATRIX GRID (Oldest -> Newest) */}
+                                {/* MATRIX HEATMAP (FLIPPED: START -> PRESENT) */}
                                 <div className="card-standard">
-                                    <div className="flex justify-between items-center mb-8">
-                                        <p className="text-xs font-black uppercase tracking-widest text-slate-400">Consistency Matrix</p>
-                                        <span className="bg-slate-50 px-3 py-1 rounded-full text-[9px] font-black text-slate-400 uppercase tracking-tighter">{growthRange} Days Tracking</span>
+                                    <div className="flex justify-between items-center mb-10">
+                                        <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Consistency Matrix</p>
+                                        <span className="bg-slate-50 px-4 py-1.5 rounded-full text-[10px] font-black text-slate-400 uppercase tracking-tighter">
+                                            {growthRange} Units
+                                        </span>
                                     </div>
                                     <div className={`heatmap-grid ${growthRange > 100 ? 'grid-cols-10' : 'grid-cols-7'}`}>
-                                        {stats.heatmap.map((cell, idx) => {
-                                            let intensity = '#F8FAFC';
-                                            if (cell.pct > 0) intensity = '#FFF4CC';
-                                            if (cell.pct > 0.5) intensity = '#D4AF37';
-                                            if (cell.pct === 1) intensity = '#1A1A1A';
+                                        {statsEngine.heatmap.map((cellObj, idx) => {
+                                            let cellBg = '#F8FAFC';
+                                            if (cellObj.pct > 0) cellBg = '#FFF4CC';
+                                            if (cellObj.pct > 0.5) cellBg = '#D4AF37';
+                                            if (cellObj.pct === 1) cellBg = '#1A1A1A';
                                             return (
                                                 <div 
                                                     key={idx} 
                                                     className="heatmap-cell shadow-sm" 
-                                                    style={{ backgroundColor: intensity }} 
+                                                    style={{ backgroundColor: cellBg }} 
+                                                    title={cellObj.date}
                                                 />
                                             );
                                         })}
                                     </div>
-                                    <div className="flex justify-between mt-6 px-1">
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-2 h-2 rounded-full bg-slate-100"></div>
-                                            <span className="text-[9px] font-black text-slate-300 uppercase tracking-tighter">Start</span>
+                                    <div className="flex justify-between mt-8 px-2">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-2.5 h-2.5 rounded-full bg-slate-100 shadow-inner"></div>
+                                            <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Past</span>
                                         </div>
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-[9px] font-black text-slate-300 uppercase tracking-tighter">Present</span>
-                                            <div className="w-2 h-2 rounded-full bg-black"></div>
+                                        <div className="flex items-center gap-3">
+                                            <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Today</span>
+                                            <div className="w-2.5 h-2.5 rounded-full bg-black shadow-lg"></div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         )}
 
-                        {/* --- LIBRARY: RITUALS --- */}
+                        {/* --- 4. PAGE: RITUAL LIBRARY (MANAGEMENT) --- */}
                         {currentPage === 'habits' && (
                             <div className="flex-1 flex flex-col animate-fade">
-                                <div className="mb-10">
-                                    <h2 className="text-2xl font-black italic text-black">Active Rituals</h2>
-                                    <p className="text-slate-400 text-xs font-bold mt-2 uppercase tracking-widest">Library Management</p>
+                                <div className="mb-12">
+                                    <h2 className="text-3xl font-black italic text-black">Active Rituals</h2>
+                                    <p className="text-slate-400 text-xs font-bold mt-3 uppercase tracking-[0.25em]">Discipline Portfolio</p>
                                 </div>
                                 
                                 {habits.length > 0 ? (
-                                    <div className="space-y-6">
-                                        {habits.map(h => (
-                                            <div key={h.id} className="card-standard relative overflow-hidden" style={{ borderTop: `6px solid ${h.color}` }}>
-                                                <div className="flex justify-between items-start mb-4">
-                                                    <div className="flex items-center gap-4">
-                                                        <div className="w-14 h-14 rounded-2xl bg-slate-50 flex items-center justify-center text-3xl shadow-inner border border-black/5">{h.icon}</div>
+                                    <div className="space-y-8">
+                                        {habits.map(habit => (
+                                            <div 
+                                                key={habit.id} 
+                                                className="card-standard relative overflow-hidden" 
+                                                style={{ borderTop: `8px solid ${habit.color}` }}
+                                            >
+                                                <div className="flex justify-between items-start mb-6">
+                                                    <div className="flex items-center gap-5">
+                                                        <div className="w-16 h-16 rounded-[24px] bg-slate-50 flex items-center justify-center text-4xl shadow-inner border border-black/5">
+                                                            {habit.icon}
+                                                        </div>
                                                         <div className="flex flex-col">
-                                                            <h3 className="font-black text-xl text-black leading-tight">{h.name}</h3>
-                                                            <p className="text-[10px] font-black uppercase text-amber-500 tracking-[0.15em] mt-1">{h.category}</p>
+                                                            <h3 className="font-black text-2xl text-black leading-none">{habit.name}</h3>
+                                                            <p className="text-[11px] font-black uppercase text-amber-500 tracking-[0.2em] mt-3">{habit.category}</p>
                                                         </div>
                                                     </div>
-                                                    <div className="flex gap-2">
-                                                        <button onClick={() => triggerEditMode(h)} className="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 hover:text-black hover:bg-slate-100 transition-all flex items-center justify-center"><i className="fa-solid fa-pen-nib"></i></button>
-                                                        <button onClick={() => triggerDelete(h.id)} className="w-10 h-10 rounded-xl bg-rose-50 text-rose-400 hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center"><i className="fa-solid fa-trash-can"></i></button>
+                                                    <div className="flex gap-3">
+                                                        <button 
+                                                            onClick={() => onTriggerEdit(habit)} 
+                                                            className="w-12 h-12 rounded-2xl bg-slate-50 text-slate-400 hover:text-black hover:bg-slate-100 transition-all flex items-center justify-center shadow-sm"
+                                                        >
+                                                            <i className="fa-solid fa-pen-nib"></i>
+                                                        </button>
+                                                        <button 
+                                                            onClick={() => onTriggerDelete(habit.id)} 
+                                                            className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-400 hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center shadow-sm"
+                                                        >
+                                                            <i className="fa-solid fa-trash-can"></i>
+                                                        </button>
                                                     </div>
                                                 </div>
-                                                <div className="bg-slate-50/50 p-4 rounded-2xl">
-                                                    <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest flex items-center gap-2">
-                                                        <i className="fa-solid fa-repeat text-slate-300"></i>
-                                                        {
-                                                            h.frequency === 'Specific Days of Week' ? h.weekDays.join(', ') : 
-                                                            h.frequency === 'Specific Days of Month' ? `Scheduled: ${h.monthDays.join(', ')}` : 
-                                                            h.frequency === 'Customise Days' ? `${h.customCount} times per ${h.customPeriod}` : h.frequency
-                                                        }
-                                                    </p>
-                                                    {h.description && (
-                                                        <p className="text-slate-500 text-sm mt-3 font-semibold leading-relaxed italic border-l-2 border-slate-200 pl-3">
-                                                            "{h.description}"
+                                                <div className="bg-slate-50/60 p-6 rounded-[28px] border border-black/5">
+                                                    <div className="flex items-center gap-3 mb-2">
+                                                        <i className="fa-solid fa-calendar-check text-slate-300 text-xs"></i>
+                                                        <p className="text-[11px] font-black uppercase text-slate-500 tracking-widest">
+                                                            {
+                                                                habit.frequency === 'Specific Days of Week' ? habit.weekDays.join(', ') : 
+                                                                habit.frequency === 'Specific Days of Month' ? `Scheduled on: ${habit.monthDays.join(', ')}` : 
+                                                                habit.frequency === 'Customise Days' ? `${habit.customCount} times per ${habit.customPeriod}` : habit.frequency
+                                                            }
+                                                        </p>
+                                                    </div>
+                                                    {habit.description && (
+                                                        <p className="text-slate-500 text-sm mt-4 font-bold leading-relaxed italic border-l-4 border-slate-200 pl-4 py-1">
+                                                            "{habit.description}"
                                                         </p>
                                                     )}
                                                 </div>
@@ -584,54 +807,66 @@
                                         ))}
                                     </div>
                                 ) : (
-                                    <div className="centered-container opacity-20 py-20">
-                                        <i className="fa-solid fa-leaf text-8xl mb-6 text-black"></i>
-                                        <p className="font-black uppercase tracking-[0.5em] text-[14px] text-black">Pure Mind</p>
+                                    <div className="centered-container opacity-20 py-32">
+                                        <i className="fa-solid fa-leaf text-9xl mb-8 text-black"></i>
+                                        <p className="font-black uppercase tracking-[0.6em] text-[16px] text-black">Pure Mind</p>
                                     </div>
                                 )}
                             </div>
                         )}
 
-                        {/* --- ENGINE: ADD / EDIT RITUAL --- */}
+                        {/* --- 5. ENGINE: FORGE RITUAL (ADD / EDIT) --- */}
                         {currentPage === 'add' && (
-                            <div className="animate-fade space-y-8 pb-20">
-                                <div className="mb-4">
-                                    <h2 className="text-2xl font-black italic text-black">{editingId ? 'Modify Ritual' : 'Forge Ritual'}</h2>
-                                    <p className="text-slate-400 text-xs font-bold mt-2 uppercase tracking-widest">Define Your Discipline</p>
+                            <div className="animate-fade space-y-10 pb-24">
+                                <div className="mb-6">
+                                    <h2 className="text-3xl font-black italic text-black leading-tight">
+                                        {editingId ? 'Modify Ritual' : 'Forge Ritual'}
+                                    </h2>
+                                    <p className="text-slate-400 text-xs font-bold mt-3 uppercase tracking-[0.25em]">Define Your New Habit</p>
                                 </div>
                                 
-                                <div className="space-y-4">
-                                    <input 
-                                        className="w-full p-7 rounded-[32px] bg-white font-black text-lg outline-none shadow-sm text-black placeholder:text-slate-200 border border-transparent focus:border-black/5 transition-all" 
-                                        placeholder="Ritual Name" 
-                                        value={form.name} 
-                                        onChange={e => setForm({...form, name: e.target.value})} 
-                                    />
+                                <div className="space-y-6">
+                                    <div className="space-y-2">
+                                        <p className="text-[11px] font-black uppercase tracking-widest ml-4 text-slate-400">Identity</p>
+                                        <input 
+                                            className="w-full p-8 rounded-[36px] bg-white font-black text-xl outline-none shadow-sm text-black placeholder:text-slate-100 border-2 border-transparent focus:border-amber-400/20 transition-all" 
+                                            placeholder="What is this ritual named?" 
+                                            value={form.name} 
+                                            onChange={e => setForm({...form, name: e.target.value})} 
+                                        />
+                                    </div>
                                     
-                                    <textarea 
-                                        className="w-full p-7 rounded-[32px] bg-white font-bold text-sm outline-none shadow-sm text-black placeholder:text-slate-200 border border-transparent focus:border-black/5 transition-all" 
-                                        placeholder="Why is this important? (Optional)" 
-                                        rows="3" 
-                                        value={form.description} 
-                                        onChange={e => setForm({...form, description: e.target.value})} 
-                                    />
+                                    <div className="space-y-2">
+                                        <p className="text-[11px] font-black uppercase tracking-widest ml-4 text-slate-400">Purpose</p>
+                                        <textarea 
+                                            className="w-full p-8 rounded-[36px] bg-white font-bold text-sm outline-none shadow-sm text-black placeholder:text-slate-100 border-2 border-transparent focus:border-amber-400/20 transition-all" 
+                                            placeholder="Add an optional note about why this matters." 
+                                            rows="4" 
+                                            value={form.description} 
+                                            onChange={e => setForm({...form, description: e.target.value})} 
+                                        />
+                                    </div>
                                 </div>
                                 
-                                <div className="flex flex-col gap-8">
-                                    {/* DYNAMIC COLOR PICKER */}
-                                    <div className="flex flex-col gap-3">
-                                        <p className="text-[10px] font-black uppercase tracking-[0.2em] ml-4 text-slate-400">Signature Color</p>
+                                <div className="flex flex-col gap-10">
+                                    {/* COLOR PICKER ENGINE */}
+                                    <div className="flex flex-col gap-4">
+                                        <p className="text-[11px] font-black uppercase tracking-[0.3em] ml-6 text-slate-400">Theme Palette</p>
                                         <div className="flex items-center">
-                                            <button onClick={() => setPickers({color: !pickers.color, icon: false})} className="w-16 h-16 rounded-full border-8 border-white shadow-2xl z-10 shrink-0 transition-transform active:scale-90" style={{ backgroundColor: form.color }} />
+                                            <button 
+                                                onClick={() => setPickers({color: !pickers.color, icon: false})} 
+                                                className="w-20 h-20 rounded-full border-[10px] border-white shadow-2xl z-10 shrink-0 transition-transform active:scale-90" 
+                                                style={{ backgroundColor: form.color }} 
+                                            />
                                             {pickers.color && (
-                                                <div className="scroll-wrapper no-scrollbar ml-3 bg-white/60 p-2 rounded-full animate-fade">
-                                                    <div className="scroll-inner px-4">
-                                                        {colorPalette.map(colorCode => (
+                                                <div className="scroll-wrapper no-scrollbar ml-4 bg-white/70 p-3 rounded-full animate-fade shadow-inner border border-white">
+                                                    <div className="scroll-inner px-6">
+                                                        {colorPalette.map(hex => (
                                                             <button 
-                                                                key={colorCode} 
-                                                                onClick={() => {setForm({...form, color: colorCode}); setPickers({color: false})}} 
-                                                                className="w-11 h-11 rounded-full shrink-0 shadow-md transition-transform active:scale-75 hover:scale-110" 
-                                                                style={{ backgroundColor: colorCode }} 
+                                                                key={hex} 
+                                                                onClick={() => {setForm({...form, color: hex}); setPickers({color: false})}} 
+                                                                className="w-13 h-13 rounded-full shrink-0 shadow-xl transition-all duration-300 active:scale-75 hover:scale-125 border-4 border-white" 
+                                                                style={{ backgroundColor: hex }} 
                                                             />
                                                         ))}
                                                     </div>
@@ -640,24 +875,24 @@
                                         </div>
                                     </div>
 
-                                    {/* DYNAMIC ICON PICKER */}
-                                    <div className="flex flex-col gap-3">
-                                        <p className="text-[10px] font-black uppercase tracking-[0.2em] ml-4 text-slate-400">Ritual Symbol</p>
+                                    {/* ICON PICKER ENGINE */}
+                                    <div className="flex flex-col gap-4">
+                                        <p className="text-[11px] font-black uppercase tracking-[0.3em] ml-6 text-slate-400">Visual Icon</p>
                                         <div className="flex items-center">
                                             <button 
                                                 onClick={() => setPickers({icon: !pickers.icon, color: false})} 
-                                                className="w-16 h-16 rounded-[24px] bg-white flex items-center justify-center text-3xl shadow-xl z-10 border border-black/5 shrink-0 text-black transition-transform active:scale-90"
+                                                className="w-20 h-20 rounded-[32px] bg-white flex items-center justify-center text-4xl shadow-2xl z-10 border border-black/5 shrink-0 text-black transition-transform active:scale-90"
                                             >
                                                 {form.icon}
                                             </button>
                                             {pickers.icon && (
-                                                <div className="scroll-wrapper no-scrollbar ml-3 bg-white/60 p-2 rounded-[28px] animate-fade">
-                                                    <div className="scroll-inner px-4">
+                                                <div className="scroll-wrapper no-scrollbar ml-4 bg-white/70 p-3 rounded-[36px] animate-fade shadow-inner border border-white">
+                                                    <div className="scroll-inner px-6">
                                                         {iconLibrary.map(sym => (
                                                             <button 
                                                                 key={sym} 
                                                                 onClick={() => {setForm({...form, icon: sym}); setPickers({icon: false})}} 
-                                                                className="w-13 h-13 rounded-2xl bg-white flex items-center justify-center text-xl shrink-0 border border-black/5 shadow-sm transition-transform active:scale-75 hover:scale-110"
+                                                                className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center text-2xl shrink-0 border border-black/5 shadow-md transition-all duration-300 active:scale-75 hover:scale-125"
                                                             >
                                                                 {sym}
                                                             </button>
@@ -669,93 +904,100 @@
                                     </div>
                                 </div>
 
-                                {/* DROPDOWN CATEGORY/FREQUENCY BOXES */}
-                                <div className="grid grid-cols-2 gap-5 mt-4">
-                                    <div className="space-y-2">
-                                        <p className="text-[9px] font-black uppercase text-slate-400 ml-4 tracking-widest">Type</p>
-                                        <select 
-                                            className="w-full p-6 rounded-[28px] bg-white font-black text-xs shadow-sm outline-none appearance-none text-black border border-transparent focus:border-black/5" 
-                                            value={form.category} 
-                                            onChange={e => setForm({...form, category: e.target.value})}
-                                        >
-                                            <option value="Category" disabled>Category</option>
-                                            <option>Body</option><option>Mind</option><option>Work</option><option>Growth</option><option>Finance</option><option>Social</option>
-                                        </select>
+                                {/* PICKER DROPDOWN GRID */}
+                                <div className="grid grid-cols-2 gap-6 mt-6">
+                                    <div className="space-y-3">
+                                        <p className="text-[10px] font-black uppercase text-slate-400 ml-6 tracking-[0.2em]">Pillar</p>
+                                        <div className="relative">
+                                            <select 
+                                                className="w-full p-7 rounded-[32px] bg-white font-black text-xs shadow-sm outline-none appearance-none text-black border border-transparent focus:border-black/5 cursor-pointer" 
+                                                value={form.category} 
+                                                onChange={e => setForm({...form, category: e.target.value})}
+                                            >
+                                                <option value="Category" disabled>Select Pillar</option>
+                                                <option>Body</option><option>Mind</option><option>Work</option><option>Growth</option><option>Finance</option><option>Social</option>
+                                            </select>
+                                            <i className="fa-solid fa-chevron-down absolute right-8 top-1/2 -translate-y-1/2 text-slate-200 pointer-events-none"></i>
+                                        </div>
                                     </div>
-                                    <div className="space-y-2">
-                                        <p className="text-[9px] font-black uppercase text-slate-400 ml-4 tracking-widest">Schedule</p>
-                                        <select 
-                                            className="w-full p-6 rounded-[28px] bg-white font-black text-xs shadow-sm outline-none appearance-none text-black border border-transparent focus:border-black/5" 
-                                            value={form.frequency} 
-                                            onChange={e => setForm({...form, frequency: e.target.value})}
-                                        >
-                                            <option value="Frequency" disabled>Frequency</option>
-                                            <option>Daily</option>
-                                            <option>Specific Days of Week</option>
-                                            <option>Specific Days of Month</option>
-                                            <option>Customise Days</option>
-                                        </select>
+                                    <div className="space-y-3">
+                                        <p className="text-[10px] font-black uppercase text-slate-400 ml-6 tracking-[0.2em]">Cadence</p>
+                                        <div className="relative">
+                                            <select 
+                                                className="w-full p-7 rounded-[32px] bg-white font-black text-xs shadow-sm outline-none appearance-none text-black border border-transparent focus:border-black/5 cursor-pointer" 
+                                                value={form.frequency} 
+                                                onChange={e => setForm({...form, frequency: e.target.value})}
+                                            >
+                                                <option value="Frequency" disabled>Set Cadence</option>
+                                                <option>Daily</option>
+                                                <option>Specific Days of Week</option>
+                                                <option>Specific Days of Month</option>
+                                                <option>Customise Days</option>
+                                            </select>
+                                            <i className="fa-solid fa-calendar-day absolute right-8 top-1/2 -translate-y-1/2 text-slate-200 pointer-events-none"></i>
+                                        </div>
                                     </div>
                                 </div>
 
-                                {/* CONDITIONAL MODULE: WEEKDAYS */}
+                                {/* FREQUENCY LOGIC: WEEKDAYS EXPANSION */}
                                 {form.frequency === 'Specific Days of Week' && (
-                                    <div className="flex justify-between gap-2 animate-fade p-2 bg-white rounded-[32px] shadow-sm">
-                                        {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(day => {
-                                            const isSelected = form.weekDays.includes(day);
+                                    <div className="flex justify-between gap-2 animate-fade p-3 bg-white/50 rounded-[40px] shadow-inner border border-white">
+                                        {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(name => {
+                                            const isActive = form.weekDays.includes(name);
                                             return (
                                                 <button 
-                                                    key={day} 
+                                                    key={name} 
                                                     onClick={() => {
-                                                        const current = isSelected ? form.weekDays.filter(d => d !== day) : [...form.weekDays, day];
-                                                        setForm({...form, weekDays: current});
+                                                        const currentArr = isActive ? form.weekDays.filter(d => d !== name) : [...form.weekDays, name];
+                                                        setForm({...form, weekDays: currentArr});
                                                     }} 
-                                                    className={`w-12 h-12 rounded-2xl text-[10px] font-black transition-all duration-300 ${isSelected ? 'bg-black text-white shadow-xl scale-110' : 'bg-slate-50 text-slate-300'}`}
+                                                    className={`w-14 h-14 rounded-[22px] text-[11px] font-black transition-all duration-400 ${isActive ? 'bg-black text-white shadow-2xl scale-110' : 'bg-white text-slate-300'}`}
                                                 >
-                                                    {day[0]}
+                                                    {name[0]}
                                                 </button>
                                             );
                                         })}
                                     </div>
                                 )}
 
-                                {/* CONDITIONAL MODULE: MONTH DATES (1-31) */}
+                                {/* FREQUENCY LOGIC: MONTH DATES (FIXED ALIGNMENT) */}
                                 {form.frequency === 'Specific Days of Month' && (
-                                    <div className="month-picker-grid bg-white p-7 rounded-[40px] animate-fade shadow-sm border border-black/5">
+                                    <div className="month-picker-grid bg-white/70 p-8 rounded-[48px] animate-fade shadow-inner border border-white">
                                         {[...Array(31)].map((_, i) => {
-                                            const dNum = i + 1;
-                                            const isSel = form.monthDays.includes(dNum);
+                                            const dayNumber = i + 1;
+                                            const isSelected = form.monthDays.includes(dayNumber);
                                             return (
                                                 <button 
-                                                    key={dNum} 
+                                                    key={dayNumber} 
                                                     onClick={() => {
-                                                        const current = isSel ? form.monthDays.filter(d => d !== dNum) : [...form.monthDays, dNum];
-                                                        setForm({...form, monthDays: current});
+                                                        const currentSet = isSelected ? form.monthDays.filter(d => d !== dayNumber) : [...form.monthDays, dayNumber];
+                                                        setForm({...form, monthDays: currentSet});
                                                     }} 
-                                                    className={`w-10 h-10 rounded-xl text-[10px] font-black transition-all duration-300 ${isSel ? 'bg-black text-white shadow-lg' : 'bg-slate-50 text-slate-300'}`}
+                                                    className={`w-10 h-10 rounded-2xl text-[11px] font-black transition-all duration-300 ${isSelected ? 'bg-black text-white shadow-lg scale-110' : 'bg-white text-slate-300 border border-black/5'}`}
                                                 >
-                                                    {dNum}
+                                                    {dayNumber}
                                                 </button>
                                             );
                                         })}
                                     </div>
                                 )}
 
-                                {/* CONDITIONAL MODULE: CUSTOM REPETITION */}
+                                {/* FREQUENCY LOGIC: CUSTOM REPETITION */}
                                 {form.frequency === 'Customise Days' && (
-                                    <div className="flex items-center gap-6 bg-white p-8 rounded-[40px] animate-fade shadow-sm border border-black/5">
+                                    <div className="flex items-center gap-8 bg-white/80 p-10 rounded-[48px] animate-fade shadow-xl border border-white">
                                         <div className="flex flex-col">
+                                            <p className="text-[9px] font-black text-slate-300 uppercase mb-3 ml-2">Amount</p>
                                             <input 
                                                 type="number" 
-                                                className="w-20 font-black text-3xl text-center outline-none border-b-4 border-amber-400 bg-transparent text-black" 
+                                                className="w-24 font-black text-4xl text-center outline-none border-b-4 border-amber-400 bg-transparent text-black" 
                                                 value={form.customCount} 
                                                 onChange={e => setForm({...form, customCount: e.target.value})} 
                                             />
                                         </div>
                                         <div className="flex flex-col flex-1">
-                                            <span className="font-black text-[10px] opacity-30 uppercase tracking-[0.2em] mb-2">Repetitions per</span>
+                                            <p className="font-black text-[10px] text-slate-300 uppercase tracking-[0.25em] mb-4">Frequency Window</p>
                                             <select 
-                                                className="font-black text-lg outline-none bg-transparent text-black" 
+                                                className="font-black text-2xl outline-none bg-transparent text-black cursor-pointer" 
                                                 value={form.customPeriod} 
                                                 onChange={e => setForm({...form, customPeriod: e.target.value})}
                                             >
@@ -767,17 +1009,17 @@
                                 )}
 
                                 <button 
-                                    onClick={processHabitSave} 
-                                    className="w-full py-8 rounded-[40px] logo-gradient text-white font-black text-xl shadow-2xl active:scale-95 transition-all duration-300 flex items-center justify-center gap-4"
+                                    onClick={onSaveRitual} 
+                                    className="w-full py-9 rounded-[44px] logo-gradient text-white font-black text-2xl shadow-2xl active:scale-95 transition-all duration-400 flex items-center justify-center gap-5 group"
                                 >
-                                    <i className="fa-solid fa-bolt text-amber-400"></i>
-                                    {editingId ? 'Update Discipline' : 'Forge Ritual'}
+                                    <i className="fa-solid fa-bolt-lightning text-amber-400 group-hover:animate-pulse"></i>
+                                    {editingId ? 'Update Ritual' : 'Forge Ritual'}
                                 </button>
                                 
                                 {editingId && (
                                     <button 
                                         onClick={() => { setEditingId(null); setForm(defaultForm); setCurrentPage('habits'); }} 
-                                        className="w-full text-slate-400 font-bold text-sm py-2 hover:text-black transition-colors"
+                                        className="w-full text-slate-400 font-bold text-xs py-4 hover:text-black transition-colors tracking-widest uppercase"
                                     >
                                         Discard Changes
                                     </button>
@@ -785,35 +1027,47 @@
                             </div>
                         )}
 
-                        {/* --- CALENDAR: FULL VIEW --- */}
+                        {/* --- 6. PAGE: CALENDAR (FULL HISTORY) --- */}
                         {currentPage === 'calendar_full' && (
                             <div className="animate-fade flex flex-col h-full relative">
-                                <div className="flex justify-between items-center mb-10">
+                                <div className="flex justify-between items-end mb-10 px-2">
                                     <div>
-                                        <h2 className="text-3xl font-black italic text-black leading-tight">{viewDate.toLocaleString('default', { month: 'long' })}</h2>
-                                        <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">{viewDate.getFullYear()}</p>
+                                        <h2 className="text-4xl font-black italic text-black leading-tight">
+                                            {viewDate.toLocaleString('default', { month: 'long' })}
+                                        </h2>
+                                        <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.3em] mt-2">Historical Records • {viewDate.getFullYear()}</p>
                                     </div>
-                                    <div className="flex gap-3">
-                                        <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1))} className="w-12 h-12 bg-white rounded-2xl shadow-sm border border-black/5 text-black hover:bg-slate-50 transition-all"><i className="fa-solid fa-chevron-left"></i></button>
-                                        <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1))} className="w-12 h-12 bg-white rounded-2xl shadow-sm border border-black/5 text-black hover:bg-slate-50 transition-all"><i className="fa-solid fa-chevron-right"></i></button>
+                                    <div className="flex gap-4">
+                                        <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1))} className="w-13 h-13 bg-white rounded-2xl shadow-sm border border-black/5 text-black hover:bg-slate-50 active:scale-90 transition-all"><i className="fa-solid fa-chevron-left"></i></button>
+                                        <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1))} className="w-13 h-13 bg-white rounded-2xl shadow-sm border border-black/5 text-black hover:bg-slate-50 active:scale-90 transition-all"><i className="fa-solid fa-chevron-right"></i></button>
                                     </div>
                                 </div>
                                 
-                                <div className="bg-white p-8 rounded-[48px] border border-black/5 shadow-2xl mb-24">
+                                <div className="bg-white p-10 rounded-[56px] border border-black/5 shadow-2xl mb-28">
                                     <div className="calendar-grid">
-                                        {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(dName => <div key={dName} className="text-center text-[10px] font-black text-slate-200 mb-6 uppercase tracking-tighter">{dName}</div>)}
-                                        {[...Array(new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay())].map((_, i) => <div key={`empty-${i}`}></div>)}
+                                        {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(name => (
+                                            <div key={name} className="text-center text-[10px] font-black text-slate-200 mb-8 uppercase tracking-widest">{name}</div>
+                                        ))}
+                                        
+                                        {[...Array(new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay())].map((_, i) => (
+                                            <div key={`blank-${i}`}></div>
+                                        ))}
+                                        
                                         {[...Array(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate())].map((_, i) => {
-                                            const dayNum = i + 1;
-                                            const dsString = `${viewDate.getFullYear()}-${String(viewDate.getMonth() + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
-                                            const dayCount = (logs[dsString] || []).length;
-                                            const dayPct = habits.length > 0 ? (dayCount / habits.length) * 100 : 0;
+                                            const day = i + 1;
+                                            const dsKey = `${viewDate.getFullYear()}-${String(viewDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                                            const doneCount = (logs[dsKey] || []).length;
+                                            const percent = habits.length > 0 ? (doneCount / habits.length) * 100 : 0;
                                             
-                                            let bgStatus = 'bg-slate-50 text-slate-300';
-                                            if (dayPct > 0) bgStatus = 'bg-amber-100 text-amber-700';
-                                            if (dayPct === 100) bgStatus = 'bg-black text-amber-400 shadow-xl scale-105 z-10';
+                                            let cellBg = 'bg-slate-50 text-slate-300';
+                                            if (percent > 0) cellBg = 'bg-amber-100 text-amber-700 font-black';
+                                            if (percent === 100) cellBg = 'bg-black text-amber-400 shadow-xl scale-110 z-10 font-black';
                                             
-                                            return <div key={dayNum} className={`calendar-day transition-all duration-500 ${bgStatus}`}>{dayNum}</div>
+                                            return (
+                                                <div key={day} className={`calendar-day transition-all duration-700 ${cellBg}`}>
+                                                    {day}
+                                                </div>
+                                            );
                                         })}
                                     </div>
                                 </div>
@@ -821,40 +1075,16 @@
                                 <div className="fixed-bottom-btn">
                                     <button 
                                         onClick={() => { setViewDate(new Date()); setCurrentPage('home'); }} 
-                                        className="w-full py-7 rounded-[40px] bg-black text-white font-black text-lg shadow-2xl shadow-black/40 active:scale-95 transition-all"
+                                        className="w-full py-8 rounded-[44px] bg-black text-white font-black text-lg shadow-2xl shadow-black/50 active:scale-95 transition-all"
                                     >
-                                        Return to Today
+                                        Jump Back to Today
                                     </button>
                                 </div>
                             </div>
                         )}
                     </div>
 
-                    {/* PERMANENT NAV ENGINE */}
-                    <nav className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl px-2 py-10 flex justify-around items-center z-50 border-t border-black/5 shadow-[0_-10px_40px_rgba(0,0,0,0.03)]">
-                        <button onClick={() => { setEditingId(null); setForm(defaultForm); setCurrentPage('home'); }} className={`flex flex-col items-center w-14 transition-all duration-300 ${currentPage === 'home' ? 'text-black scale-110' : 'text-slate-300'}`}>
-                            <i className="fa-solid fa-house-chimney text-xl"></i>
-                            <span className="nav-text">Home</span>
-                        </button>
-                        <button onClick={() => { setEditingId(null); setForm(defaultForm); setCurrentPage('habits'); }} className={`flex flex-col items-center w-14 transition-all duration-300 ${currentPage === 'habits' ? 'text-black scale-110' : 'text-slate-300'}`}>
-                            <i className="fa-solid fa-dna text-xl"></i>
-                            <span className="nav-text">Rituals</span>
-                        </button>
-                        <button 
-                            onClick={() => { setForm(defaultForm); setEditingId(null); setCurrentPage('add'); }} 
-                            className="w-16 h-16 logo-gradient rounded-[28px] flex items-center justify-center text-white -mt-20 border-8 border-white shadow-2xl active:scale-90 transition-all duration-500 hover:rotate-90"
-                        >
-                            <i className="fa-solid fa-plus text-2xl text-amber-400"></i>
-                        </button>
-                        <button onClick={() => { setEditingId(null); setCurrentPage('growth'); }} className={`flex flex-col items-center w-14 transition-all duration-300 ${currentPage === 'growth' ? 'text-black scale-110' : 'text-slate-300'}`}>
-                            <i className="fa-solid fa-chart-pie text-xl"></i>
-                            <span className="nav-text">Growth</span>
-                        </button>
-                        <button onClick={() => { setEditingId(null); setCurrentPage('coach'); }} className={`flex flex-col items-center w-14 transition-all duration-300 ${currentPage === 'coach' ? 'text-black scale-110' : 'text-slate-300'}`}>
-                            <i className="fa-solid fa-wand-magic-sparkles text-xl"></i>
-                            <span className="nav-text">Coach</span>
-                        </button>
-                    </nav>
+                    <AppNavBar />
                 </div>
             );
         };
