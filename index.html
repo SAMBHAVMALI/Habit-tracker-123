@@ -13,22 +13,40 @@
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
-        :root { --logo-gold: #D4AF37; --logo-black: #1A1A1A; --logo-peach: #F5E6D3; }
-        body, html, #root { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--logo-peach) !important; margin: 0; height: 100vh; width: 100vw; overflow: hidden; }
+        
+        :root {
+            --logo-gold: #D4AF37;   
+            --logo-black: #1A1A1A;  
+            --logo-peach: #F5E6D3;  
+        }
+
+        body, html, #root { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: var(--logo-peach) !important; 
+            margin: 0; height: 100vh; width: 100vw; overflow: hidden;
+        }
+
         .app-shell { height: 100vh; display: flex; flex-direction: column; position: relative; }
         .content-area { flex: 1; display: flex; flex-direction: column; padding: 28px 28px 120px 28px; overflow-y: auto; }
-        .centered-container { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-        .overlay-screen { position: fixed; inset: 0; background: #FFFFFF; display: flex; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.8s ease-in-out; }
+        
+        /* Splash Overlay */
+        .overlay-screen { position: fixed; inset: 0; background: #FFFFFF; display: flex; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.8s ease; }
         .hide-overlay { opacity: 0; pointer-events: none; }
+        
         .logo-gradient { background: linear-gradient(135deg, #1A1A1A 0%, #444444 100%); }
         .card-standard { background: #FFFFFF; border-radius: 28px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: none; }
         .nav-text { font-size: 9px; font-weight: 800; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.1em; }
-        .gold-accent { color: var(--logo-gold); }
+
+        /* Perfect Centering for No Rituals */
+        .centered-container { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
         .calendar-day { aspect-ratio: 1; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; }
+
         .picker-panel { animation: slideIn 0.3s ease-out; }
         @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
-        .month-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+        
+        .month-picker-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
     </style>
 </head>
 <body>
@@ -42,26 +60,26 @@
             const [currentPage, setCurrentPage] = useState('home');
             const [showMenu, setShowMenu] = useState(false);
             const [viewDate, setViewDate] = useState(new Date());
-            const [pickers, setPickers] = useState({ color: false, icon: false });
 
+            const [pickers, setPickers] = useState({ color: false, icon: false });
             const [habits, setHabits] = useState(() => JSON.parse(localStorage.getItem('habits')) || []);
             const [logs, setLogs] = useState(() => JSON.parse(localStorage.getItem('habitLogs')) || {});
             
             const [form, setForm] = useState({
                 name: '', description: '', color: '#1A1A1A', icon: '✨', 
-                category: 'General', frequency: 'Daily', weekDays: [], monthDays: [],
-                measureType: 'Checkmark', goalValue: 1, unit: 'times',
+                category: 'Category', frequency: 'Frequency', weekDays: [], monthDays: [],
                 customCount: 1, customPeriod: 'Week'
             });
 
-            const quotes = ["Small habits lead to big changes.", "Consistency is your signature."];
+            const quotes = ["Consistency is your signature.", "Quality is a habit.", "Discipline is freedom."];
             const [activeQuote] = useState(() => quotes[Math.floor(Math.random() * quotes.length)]);
-            const colors = ['#1A1A1A', '#D4AF37', '#6366F1', '#EC4899', '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6'];
-            const icons = ['✨', '🏃‍♂️', '💧', '📚', '🧘‍♂️', '🍎', '💪', '🧠', '☀️', '💼'];
+
+            const colorPalette = ['#1A1A1A', '#D4AF37', '#6366F1', '#EC4899', '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6', '#FF6B6B', '#4ECDC4', '#A8E6CF', '#FFD3B6', '#FFAAA5', '#88D8B0'];
+            const iconLibrary = ['✨', '🏃‍♂️', '💧', '📚', '🧘‍♂️', '🍎', '💪', '🧠', '☀️', '💼', '🎨', '🔥', '🧗', '🔋', '🧘', '🛌', '🚶', '🚴', '🥗', '🥛'];
 
             useEffect(() => {
-                const t1 = setTimeout(() => setOverlayStage('quote'), 1000);
-                const t2 = setTimeout(() => setOverlayStage('none'), 2500);
+                const t1 = setTimeout(() => setOverlayStage('quote'), 1200);
+                const t2 = setTimeout(() => setOverlayStage('none'), 3000);
                 return () => { clearTimeout(t1); clearTimeout(t2); };
             }, []);
 
@@ -71,7 +89,6 @@
             }, [habits, logs]);
 
             const todayStr = new Date().toISOString().split('T')[0];
-            const getDayName = () => new Intl.DateTimeFormat('en-US', { weekday: 'short' }).format(new Date());
 
             const Header = () => (
                 <header className="flex justify-between items-center mb-10 w-full relative z-[60]">
@@ -80,11 +97,17 @@
                         <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mt-1">Daily Discipline</p>
                     </div>
                     <div className="flex gap-3 relative">
-                        <button onClick={() => setCurrentPage('calendar_full')} className="w-11 h-11 flex items-center justify-center rounded-2xl bg-white border border-black/5 text-black shadow-sm"><i className="fa-solid fa-calendar-day"></i></button>
-                        <button onClick={() => setShowMenu(!showMenu)} className="w-11 h-11 flex items-center justify-center rounded-2xl bg-black text-white shadow-lg"><i className="fa-solid fa-ellipsis-vertical gold-accent"></i></button>
+                        <button onClick={() => setCurrentPage('calendar_full')} className="w-11 h-11 flex items-center justify-center rounded-2xl bg-white border border-black/5 text-black shadow-sm active:scale-95 transition-transform">
+                            <i className="fa-solid fa-calendar-day"></i>
+                        </button>
+                        <button onClick={() => setShowMenu(!showMenu)} className="w-11 h-11 flex items-center justify-center rounded-2xl bg-black text-white shadow-lg active:scale-95 transition-transform">
+                            <i className="fa-solid fa-ellipsis-vertical text-[--logo-gold]"></i>
+                        </button>
                         {showMenu && (
                             <div className="absolute right-0 top-14 w-48 bg-white border border-black/5 rounded-3xl shadow-2xl z-[70] p-2">
-                                <button onClick={() => {localStorage.clear(); window.location.reload();}} className="w-full px-5 py-4 text-left text-xs font-bold text-rose-500 hover:bg-rose-50 flex items-center gap-3 rounded-2xl"><i className="fa-solid fa-trash-can opacity-50"></i> Clear All Data</button>
+                                <button onClick={() => {localStorage.clear(); window.location.reload();}} className="w-full px-5 py-4 text-left text-xs font-bold text-rose-500 hover:bg-rose-50 flex items-center gap-3 rounded-2xl transition-colors">
+                                    <i className="fa-solid fa-trash-can opacity-50"></i> Clear All Data
+                                </button>
                             </div>
                         )}
                     </div>
@@ -93,11 +116,12 @@
 
             return (
                 <div className="app-shell max-w-lg mx-auto">
+                    {/* Splash Overlay */}
                     <div className={`overlay-screen ${overlayStage === 'none' ? 'hide-overlay' : ''}`}>
                         {overlayStage === 'logo' ? (
                             <div className="flex flex-col items-center">
                                 <img src="./logo512.png" alt="Routiq" className="w-40 h-40 object-contain" />
-                                <h1 className="text-4xl font-black italic mt-4">Routiq</h1>
+                                <h1 className="text-4xl font-black text-black mt-4 italic">Routiq</h1>
                             </div>
                         ) : (
                             <p className="px-12 text-center text-xl font-bold italic leading-relaxed">"{activeQuote}"</p>
@@ -112,34 +136,27 @@
                                 {habits.length > 0 ? (
                                     <div className="space-y-4">
                                         {habits.map(h => {
-                                            const progress = logs[todayStr]?.[h.id] || 0;
-                                            const isDone = h.measureType === 'Checkmark' ? progress === 1 : progress >= h.goalValue;
+                                            const isDone = (logs[todayStr] || []).includes(h.id);
                                             return (
-                                                <div key={h.id} className="card-standard flex justify-between items-center" style={{ borderLeft: `6px solid ${h.color}` }}>
+                                                <div key={h.id} className="card-standard flex justify-between items-center transition-all active:scale-[0.98]" style={{ borderLeft: `6px solid ${h.color}` }}>
                                                     <div className="flex items-center gap-4">
                                                         <span className="text-2xl">{h.icon}</span>
-                                                        <div>
-                                                            <span className={`font-bold text-lg ${isDone ? 'text-slate-300 line-through' : ''}`}>{h.name}</span>
-                                                            {h.measureType === 'Numeric' && <p className="text-xs text-slate-400 font-bold">{progress} / {h.goalValue} {h.unit}</p>}
-                                                        </div>
+                                                        <span className={`font-bold text-lg ${isDone ? 'text-slate-300 line-through' : ''}`}>{h.name}</span>
                                                     </div>
-                                                    {h.measureType === 'Checkmark' ? (
-                                                        <button onClick={() => {
-                                                            const cur = logs[todayStr] || {};
-                                                            setLogs({...logs, [todayStr]: {...cur, [h.id]: cur[h.id] === 1 ? 0 : 1}});
-                                                        }} className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${isDone ? 'bg-black text-amber-400 shadow-md' : 'bg-white border border-slate-100'}`}><i className="fa-solid fa-check"></i></button>
-                                                    ) : (
-                                                        <div className="flex items-center gap-2">
-                                                            <button onClick={() => { const cur = logs[todayStr] || {}; setLogs({...logs, [todayStr]: {...cur, [h.id]: Math.max(0, (cur[h.id] || 0) - 1)}}); }} className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400"><i className="fa-solid fa-minus text-xs"></i></button>
-                                                            <button onClick={() => { const cur = logs[todayStr] || {}; setLogs({...logs, [todayStr]: {...cur, [h.id]: (cur[h.id] || 0) + 1}}); }} className="w-10 h-10 rounded-xl bg-black text-amber-400 flex items-center justify-center"><i className="fa-solid fa-plus text-sm"></i></button>
-                                                        </div>
-                                                    )}
+                                                    <button onClick={() => {
+                                                        const cur = logs[todayStr] || [];
+                                                        const next = cur.includes(h.id) ? cur.filter(id => id !== h.id) : [...cur, h.id];
+                                                        setLogs({...logs, [todayStr]: next});
+                                                    }} className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${isDone ? 'bg-black text-amber-400 shadow-md' : 'bg-white border border-slate-100'}`}><i className="fa-solid fa-check text-lg"></i></button>
                                                 </div>
                                             );
                                         })}
                                     </div>
                                 ) : (
-                                    <div className="centered-container opacity-20"><i className="fa-solid fa-feather text-8xl mb-4"></i><p className="font-bold uppercase tracking-[0.4em] text-[14px]">No Rituals</p></div>
+                                    <div className="centered-container opacity-20">
+                                        <i className="fa-solid fa-feather text-8xl mb-4"></i>
+                                        <p className="font-bold uppercase tracking-[0.4em] text-[14px]">No Rituals</p>
+                                    </div>
                                 )}
                             </div>
                         )}
@@ -149,26 +166,27 @@
                                 <div className="flex justify-between items-center mb-8">
                                     <h2 className="text-2xl font-black italic">{viewDate.toLocaleString('default', { month: 'long' })} {viewDate.getFullYear()}</h2>
                                     <div className="flex gap-2">
-                                        <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1))} className="w-10 h-10 bg-white rounded-xl shadow-sm"><i className="fa-solid fa-chevron-left"></i></button>
-                                        <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1))} className="w-10 h-10 bg-white rounded-xl shadow-sm"><i className="fa-solid fa-chevron-right"></i></button>
+                                        <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1))} className="w-10 h-10 bg-white rounded-xl shadow-sm border border-black/5"><i className="fa-solid fa-chevron-left"></i></button>
+                                        <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1))} className="w-10 h-10 bg-white rounded-xl shadow-sm border border-black/5"><i className="fa-solid fa-chevron-right"></i></button>
                                     </div>
                                 </div>
-                                <div className="bg-white p-6 rounded-[32px] border border-black/5">
+                                <div className="bg-white p-6 rounded-[32px] border border-black/5 shadow-sm">
                                     <div className="calendar-grid">
                                         {['S','M','T','W','T','F','S'].map(d => <div key={d} className="text-center text-[10px] font-black text-slate-300 mb-4">{d}</div>)}
                                         {[...Array(new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay())].map((_, i) => <div key={`e-${i}`}></div>)}
                                         {[...Array(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate())].map((_, i) => {
                                             const d = i + 1;
                                             const ds = `${viewDate.getFullYear()}-${String(viewDate.getMonth() + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-                                            const pct = habits.length > 0 ? (Object.keys(logs[ds] || {}).length / habits.length) * 100 : 0;
+                                            const completed = (logs[ds] || []).length;
+                                            const pct = habits.length > 0 ? (completed / habits.length) * 100 : 0;
                                             let bg = 'bg-slate-50 text-slate-300';
                                             if (pct > 0) bg = 'bg-amber-100 text-amber-700';
-                                            if (pct === 100) bg = 'bg-black text-amber-400';
+                                            if (pct === 100) bg = 'bg-black text-amber-400 shadow-md';
                                             return <div key={d} className={`calendar-day ${bg}`}>{d}</div>
                                         })}
                                     </div>
                                 </div>
-                                <button onClick={() => { setViewDate(new Date()); setCurrentPage('home'); }} className="w-full mt-10 py-5 rounded-[32px] bg-black text-white font-bold shadow-xl">Back to Today</button>
+                                <button onClick={() => { setViewDate(new Date()); setCurrentPage('home'); }} className="w-full mt-10 py-5 rounded-[32px] bg-black text-white font-bold shadow-xl transition-transform active:scale-95">Back to Today</button>
                             </div>
                         )}
 
@@ -184,17 +202,20 @@
                                                         <span className="text-2xl">{h.icon}</span>
                                                         <h3 className="font-bold text-lg">{h.name}</h3>
                                                     </div>
-                                                    <button onClick={() => setHabits(habits.filter(x => x.id !== h.id))} className="text-rose-500"><i className="fa-solid fa-trash-can"></i></button>
+                                                    <button onClick={() => setHabits(habits.filter(x => x.id !== h.id))} className="text-rose-500 transition-colors hover:bg-rose-50 p-2 rounded-lg"><i className="fa-solid fa-trash-can"></i></button>
                                                 </div>
                                                 <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">
                                                     {h.category} • {h.frequency === 'Specific Days of Week' ? h.weekDays.join(', ') : h.frequency === 'Specific Days of Month' ? `Dates: ${h.monthDays.join(', ')}` : h.frequency}
                                                 </p>
-                                                {h.description && <p className="text-slate-500 text-sm mt-2">{h.description}</p>}
+                                                {h.description && <p className="text-slate-500 text-sm mt-2 font-medium leading-relaxed">{h.description}</p>}
                                             </div>
                                         ))}
                                     </div>
                                 ) : (
-                                    <div className="centered-container opacity-20"><i className="fa-solid fa-leaf text-8xl mb-4"></i><p className="font-bold uppercase tracking-[0.4em] text-[14px]">No Habits</p></div>
+                                    <div className="centered-container opacity-20">
+                                        <i className="fa-solid fa-leaf text-8xl mb-4"></i>
+                                        <p className="font-bold uppercase tracking-[0.4em] text-[14px]">No Habits</p>
+                                    </div>
                                 )}
                             </div>
                         )}
@@ -202,92 +223,102 @@
                         {currentPage === 'add' && (
                             <div className="animate-in slide-in-from-bottom-6 space-y-6 pb-20">
                                 <h2 className="text-2xl font-black italic">New Ritual</h2>
-                                <input className="w-full p-6 rounded-3xl bg-white font-bold outline-none shadow-sm" placeholder="Habit Name" value={form.name} onChange={e => setForm({...form, name: e.target.value})} />
-                                <textarea className="w-full p-6 rounded-3xl bg-white font-medium text-sm outline-none shadow-sm" placeholder="Description" rows="2" value={form.description} onChange={e => setForm({...form, description: e.target.value})} />
+                                <input className="w-full p-6 rounded-3xl bg-white font-bold outline-none shadow-sm border border-transparent focus:border-black/5 transition-all" placeholder="Habit Name" value={form.name} onChange={e => setForm({...form, name: e.target.value})} />
+                                <textarea className="w-full p-6 rounded-3xl bg-white font-medium text-sm outline-none shadow-sm border border-transparent focus:border-black/5 transition-all" placeholder="Description" rows="2" value={form.description} onChange={e => setForm({...form, description: e.target.value})} />
                                 
+                                {/* HIDDEN COLOR & ICON PICKERS */}
                                 <div className="flex items-center gap-4">
-                                    <div className="flex items-center">
-                                        <button onClick={() => setPickers({color: !pickers.color, icon: false})} className="w-14 h-14 rounded-full border-4 border-white shadow-md z-10" style={{ backgroundColor: form.color }} />
-                                        {pickers.color && (
-                                            <div className="flex gap-2 overflow-x-auto px-4 py-2 ml-2 bg-white rounded-full picker-panel shadow-sm">
-                                                {colors.map(c => <button key={c} onClick={() => {setForm({...form, color: c}); setPickers({color: false})}} className="w-8 h-8 rounded-full shrink-0" style={{ backgroundColor: c }} />)}
-                                            </div>
-                                        )}
+                                    <div className="flex flex-col gap-2">
+                                        <p className="text-[10px] font-black uppercase tracking-widest ml-2 opacity-50">Theme Color</p>
+                                        <div className="flex items-center gap-4">
+                                            <button onClick={() => setPickers({color: !pickers.color, icon: false})} className="w-14 h-14 rounded-full border-4 border-white shadow-md transition-transform active:scale-90" style={{ backgroundColor: form.color }} />
+                                            {pickers.color && (
+                                                <div className="flex gap-2 overflow-x-auto px-4 py-2 ml-2 bg-white/50 rounded-full picker-panel shadow-sm">
+                                                    {colorPalette.map(c => <button key={c} onClick={() => {setForm({...form, color: c}); setPickers({color: false})}} className="w-9 h-9 rounded-full shrink-0 hover:scale-110 transition-transform shadow-sm" style={{ backgroundColor: c }} />)}
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
-                                    <div className="flex items-center">
-                                        <button onClick={() => setPickers({icon: !pickers.icon, color: false})} className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center text-2xl shadow-sm z-10">{form.icon}</button>
-                                        {pickers.icon && (
-                                            <div className="flex gap-2 overflow-x-auto px-4 py-2 ml-2 bg-white rounded-2xl picker-panel shadow-sm">
-                                                {icons.map(i => <button key={i} onClick={() => {setForm({...form, icon: i}); setPickers({icon: false})}} className="w-10 h-10 shrink-0 bg-white rounded-xl flex items-center justify-center text-xl shadow-sm">{i}</button>)}
-                                            </div>
-                                        )}
+                                    <div className="flex flex-col gap-2">
+                                        <p className="text-[10px] font-black uppercase tracking-widest ml-2 opacity-50">Select Icon</p>
+                                        <div className="flex items-center gap-4">
+                                            <button onClick={() => setPickers({icon: !pickers.icon, color: false})} className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center text-2xl shadow-sm z-10 border border-black/5 active:scale-90 transition-transform">{form.icon}</button>
+                                            {pickers.icon && (
+                                                <div className="flex gap-2 overflow-x-auto px-4 py-2 ml-2 bg-white/50 rounded-2xl picker-panel shadow-sm">
+                                                    {iconLibrary.map(i => <button key={i} onClick={() => {setForm({...form, icon: i}); setPickers({icon: false})}} className="w-11 h-11 shrink-0 bg-white rounded-xl flex items-center justify-center text-xl shadow-sm border border-black/5 hover:scale-110 transition-transform">{i}</button>)}
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-2">
                                         <p className="text-[10px] font-black uppercase tracking-widest ml-2 opacity-50">Category</p>
-                                        <select className="w-full p-5 rounded-3xl bg-white font-bold shadow-sm outline-none appearance-none" onChange={e => setForm({...form, category: e.target.value})}>
-                                            <option>General</option><option>Health</option><option>Work</option><option>Mind</option><option>Growth</option>
+                                        <select className="w-full p-5 rounded-3xl bg-white font-bold shadow-sm outline-none appearance-none border border-transparent focus:border-black/5 transition-all" value={form.category} onChange={e => setForm({...form, category: e.target.value})}>
+                                            <option>Category</option>
+                                            <option>Health</option><option>Work</option><option>Mind</option><option>Finance</option><option>Growth</option><option>Social</option>
                                         </select>
                                     </div>
                                     <div className="space-y-2">
                                         <p className="text-[10px] font-black uppercase tracking-widest ml-2 opacity-50">Frequency</p>
-                                        <select className="w-full p-5 rounded-3xl bg-white font-bold shadow-sm outline-none appearance-none" value={form.frequency} onChange={e => setForm({...form, frequency: e.target.value})}>
+                                        <select className="w-full p-5 rounded-3xl bg-white font-bold shadow-sm outline-none appearance-none border border-transparent focus:border-black/5 transition-all" value={form.frequency} onChange={e => setForm({...form, frequency: e.target.value})}>
+                                            <option>Frequency</option>
                                             <option>Daily</option><option>Specific Days of Week</option><option>Specific Days of Month</option><option>Customise Days</option>
                                         </select>
                                     </div>
                                 </div>
 
+                                {/* FREQUENCY LOGIC SCREENS */}
                                 {form.frequency === 'Specific Days of Week' && (
-                                    <div className="flex justify-between animate-in fade-in">{['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d => (
-                                        <button key={d} onClick={() => { const n = form.weekDays.includes(d) ? form.weekDays.filter(x => x !== d) : [...form.weekDays, d]; setForm({...form, weekDays: n}); }} className={`w-10 h-10 rounded-xl text-[10px] font-black ${form.weekDays.includes(d) ? 'bg-black text-white' : 'bg-white text-slate-300 shadow-sm'}`}>{d[0]}</button>
-                                    ))}</div>
-                                )}
-                                {form.frequency === 'Specific Days of Month' && (
-                                    <div className="month-grid bg-white p-4 rounded-3xl animate-in fade-in shadow-sm">
-                                        {[...Array(31)].map((_, i) => (
-                                            <button key={i} onClick={() => { const n = form.monthDays.includes(i+1) ? form.monthDays.filter(x => x !== i+1) : [...form.monthDays, i+1]; setForm({...form, monthDays: n}); }} className={`w-9 h-9 rounded-lg text-[10px] font-black ${form.monthDays.includes(i+1) ? 'bg-black text-white' : 'text-slate-300'}`}>{i+1}</button>
+                                    <div className="flex justify-between gap-1 animate-in fade-in p-1">
+                                        {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d => (
+                                            <button key={d} onClick={() => {
+                                                const n = form.weekDays.includes(d) ? form.weekDays.filter(x => x !== d) : [...form.weekDays, d];
+                                                setForm({...form, weekDays: n});
+                                            }} className={`w-11 h-11 rounded-2xl text-[10px] font-black transition-all ${form.weekDays.includes(d) ? 'bg-black text-white shadow-lg' : 'bg-white text-slate-300 shadow-sm border border-black/5'}`}>{d[0]}</button>
                                         ))}
                                     </div>
                                 )}
+
+                                {form.frequency === 'Specific Days of Month' && (
+                                    <div className="month-picker-grid bg-white p-5 rounded-[32px] animate-in fade-in shadow-sm border border-black/5">
+                                        {[...Array(31)].map((_, i) => (
+                                            <button key={i} onClick={() => {
+                                                const n = form.monthDays.includes(i+1) ? form.monthDays.filter(x => x !== i+1) : [...form.monthDays, i+1];
+                                                setForm({...form, monthDays: n});
+                                            }} className={`w-10 h-10 rounded-xl text-[10px] font-black transition-all ${form.monthDays.includes(i+1) ? 'bg-black text-white shadow-lg' : 'bg-white text-slate-300'}`}>{i+1}</button>
+                                        ))}
+                                    </div>
+                                )}
+
                                 {form.frequency === 'Customise Days' && (
-                                    <div className="flex items-center gap-4 bg-white p-5 rounded-3xl animate-in fade-in shadow-sm">
-                                        <input type="number" className="w-12 font-black text-center outline-none border-b-2 border-black/5" value={form.customCount} onChange={e => setForm({...form, customCount: e.target.value})} />
-                                        <span className="font-bold text-xs opacity-40 uppercase">Times per</span>
-                                        <select className="font-black text-xs outline-none bg-transparent" onChange={e => setForm({...form, customPeriod: e.target.value})}><option>Week</option><option>Month</option></select>
+                                    <div className="flex items-center gap-4 bg-white p-6 rounded-[32px] animate-in fade-in shadow-sm border border-black/5">
+                                        <input type="number" className="w-16 font-black text-xl text-center outline-none border-b-2 border-black/5" value={form.customCount} onChange={e => setForm({...form, customCount: e.target.value})} />
+                                        <span className="font-bold text-xs opacity-40 uppercase tracking-widest">Times per</span>
+                                        <select className="font-black text-sm outline-none bg-transparent" value={form.customPeriod} onChange={e => setForm({...form, customPeriod: e.target.value})}>
+                                            <option>Week</option><option>Month</option>
+                                        </select>
                                     </div>
                                 )}
 
-                                <div className="space-y-2">
-                                    <p className="text-[10px] font-black uppercase tracking-widest ml-2 opacity-50">Measurement</p>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <button onClick={() => setForm({...form, measureType: 'Checkmark'})} className={`p-4 rounded-2xl font-bold border-2 ${form.measureType === 'Checkmark' ? 'border-black bg-black text-white' : 'border-white bg-white text-slate-400'}`}>Checkmark</button>
-                                        <button onClick={() => setForm({...form, measureType: 'Numeric'})} className={`p-4 rounded-2xl font-bold border-2 ${form.measureType === 'Numeric' ? 'border-black bg-black text-white' : 'border-white bg-white text-slate-400'}`}>Numeric</button>
-                                    </div>
-                                </div>
-                                {form.measureType === 'Numeric' && (
-                                    <div className="grid grid-cols-2 gap-4 animate-in fade-in">
-                                        <input type="number" className="p-5 rounded-3xl bg-white font-bold shadow-sm outline-none" placeholder="Goal (e.g. 2000)" onChange={e => setForm({...form, goalValue: parseInt(e.target.value) || 1})} />
-                                        <input className="p-5 rounded-3xl bg-white font-bold shadow-sm outline-none" placeholder="Unit (e.g. ml)" onChange={e => setForm({...form, unit: e.target.value})} />
-                                    </div>
-                                )}
-
-                                <button onClick={() => { if(form.name){setHabits([...habits, {...form, id: Date.now()}]); setCurrentPage('home');} }} className="w-full py-6 rounded-[32px] logo-gradient text-white font-black text-lg shadow-xl shadow-black/10 transition-transform active:scale-95">Confirm Ritual</button>
+                                <button onClick={() => {if(form.name){setHabits([...habits, {...form, id: Date.now()}]); setCurrentPage('home');}}} className="w-full py-6 rounded-[32px] logo-gradient text-white font-black text-lg shadow-xl shadow-black/10 transition-transform active:scale-95">Confirm Ritual</button>
                             </div>
                         )}
                     </div>
 
-                    <nav className="fixed bottom-0 left-0 right-0 bg-white px-2 py-8 flex justify-around items-center z-50 border-t border-black/5">
-                        <button onClick={() => setCurrentPage('home')} className={`flex flex-col items-center w-14 ${currentPage === 'home' ? 'text-black' : 'text-slate-300'}`}><i className="fa-solid fa-house text-lg"></i><span className="nav-text">Home</span></button>
-                        <button onClick={() => setCurrentPage('habits')} className={`flex flex-col items-center w-14 ${currentPage === 'habits' ? 'text-black' : 'text-slate-300'}`}><i className="fa-solid fa-list-check text-lg"></i><span className="nav-text">Habits</span></button>
-                        <button onClick={() => setCurrentPage('add')} className="w-16 h-16 logo-gradient rounded-[22px] flex items-center justify-center text-white -mt-16 border-4 border-white shadow-2xl active:scale-95 transition-all"><i className="fa-solid fa-plus text-2xl gold-accent"></i></button>
-                        <button onClick={() => setCurrentPage('growth')} className={`flex flex-col items-center w-14 ${currentPage === 'growth' ? 'text-black' : 'text-slate-300'}`}><i className="fa-solid fa-chart-pie text-lg"></i><span className="nav-text">Growth</span></button>
-                        <button onClick={() => setCurrentPage('coach')} className={`flex flex-col items-center w-14 ${currentPage === 'coach' ? 'text-black' : 'text-slate-300'}`}><i className="fa-solid fa-wand-magic-sparkles text-lg"></i><span className="nav-text">Coach</span></button>
+                    {/* Navbar */}
+                    <nav className="fixed bottom-0 left-0 right-0 bg-white px-2 py-8 flex justify-around items-center z-50 border-t border-black/5 shadow-[0_-4px_20px_rgba(0,0,0,0.02)]">
+                        <button onClick={() => setCurrentPage('home')} className={`flex flex-col items-center w-14 transition-colors ${currentPage === 'home' ? 'text-black' : 'text-slate-300'}`}><i className="fa-solid fa-house text-lg"></i><span className="nav-text">Home</span></button>
+                        <button onClick={() => setCurrentPage('habits')} className={`flex flex-col items-center w-14 transition-colors ${currentPage === 'habits' ? 'text-black' : 'text-slate-300'}`}><i className="fa-solid fa-list-check text-lg"></i><span className="nav-text">Habits</span></button>
+                        <button onClick={() => setCurrentPage('add')} className="w-16 h-16 logo-gradient rounded-[24px] flex items-center justify-center text-white -mt-16 border-4 border-white shadow-2xl active:scale-95 transition-all"><i className="fa-solid fa-plus text-2xl gold-accent"></i></button>
+                        <button onClick={() => setCurrentPage('growth')} className={`flex flex-col items-center w-14 transition-colors ${currentPage === 'growth' ? 'text-black' : 'text-slate-300'}`}><i className="fa-solid fa-chart-pie text-lg"></i><span className="nav-text">Growth</span></button>
+                        <button onClick={() => setCurrentPage('coach')} className={`flex flex-col items-center w-14 transition-colors ${currentPage === 'coach' ? 'text-black' : 'text-slate-300'}`}><i className="fa-solid fa-wand-magic-sparkles text-lg"></i><span className="nav-text">Coach</span></button>
                     </nav>
                 </div>
             );
         };
+
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
     </script>
