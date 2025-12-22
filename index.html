@@ -460,24 +460,24 @@
                                 )}
                                 
                                 {habits.length > 0 ? (
-                                    <div className="space-y-5">
+                                    <div className="space-y-3">
                                         <p className="text-[11px] font-black uppercase text-slate-400 tracking-[0.2em] ml-2">Due Today</p>
                                         {habits.map(h => {
                                             const ritualDone = (logs[todayStr] || []).includes(h.id);
                                             return (
-                                                <div key={h.id} className="card-standard flex justify-between items-center transition-all duration-300 active:scale-[0.97]" style={{ borderLeft: `8px solid ${h.color}` }}>
-                                                    <div className="flex items-center gap-5">
-                                                        <div className="text-3xl grayscale-[0.5]">{h.icon}</div>
+                                                <div key={h.id} className="card-standard flex justify-between items-center transition-all duration-300 active:scale-[0.97] !py-4 !px-6" style={{ borderLeft: `6px solid ${h.color}` }}>
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="text-2xl grayscale-[0.5]">{h.icon}</div>
                                                         <div className="flex flex-col">
-                                                            <span className={`font-bold text-lg leading-tight ${ritualDone ? 'text-slate-300 line-through' : 'text-black'}`}>{h.name}</span>
-                                                            <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest mt-1">{h.category}</span>
+                                                            <span className={`font-bold text-base leading-tight ${ritualDone ? 'text-slate-300 line-through' : 'text-black'}`}>{h.name}</span>
+                                                            <span className="text-[8px] font-black uppercase text-slate-400 tracking-widest mt-0.5">{h.category}</span>
                                                         </div>
                                                     </div>
                                                     <button 
                                                         onClick={() => toggleHabitAction(h.id)} 
-                                                        className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 ${ritualDone ? 'bg-black text-amber-400 shadow-2xl rotate-[360deg]' : 'bg-slate-50 border border-slate-100 text-slate-200'}`}
+                                                        className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-500 ${ritualDone ? 'bg-black text-amber-400 shadow-lg rotate-[360deg]' : 'bg-slate-50 border border-slate-100 text-slate-200'}`}
                                                     >
-                                                        <i className={`fa-solid ${ritualDone ? 'fa-check-double' : 'fa-check'} text-xl`}></i>
+                                                        <i className={`fa-solid ${ritualDone ? 'fa-check-double' : 'fa-check'} text-base`}></i>
                                                     </button>
                                                 </div>
                                             );
