@@ -287,7 +287,7 @@
 
             // --- 2. LIFECYCLE & SYNC ---
             useEffect(() => {
-                const timer1 = setTimeout(() => setOverlayStage('quote'), 1400);
+                const timer1 = setTimeout(() => setOverlayStage('logo'), 1400);
                 const timer2 = setTimeout(() => setOverlayStage('none'), 3800);
                 return () => { clearTimeout(timer1); clearTimeout(timer2); };
             }, []);
@@ -628,76 +628,66 @@
                             </div>
                         )}
 
-                        {/* --- ENGINE: ADD / EDIT RITUAL (MODERN MOBILE SCALE) --- */}
+                        {/* --- ENGINE: ADD / EDIT RITUAL (STABLE COMPACT LAYOUT) --- */}
                         {currentPage === 'add' && (
-                            <div className="animate-fade space-y-6 pb-20">
-                                <div className="mb-2">
-                                    <h2 className="text-2xl font-black italic text-black leading-none">{editingId ? 'Modify Ritual' : 'Forge Ritual'}</h2>
-                                    <p className="text-slate-400 text-[10px] font-bold mt-1.5 uppercase tracking-widest">Define Your Discipline</p>
+                            <div className="animate-fade space-y-4 pb-20">
+                                <div className="mb-1">
+                                    <h2 className="text-xl font-black italic text-black leading-none">{editingId ? 'Modify Ritual' : 'Forge Ritual'}</h2>
+                                    <p className="text-slate-400 text-[9px] font-bold uppercase tracking-widest mt-1">Define Your Discipline</p>
                                 </div>
                                 
-                                <div className="space-y-4">
+                                <div className="space-y-2">
                                     <input 
-                                        className="w-full p-5 rounded-[28px] bg-white font-black text-lg outline-none shadow-sm text-black placeholder:text-slate-200 border border-transparent focus:border-black/5 transition-all" 
+                                        className="w-full p-4 rounded-2xl bg-white font-black text-sm outline-none shadow-sm text-black border border-transparent" 
                                         placeholder="Ritual Name" 
                                         value={form.name} 
                                         onChange={e => setForm({...form, name: e.target.value})} 
                                     />
                                     
                                     <textarea 
-                                        className="w-full p-5 rounded-[28px] bg-white font-bold text-sm outline-none shadow-sm text-black placeholder:text-slate-200 border border-transparent focus:border-black/5 transition-all" 
-                                        placeholder="Why is this important? (Optional)" 
-                                        rows="3" 
+                                        className="w-full p-4 rounded-2xl bg-white font-bold text-[11px] outline-none shadow-sm text-black border border-transparent" 
+                                        placeholder="Why is this important?" 
+                                        rows="2" 
                                         value={form.description} 
                                         onChange={e => setForm({...form, description: e.target.value})} 
                                     />
                                 </div>
                                 
-                                <div className="flex flex-col gap-6">
-                                    {/* COLOR PICKER (RESTORED SCROLL) */}
-                                    <div className="flex flex-col gap-3">
-                                        <p className="text-[9px] font-black uppercase tracking-[0.2em] ml-4 text-slate-400">Signature Color</p>
-                                        <div className="flex items-center overflow-hidden">
-                                            <button onClick={() => setPickers({color: !pickers.color, icon: false})} className="w-14 h-14 rounded-full border-4 border-white shadow-xl shrink-0 z-10" style={{ backgroundColor: form.color }} />
+                                {/* SIDE-BY-SIDE PICKERS */}
+                                <div className="flex gap-2">
+                                    <div className="flex-1">
+                                        <p className="text-[8px] font-black uppercase tracking-widest ml-2 mb-1 text-slate-400">Color</p>
+                                        <div className="flex items-center h-12 relative bg-white rounded-xl shadow-sm px-2">
+                                            <button onClick={() => setPickers({color: !pickers.color, icon: false})} className="w-8 h-8 rounded-full border-2 border-white shadow-md shrink-0" style={{ backgroundColor: form.color }} />
                                             {pickers.color && (
-                                                <div className="scroll-wrapper no-scrollbar ml-3 bg-white/40 p-1.5 rounded-full animate-fade">
-                                                    <div className="scroll-inner px-2 gap-3">
-                                                        {colorPalette.map(colorCode => (
-                                                            <button 
-                                                                key={colorCode} 
-                                                                onClick={() => {setForm({...form, color: colorCode}); setPickers({color: false})}} 
-                                                                className="w-10 h-10 rounded-full shrink-0 shadow-md" 
-                                                                style={{ backgroundColor: colorCode }} 
-                                                            />
-                                                        ))}
+                                                <div className="absolute left-12 right-2 flex items-center overflow-hidden h-full">
+                                                    <div className="scroll-wrapper no-scrollbar bg-white p-1 rounded-full border border-black/5 animate-fade">
+                                                        <div className="scroll-inner gap-2">
+                                                            {colorPalette.map(colorCode => (
+                                                                <button key={colorCode} onClick={() => {setForm({...form, color: colorCode}); setPickers({color: false})}} className="w-6 h-6 rounded-full shrink-0 shadow-sm" style={{ backgroundColor: colorCode }} />
+                                                            ))}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             )}
                                         </div>
                                     </div>
-
-                                    {/* ICON PICKER (RESTORED SCROLL) */}
-                                    <div className="flex flex-col gap-3">
-                                        <p className="text-[9px] font-black uppercase tracking-[0.2em] ml-4 text-slate-400">Ritual Symbol</p>
-                                        <div className="flex items-center overflow-hidden">
-                                            <button 
-                                                onClick={() => setPickers({icon: !pickers.icon, color: false})} 
-                                                className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center text-2xl shadow-xl z-10 border border-black/5 shrink-0 text-black"
-                                            >
+                                    <div className="flex-1">
+                                        <p className="text-[8px] font-black uppercase tracking-widest ml-2 mb-1 text-slate-400">Icon</p>
+                                        <div className="flex items-center h-12 relative bg-white rounded-xl shadow-sm px-2">
+                                            <button onClick={() => setPickers({icon: !pickers.icon, color: false})} className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-sm shadow-sm shrink-0 text-black">
                                                 {form.icon}
                                             </button>
                                             {pickers.icon && (
-                                                <div className="scroll-wrapper no-scrollbar ml-3 bg-white/40 p-1.5 rounded-[20px] animate-fade">
-                                                    <div className="scroll-inner px-2 gap-3">
-                                                        {iconLibrary.map(sym => (
-                                                            <button 
-                                                                key={sym} 
-                                                                onClick={() => {setForm({...form, icon: sym}); setPickers({icon: false})}} 
-                                                                className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-base shrink-0 border border-black/5"
-                                                            >
-                                                                {sym}
-                                                            </button>
-                                                        ))}
+                                                <div className="absolute left-12 right-2 flex items-center overflow-hidden h-full">
+                                                    <div className="scroll-wrapper no-scrollbar bg-white p-1 rounded-lg border border-black/5 animate-fade">
+                                                        <div className="scroll-inner gap-2">
+                                                            {iconLibrary.map(sym => (
+                                                                <button key={sym} onClick={() => {setForm({...form, icon: sym}); setPickers({icon: false})}} className="w-6 h-6 rounded-md bg-slate-50 flex items-center justify-center text-xs shrink-0">
+                                                                    {sym}
+                                                                </button>
+                                                            ))}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             )}
@@ -705,25 +695,17 @@
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-4 mt-2">
-                                    <div className="space-y-1.5">
-                                        <p className="text-[8px] font-black uppercase text-slate-400 ml-4 tracking-widest">Type</p>
-                                        <select 
-                                            className="w-full p-5 rounded-[24px] bg-white font-black text-xs shadow-sm outline-none appearance-none text-black border border-transparent" 
-                                            value={form.category} 
-                                            onChange={e => setForm({...form, category: e.target.value})}
-                                        >
+                                <div className="grid grid-cols-2 gap-2 mt-1">
+                                    <div className="space-y-1">
+                                        <p className="text-[8px] font-black uppercase text-slate-400 ml-2 tracking-widest">Type</p>
+                                        <select className="w-full p-4 rounded-xl bg-white font-black text-[10px] shadow-sm outline-none appearance-none text-black border border-transparent" value={form.category} onChange={e => setForm({...form, category: e.target.value})}>
                                             <option value="Category" disabled>Category</option>
                                             <option>Body</option><option>Mind</option><option>Work</option><option>Growth</option><option>Finance</option><option>Social</option>
                                         </select>
                                     </div>
-                                    <div className="space-y-1.5">
-                                        <p className="text-[8px] font-black uppercase text-slate-400 ml-4 tracking-widest">Schedule</p>
-                                        <select 
-                                            className="w-full p-5 rounded-[24px] bg-white font-black text-xs shadow-sm outline-none appearance-none text-black border border-transparent" 
-                                            value={form.frequency} 
-                                            onChange={e => setForm({...form, frequency: e.target.value})}
-                                        >
+                                    <div className="space-y-1">
+                                        <p className="text-[8px] font-black uppercase text-slate-400 ml-2 tracking-widest">Schedule</p>
+                                        <select className="w-full p-4 rounded-xl bg-white font-black text-[10px] shadow-sm outline-none appearance-none text-black border border-transparent" value={form.frequency} onChange={e => setForm({...form, frequency: e.target.value})}>
                                             <option value="Frequency" disabled>Frequency</option>
                                             <option>Daily</option>
                                             <option>Specific Days of Week</option>
@@ -734,18 +716,11 @@
                                 </div>
 
                                 {form.frequency === 'Specific Days of Week' && (
-                                    <div className="flex justify-between gap-1.5 animate-fade p-2 bg-white rounded-[24px] shadow-sm overflow-x-auto no-scrollbar">
+                                    <div className="flex justify-between gap-1 animate-fade p-2 bg-white rounded-xl shadow-sm overflow-x-auto no-scrollbar">
                                         {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(day => {
                                             const isSelected = form.weekDays.includes(day);
                                             return (
-                                                <button 
-                                                    key={day} 
-                                                    onClick={() => {
-                                                        const current = isSelected ? form.weekDays.filter(d => d !== day) : [...form.weekDays, day];
-                                                        setForm({...form, weekDays: current});
-                                                    }} 
-                                                    className={`w-10 h-10 rounded-xl text-[9px] font-black shrink-0 transition-all ${isSelected ? 'bg-black text-white' : 'bg-slate-50 text-slate-300'}`}
-                                                >
+                                                <button key={day} onClick={() => { const current = isSelected ? form.weekDays.filter(d => d !== day) : [...form.weekDays, day]; setForm({...form, weekDays: current}); }} className={`w-8 h-8 rounded-lg text-[8px] font-black shrink-0 transition-all ${isSelected ? 'bg-black text-white' : 'bg-slate-50 text-slate-300'}`}>
                                                     {day[0]}
                                                 </button>
                                             );
@@ -754,63 +729,34 @@
                                 )}
 
                                 {form.frequency === 'Specific Days of Month' && (
-                                    <div className="month-picker-grid bg-white p-6 rounded-[32px] animate-fade shadow-sm border border-black/5">
+                                    <div className="month-picker-grid bg-white p-3 rounded-2xl animate-fade shadow-sm border border-black/5">
                                         {[...Array(31)].map((_, i) => {
                                             const dNum = i + 1;
                                             const isSel = form.monthDays.includes(dNum);
-                                            return (
-                                                <button 
-                                                    key={dNum} 
-                                                    onClick={() => {
-                                                        const current = isSel ? form.monthDays.filter(d => d !== dNum) : [...form.monthDays, dNum];
-                                                        setForm({...form, monthDays: current});
-                                                    }} 
-                                                    className={`w-7 h-7 rounded-lg text-[8px] font-black transition-all ${isSel ? 'bg-black text-white shadow-md' : 'bg-slate-50 text-slate-300'}`}
-                                                >
-                                                    {dNum}
-                                                </button>
-                                            );
+                                            return <button key={dNum} onClick={() => { const current = isSel ? form.monthDays.filter(d => d !== dNum) : [...form.monthDays, dNum]; setForm({...form, monthDays: current}); }} className={`w-5 h-5 rounded-md text-[7px] font-black transition-all ${isSel ? 'bg-black text-white' : 'bg-slate-50 text-slate-300'}`}>{dNum}</button>
                                         })}
                                     </div>
                                 )}
 
                                 {form.frequency === 'Customise Days' && (
-                                    <div className="flex items-center gap-5 bg-white p-6 rounded-[32px] animate-fade shadow-sm border border-black/5">
-                                        <input 
-                                            type="number" 
-                                            className="w-16 font-black text-2xl text-center outline-none border-b-2 border-amber-400 bg-transparent text-black" 
-                                            value={form.customCount} 
-                                            onChange={e => setForm({...form, customCount: e.target.value})} 
-                                        />
+                                    <div className="flex items-center gap-3 bg-white p-3.5 rounded-2xl animate-fade shadow-sm border border-black/5">
+                                        <input type="number" className="w-10 font-black text-lg text-center outline-none border-b border-amber-400 bg-transparent text-black" value={form.customCount} onChange={e => setForm({...form, customCount: e.target.value})} />
                                         <div className="flex flex-col">
-                                            <span className="font-black text-[8px] opacity-30 uppercase tracking-[0.2em]">Repetitions per</span>
-                                            <select 
-                                                className="font-black text-sm outline-none bg-transparent text-black" 
-                                                value={form.customPeriod} 
-                                                onChange={e => setForm({...form, customPeriod: e.target.value})}
-                                            >
-                                                <option>Week</option>
-                                                <option>Month</option>
+                                            <span className="font-black text-[7px] opacity-30 uppercase">Repetitions per</span>
+                                            <select className="font-black text-xs outline-none bg-transparent text-black" value={form.customPeriod} onChange={e => setForm({...form, customPeriod: e.target.value})}>
+                                                <option>Week</option><option>Month</option>
                                             </select>
                                         </div>
                                     </div>
                                 )}
 
-                                <button 
-                                    onClick={processHabitSave} 
-                                    className="w-full py-6 rounded-[32px] logo-gradient text-white font-black text-lg shadow-2xl active:scale-95 transition-all flex items-center justify-center gap-4"
-                                >
+                                <button onClick={processHabitSave} className="w-full py-4 rounded-2xl logo-gradient text-white font-black text-sm shadow-lg active:scale-95 transition-all flex items-center justify-center gap-3">
                                     <i className="fa-solid fa-bolt text-amber-400"></i>
                                     {editingId ? 'Update Discipline' : 'Forge Ritual'}
                                 </button>
                                 
                                 {editingId && (
-                                    <button 
-                                        onClick={() => { setEditingId(null); setForm(defaultForm); setCurrentPage('habits'); }} 
-                                        className="w-full text-slate-400 font-bold text-[11px] py-1 hover:text-black transition-colors"
-                                    >
-                                        Discard Changes
-                                    </button>
+                                    <button onClick={() => { setEditingId(null); setForm(defaultForm); setCurrentPage('habits'); }} className="w-full text-slate-400 font-bold text-[9px] py-0.5 hover:text-black transition-colors text-center">Discard Changes</button>
                                 )}
                             </div>
                         )}
