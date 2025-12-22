@@ -129,17 +129,16 @@
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
         /* floating action button engine */
-.fixed-bottom-btn { 
-    position: absolute; 
-    bottom: 85px;  
-    left: 0; 
-    right: 0; 
-    z-index: 40; 
-    display: flex;
-    justify-content: center;
-    /* Isse button thoda smooth screen par upar utha hua dikhega */
-    filter: drop-shadow(0 15px 15px rgba(0,0,0,0.1));
-}
+        .fixed-bottom-btn { 
+            position: absolute; 
+            bottom: 85px;  
+            left: 0; 
+            right: 0; 
+            z-index: 40; 
+            display: flex;
+            justify-content: center;
+            filter: drop-shadow(0 15px 15px rgba(0,0,0,0.1));
+        }
 
         /* data visualization components */
         .meter-svg { transform: rotate(-90deg); }
@@ -242,10 +241,6 @@
             const [growthRange, setGrowthRange] = useState(30); 
             const [pickers, setPickers] = useState({ color: false, icon: false });
 
-            // Coach Page States
-            const [coachInput, setCoachInput] = useState("");
-            const [coachDisplayMessage, setCoachDisplayMessage] = useState("");
-
             // Persistence Management
             const [habits, setHabits] = useState(() => {
                 try {
@@ -309,7 +304,8 @@
                 const totalRituals = habits.length;
                 const completedToday = (logs[todayStr] || []).length;
                 
-                const winRateString = totalRituals === 0 ? "0.00" : ((completedToday / totalRituals) * 100).toFixed(2);
+                const winRateNumber = totalRituals === 0 ? 0 : (completedToday / totalRituals) * 100;
+                const winRateString = winRateNumber.toFixed(2);
                 
                 let rangeChecksCount = 0;
                 let rangePossibilities = totalRituals * growthRange;
@@ -335,6 +331,7 @@
                     totalCount: totalRituals, 
                     doneCount: completedToday, 
                     winRate: winRateString, 
+                    winRateNum: winRateNumber,
                     mastery: masteryLevelString, 
                     heatmap: heatmapDataArray 
                 };
@@ -380,28 +377,6 @@
                     const remainingHabits = habits.filter(h => h.id !== id);
                     setHabits(remainingHabits);
                 }
-            };
-
-            // AI Coach Logic
-            const handleCoachSubmit = () => {
-                if (!coachInput.trim()) return;
-                
-                // Simple logic for replies based on keywords or stats
-                let reply = "";
-                const input = coachInput.toLowerCase();
-                
-                if (input.includes("stats") || input.includes("score")) {
-                    reply = `Aapka current score ${stats.winRate}% hai. Aapne aaj ${stats.doneCount} out of ${stats.totalCount} rituals poore kiye hain.`;
-                } else if (input.includes("motivate") || input.includes("tired")) {
-                    reply = "Yaad rakhein: 'Discipline is doing what needs to be done, even if you don't feel like doing it.' Bas agla chota kadam uthayein.";
-                } else if (input.includes("help") || input.includes("ritual")) {
-                    reply = "Apne rituals ko 'Habit Stacking' ke zariye asaan banayein. Ek naye ritual ko apne purane pakke habit se jodein.";
-                } else {
-                    reply = `Coach: "${coachInput}" - Ye ek acha point hai. Meri advice hai ki aap apne rituals ki consistency par focus karein. Aapka mastery level abhi ${stats.mastery}% hai.`;
-                }
-
-                setCoachDisplayMessage(reply);
-                setCoachInput("");
             };
 
             // --- 5. COMPONENT: NAVIGATIONAL HEADER ---
@@ -875,17 +850,86 @@
                                 </div>
                                 
                                 <div className="fixed-bottom-btn">
-    <button 
-        onClick={() => { setViewDate(new Date()); setCurrentPage('home'); }} 
-        className="mx-auto block px-10 py-4 rounded-full bg-black text-white font-bold text-[10px] uppercase tracking-[0.2em] shadow-2xl active:scale-95 transition-all border border-white/10"
-    >
-        <i className="fa-solid fa-arrow-rotate-left mr-2 opacity-60"></i>
-        Return to Today
-    </button>
-</div>
+                                    <button 
+                                        onClick={() => { setViewDate(new Date()); setCurrentPage('home'); }} 
+                                        className="mx-auto block px-10 py-4 rounded-full bg-black text-white font-bold text-[10px] uppercase tracking-[0.2em] shadow-2xl active:scale-95 transition-all border border-white/10"
+                                    >
+                                        <i className="fa-solid fa-arrow-rotate-left mr-2 opacity-60"></i>
+                                        Return to Today
+                                    </button>
+                                </div>
                             </div>
                         )}
 
+                        {/* --- AI COACH PAGE CONTENT --- */}
+                        {currentPage === 'coach' && (
+                            <div className="animate-fade flex flex-col gap-6 pb-40">
+                                <div className="mb-2">
+                                    <h2 className="text-2xl font-black italic text-black leading-none">AI Ritual Coach</h2>
+                                    <p className="text-slate-400 text-xs font-bold mt-2 uppercase tracking-widest">Personal Performance Insights</p>
+                                </div>
+
+                                {/* Dynamic Insight Card */}
+                                <div className="card-standard bg-black text-white relative overflow-hidden">
+                                    <div className="absolute top-0 right-0 p-4 opacity-10">
+                                        <i className="fa-solid fa-brain text-6xl"></i>
+                                    </div>
+                                    <div className="relative z-10">
+                                        <span className="bg-amber-400 text-black text-[8px] font-black px-2 py-1 rounded-full uppercase tracking-tighter">Neural Engine Active</span>
+                                        <p className="mt-4 font-bold text-lg leading-tight">
+                                            {stats.winRateNum >= 70 
+                                                ? `Shaandaar! Aapka score ${stats.winRate}% hai. Aaj ise 100% tak le jaane ki koshish karein. Aap sahi raaste par hain!` 
+                                                : `Thodi mehnat aur zaroori hai. Aapka current score ${stats.winRate}% hai. Neeche diye gaye suggestions se shuru karein.`
+                                            }
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Coach Advice - Habit Stacking Recommendations */}
+                                <div className="space-y-4">
+                                    <p className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] ml-2">
+                                        {stats.winRateNum >= 70 ? 'Recommended for Mastery' : 'Habit Stacking Ideas (For You)'}
+                                    </p>
+                                    
+                                    {stats.winRateNum < 70 ? (
+                                        <Fragment>
+                                            <div className="card-standard flex items-center gap-4 border border-black/5 hover:border-amber-200 transition-all">
+                                                <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-xl">🔗</div>
+                                                <div className="flex-1">
+                                                    <h4 className="font-black text-xs uppercase tracking-tight">Morning Link</h4>
+                                                    <p className="text-[10px] text-slate-500 font-semibold">"Chai peene ke baad (Old), main 5 minute meditate (New) karunga."</p>
+                                                </div>
+                                            </div>
+                                            <div className="card-standard flex items-center gap-4 border border-black/5 hover:border-amber-200 transition-all">
+                                                <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-xl">🔗</div>
+                                                <div className="flex-1">
+                                                    <h4 className="font-black text-xs uppercase tracking-tight">Post-Work Link</h4>
+                                                    <p className="text-[10px] text-slate-500 font-semibold">"Laptop band karne ke turant baad (Old), main 1 glass paani (New) piyunga."</p>
+                                                </div>
+                                            </div>
+                                        </Fragment>
+                                    ) : (
+                                        <Fragment>
+                                            <div className="card-standard flex items-center gap-4 border border-black/5 hover:border-amber-200 transition-all">
+                                                <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-xl">🚀</div>
+                                                <div className="flex-1">
+                                                    <h4 className="font-black text-xs uppercase tracking-tight">Raise the Bar</h4>
+                                                    <p className="text-[10px] text-slate-500 font-semibold">Aapki consistency kamaal ki hai. Aaj ek extra ritual complete karke apni limit test karein.</p>
+                                                </div>
+                                            </div>
+                                            <div className="card-standard flex items-center gap-4 border border-black/5 hover:border-amber-200 transition-all">
+                                                <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-xl">🧘</div>
+                                                <div className="flex-1">
+                                                    <h4 className="font-black text-xs uppercase tracking-tight">Flow State</h4>
+                                                    <p className="text-[10px] text-slate-500 font-semibold">Aap momentum mein hain. In rituals ko autopilot mode par lane ke liye 21 din tak break na karein.</p>
+                                                </div>
+                                            </div>
+                                        </Fragment>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                    </div>
 
                     {/* PERMANENT NAV ENGINE */}
                     <nav className="rout-nav">
