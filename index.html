@@ -232,6 +232,16 @@
         const { useState, useEffect, useMemo, Fragment } = React;
 
         const App = () => {
+            // --- IST TIME HELPER ---
+            const getISTDateString = (date = new Date()) => {
+                return new Intl.DateTimeFormat('en-CA', {
+                    timeZone: 'Asia/Kolkata',
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
+                }).format(date);
+            };
+
             // --- 1. CORE STATE ARCHITECTURE ---
             const [overlayStage, setOverlayStage] = useState('logo');
             const [currentPage, setCurrentPage] = useState('home');
@@ -297,7 +307,8 @@
                 localStorage.setItem('habitLogs', JSON.stringify(logs));
             }, [habits, logs]);
 
-            const todayStr = new Date().toISOString().split('T')[0];
+            // UPDATED: todayStr now forced to IST
+            const todayStr = getISTDateString();
 
             // --- 3. ANALYTICS CALCULATION ---
             const stats = useMemo(() => {
@@ -314,7 +325,8 @@
                 for (let i = growthRange; i >= 0; i--) {
                     const targetDate = new Date();
                     targetDate.setDate(targetDate.getDate() - i);
-                    const dsKey = targetDate.toISOString().split('T')[0];
+                    // UPDATED: Heatmap keys forced to IST
+                    const dsKey = getISTDateString(targetDate);
                     
                     const dailyChecks = (logs[dsKey] || []).length;
                     rangeChecksCount += dailyChecks;
@@ -834,7 +846,8 @@
                                         {[...Array(new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay())].map((_, i) => <div key={`empty-${i}`}></div>)}
                                         {[...Array(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate())].map((_, i) => {
                                             const dayNum = i + 1;
-                                            const dsString = `${viewDate.getFullYear()}-${String(viewDate.getMonth() + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
+                                            // UPDATED: Calendar comparison string forced to IST format
+                                            const dsString = getISTDateString(new Date(viewDate.getFullYear(), viewDate.getMonth(), dayNum));
                                             const dayCount = (logs[dsString] || []).length;
                                             const dayPct = habits.length > 0 ? (dayCount / habits.length) * 100 : 0;
                                             
