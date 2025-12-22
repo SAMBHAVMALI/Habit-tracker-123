@@ -287,7 +287,7 @@
 
             // --- 2. LIFECYCLE & SYNC ---
             useEffect(() => {
-                const timer1 = setTimeout(() => setOverlayStage('logo'), 1400);
+                const timer1 = setTimeout(() => setOverlayStage('quote'), 1400);
                 const timer2 = setTimeout(() => setOverlayStage('none'), 3800);
                 return () => { clearTimeout(timer1); clearTimeout(timer2); };
             }, []);
@@ -628,73 +628,76 @@
                             </div>
                         )}
 
-                        {/* --- ENGINE: ADD / EDIT RITUAL (ULTRA STABLE MOBILE LAYOUT) --- */}
+                        {/* --- ENGINE: ADD / EDIT RITUAL (SIZES REDUCED) --- */}
                         {currentPage === 'add' && (
-                            <div className="animate-fade space-y-4 pb-20">
-                                <div className="mb-1">
+                            <div className="animate-fade space-y-6 pb-20">
+                                <div className="mb-2">
                                     <h2 className="text-xl font-black italic text-black leading-none">{editingId ? 'Modify Ritual' : 'Forge Ritual'}</h2>
-                                    <p className="text-slate-400 text-[9px] font-bold uppercase tracking-widest mt-1">Define Your Discipline</p>
+                                    <p className="text-slate-400 text-[9px] font-bold mt-1.5 uppercase tracking-widest">Define Your Discipline</p>
                                 </div>
                                 
-                                <div className="space-y-2">
+                                <div className="space-y-3">
                                     <input 
-                                        className="w-full p-4 rounded-2xl bg-white font-black text-sm outline-none shadow-sm text-black border border-transparent focus:border-black/5 transition-all duration-300" 
+                                        className="w-full p-4 rounded-[24px] bg-white font-black text-sm outline-none shadow-sm text-black placeholder:text-slate-200 border border-transparent focus:border-black/5 transition-all" 
                                         placeholder="Ritual Name" 
                                         value={form.name} 
                                         onChange={e => setForm({...form, name: e.target.value})} 
                                     />
                                     
                                     <textarea 
-                                        className="w-full p-4 rounded-2xl bg-white font-bold text-[11px] outline-none shadow-sm text-black border border-transparent focus:border-black/5 transition-all duration-300" 
-                                        placeholder="Why is this important?" 
+                                        className="w-full p-4 rounded-[24px] bg-white font-bold text-[11px] outline-none shadow-sm text-black placeholder:text-slate-200 border border-transparent focus:border-black/5 transition-all" 
+                                        placeholder="Why is this important? (Optional)" 
                                         rows="2" 
                                         value={form.description} 
                                         onChange={e => setForm({...form, description: e.target.value})} 
                                     />
                                 </div>
                                 
-                                {/* SIDE-BY-SIDE PICKERS (SIDE BY SIDE IN ONE ROW) */}
-                                <div className="flex gap-2">
-                                    <div className="flex-1">
-                                        <p className="text-[8px] font-black uppercase tracking-widest ml-2 mb-1 text-slate-400">Signature Color</p>
-                                        <div className="flex items-center h-12 relative bg-white rounded-xl shadow-sm px-2 overflow-visible">
-                                            <button 
-                                                onClick={() => setPickers({color: !pickers.color, icon: false})} 
-                                                className="w-8 h-8 rounded-full border-2 border-white shadow-md shrink-0 active:scale-90 transition-transform" 
-                                                style={{ backgroundColor: form.color }} 
-                                            />
+                                <div className="flex flex-col gap-6">
+                                    {/* COLOR PICKER (SCROLL RETAINED) */}
+                                    <div className="flex flex-col gap-3">
+                                        <p className="text-[9px] font-black uppercase tracking-[0.2em] ml-4 text-slate-400">Signature Color</p>
+                                        <div className="flex items-center overflow-hidden">
+                                            <button onClick={() => setPickers({color: !pickers.color, icon: false})} className="w-14 h-14 rounded-full border-4 border-white shadow-xl shrink-0 z-10" style={{ backgroundColor: form.color }} />
                                             {pickers.color && (
-                                                <div className="absolute left-0 top-14 w-64 bg-white/95 backdrop-blur-xl border border-black/5 rounded-2xl shadow-2xl p-2 z-[100] animate-fade">
-                                                    <div className="scroll-wrapper no-scrollbar">
-                                                        <div className="scroll-inner gap-2 px-2">
-                                                            {colorPalette.map(c => (
-                                                                <button key={c} onClick={() => {setForm({...form, color: c}); setPickers({color: false})}} className="w-8 h-8 rounded-full shadow-sm active:scale-75 transition-all" style={{ backgroundColor: c }} />
-                                                            ))}
-                                                        </div>
+                                                <div className="scroll-wrapper no-scrollbar ml-3 bg-white/40 p-1.5 rounded-full animate-fade">
+                                                    <div className="scroll-inner px-2 gap-3">
+                                                        {colorPalette.map(colorCode => (
+                                                            <button 
+                                                                key={colorCode} 
+                                                                onClick={() => {setForm({...form, color: colorCode}); setPickers({color: false})}} 
+                                                                className="w-10 h-10 rounded-full shrink-0 shadow-md" 
+                                                                style={{ backgroundColor: colorCode }} 
+                                                            />
+                                                        ))}
                                                     </div>
                                                 </div>
                                             )}
                                         </div>
                                     </div>
-                                    <div className="flex-1">
-                                        <p className="text-[8px] font-black uppercase tracking-widest ml-2 mb-1 text-slate-400">Ritual Symbol</p>
-                                        <div className="flex items-center h-12 relative bg-white rounded-xl shadow-sm px-2 overflow-visible">
+
+                                    {/* ICON PICKER (SCROLL RETAINED) */}
+                                    <div className="flex flex-col gap-3">
+                                        <p className="text-[9px] font-black uppercase tracking-[0.2em] ml-4 text-slate-400">Ritual Symbol</p>
+                                        <div className="flex items-center overflow-hidden">
                                             <button 
                                                 onClick={() => setPickers({icon: !pickers.icon, color: false})} 
-                                                className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-sm shadow-sm shrink-0 active:scale-90 transition-transform text-black"
+                                                className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center text-2xl shadow-xl z-10 border border-black/5 shrink-0 text-black"
                                             >
                                                 {form.icon}
                                             </button>
                                             {pickers.icon && (
-                                                <div className="absolute right-0 top-14 w-64 bg-white/95 backdrop-blur-xl border border-black/5 rounded-2xl shadow-2xl p-2 z-[100] animate-fade">
-                                                    <div className="scroll-wrapper no-scrollbar">
-                                                        <div className="scroll-inner gap-2 px-2">
-                                                            {iconLibrary.map(i => (
-                                                                <button key={i} onClick={() => {setForm({...form, icon: i}); setPickers({icon: false})}} className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-xs active:scale-75 transition-all">
-                                                                    {i}
-                                                                </button>
-                                                            ))}
-                                                        </div>
+                                                <div className="scroll-wrapper no-scrollbar ml-3 bg-white/40 p-1.5 rounded-[20px] animate-fade">
+                                                    <div className="scroll-inner px-2 gap-3">
+                                                        {iconLibrary.map(sym => (
+                                                            <button 
+                                                                key={sym} 
+                                                                onClick={() => {setForm({...form, icon: sym}); setPickers({icon: false})}} 
+                                                                className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-base shrink-0 border border-black/5"
+                                                            >
+                                                                {sym}
+                                                            </button>
+                                                        ))}
                                                     </div>
                                                 </div>
                                             )}
@@ -702,11 +705,11 @@
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-2 mt-1">
-                                    <div className="space-y-1">
-                                        <p className="text-[8px] font-black uppercase text-slate-400 ml-2 tracking-widest">Type</p>
+                                <div className="grid grid-cols-2 gap-4 mt-2">
+                                    <div className="space-y-1.5">
+                                        <p className="text-[8px] font-black uppercase text-slate-400 ml-4 tracking-widest">Type</p>
                                         <select 
-                                            className="w-full p-4 rounded-xl bg-white font-black text-[10px] shadow-sm outline-none appearance-none text-black border border-transparent focus:border-black/5" 
+                                            className="w-full p-4 rounded-[20px] bg-white font-black text-[10px] shadow-sm outline-none appearance-none text-black border border-transparent" 
                                             value={form.category} 
                                             onChange={e => setForm({...form, category: e.target.value})}
                                         >
@@ -714,10 +717,10 @@
                                             <option>Body</option><option>Mind</option><option>Work</option><option>Growth</option><option>Finance</option><option>Social</option>
                                         </select>
                                     </div>
-                                    <div className="space-y-1">
-                                        <p className="text-[8px] font-black uppercase text-slate-400 ml-2 tracking-widest">Schedule</p>
+                                    <div className="space-y-1.5">
+                                        <p className="text-[8px] font-black uppercase text-slate-400 ml-4 tracking-widest">Schedule</p>
                                         <select 
-                                            className="w-full p-4 rounded-xl bg-white font-black text-[10px] shadow-sm outline-none appearance-none text-black border border-transparent focus:border-black/5" 
+                                            className="w-full p-4 rounded-[20px] bg-white font-black text-[10px] shadow-sm outline-none appearance-none text-black border border-transparent" 
                                             value={form.frequency} 
                                             onChange={e => setForm({...form, frequency: e.target.value})}
                                         >
@@ -731,11 +734,18 @@
                                 </div>
 
                                 {form.frequency === 'Specific Days of Week' && (
-                                    <div className="flex justify-between gap-1 animate-fade p-2 bg-white rounded-xl shadow-sm overflow-x-auto no-scrollbar">
+                                    <div className="flex justify-between gap-1.5 animate-fade p-2 bg-white rounded-[24px] shadow-sm overflow-x-auto no-scrollbar">
                                         {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(day => {
                                             const isSelected = form.weekDays.includes(day);
                                             return (
-                                                <button key={day} onClick={() => { const current = isSelected ? form.weekDays.filter(d => d !== day) : [...form.weekDays, day]; setForm({...form, weekDays: current}); }} className={`w-8 h-8 rounded-lg text-[8px] font-black shrink-0 transition-all duration-300 ${isSelected ? 'bg-black text-white shadow-lg scale-105' : 'bg-slate-50 text-slate-300'}`}>
+                                                <button 
+                                                    key={day} 
+                                                    onClick={() => {
+                                                        const current = isSelected ? form.weekDays.filter(d => d !== day) : [...form.weekDays, day];
+                                                        setForm({...form, weekDays: current});
+                                                    }} 
+                                                    className={`w-10 h-10 rounded-xl text-[9px] font-black shrink-0 transition-all ${isSelected ? 'bg-black text-white' : 'bg-slate-50 text-slate-300'}`}
+                                                >
                                                     {day[0]}
                                                 </button>
                                             );
@@ -744,12 +754,19 @@
                                 )}
 
                                 {form.frequency === 'Specific Days of Month' && (
-                                    <div className="month-picker-grid bg-white p-3 rounded-2xl animate-fade shadow-sm border border-black/5">
+                                    <div className="month-picker-grid bg-white p-6 rounded-[32px] animate-fade shadow-sm border border-black/5">
                                         {[...Array(31)].map((_, i) => {
                                             const dNum = i + 1;
                                             const isSel = form.monthDays.includes(dNum);
                                             return (
-                                                <button key={dNum} onClick={() => { const current = isSel ? form.monthDays.filter(d => d !== dNum) : [...form.monthDays, dNum]; setForm({...form, monthDays: current}); }} className={`w-5 h-5 rounded-md text-[7px] font-black transition-all duration-300 ${isSel ? 'bg-black text-white shadow-sm' : 'bg-slate-50 text-slate-300'}`}>
+                                                <button 
+                                                    key={dNum} 
+                                                    onClick={() => {
+                                                        const current = isSel ? form.monthDays.filter(d => d !== dNum) : [...form.monthDays, dNum];
+                                                        setForm({...form, monthDays: current});
+                                                    }} 
+                                                    className={`w-7 h-7 rounded-lg text-[8px] font-black transition-all ${isSel ? 'bg-black text-white shadow-md' : 'bg-slate-50 text-slate-300'}`}
+                                                >
                                                     {dNum}
                                                 </button>
                                             );
@@ -758,24 +775,43 @@
                                 )}
 
                                 {form.frequency === 'Customise Days' && (
-                                    <div className="flex items-center gap-3 bg-white p-3.5 rounded-2xl animate-fade shadow-sm border border-black/5">
-                                        <input type="number" className="w-10 font-black text-lg text-center outline-none border-b border-amber-400 bg-transparent text-black" value={form.customCount} onChange={e => setForm({...form, customCount: e.target.value})} />
+                                    <div className="flex items-center gap-5 bg-white p-6 rounded-[32px] animate-fade shadow-sm border border-black/5">
+                                        <input 
+                                            type="number" 
+                                            className="w-16 font-black text-2xl text-center outline-none border-b-2 border-amber-400 bg-transparent text-black" 
+                                            value={form.customCount} 
+                                            onChange={e => setForm({...form, customCount: e.target.value})} 
+                                        />
                                         <div className="flex flex-col">
-                                            <span className="font-black text-[7px] opacity-30 uppercase tracking-[0.2em]">Repetitions per</span>
-                                            <select className="font-black text-xs outline-none bg-transparent text-black" value={form.customPeriod} onChange={e => setForm({...form, customPeriod: e.target.value})}>
-                                                <option>Week</option><option>Month</option>
+                                            <span className="font-black text-[8px] opacity-30 uppercase tracking-[0.2em]">Repetitions per</span>
+                                            <select 
+                                                className="font-black text-sm outline-none bg-transparent text-black" 
+                                                value={form.customPeriod} 
+                                                onChange={e => setForm({...form, customPeriod: e.target.value})}
+                                            >
+                                                <option>Week</option>
+                                                <option>Month</option>
                                             </select>
                                         </div>
                                     </div>
                                 )}
 
-                                <button onClick={processHabitSave} className="w-full py-4 rounded-2xl logo-gradient text-white font-black text-sm shadow-xl active:scale-95 transition-all duration-300 flex items-center justify-center gap-3">
+                                {/* FORGE RITUAL BUTTON (SIZE REDUCED) */}
+                                <button 
+                                    onClick={processHabitSave} 
+                                    className="w-full py-4 rounded-[32px] logo-gradient text-white font-black text-sm shadow-2xl active:scale-95 transition-all flex items-center justify-center gap-4"
+                                >
                                     <i className="fa-solid fa-bolt text-amber-400"></i>
                                     {editingId ? 'Update Discipline' : 'Forge Ritual'}
                                 </button>
                                 
                                 {editingId && (
-                                    <button onClick={() => { setEditingId(null); setForm(defaultForm); setCurrentPage('habits'); }} className="w-full text-slate-400 font-bold text-[9px] py-1 hover:text-black transition-colors text-center">Discard Changes</button>
+                                    <button 
+                                        onClick={() => { setEditingId(null); setForm(defaultForm); setCurrentPage('habits'); }} 
+                                        className="w-full text-slate-400 font-bold text-[11px] py-1 hover:text-black transition-colors"
+                                    >
+                                        Discard Changes
+                                    </button>
                                 )}
                             </div>
                         )}
@@ -789,8 +825,8 @@
                                         <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">{viewDate.getFullYear()}</p>
                                     </div>
                                     <div className="flex gap-3">
-                                        <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1))} className="w-12 h-12 bg-white rounded-2xl shadow-sm border border-black/5 text-black hover:bg-slate-50 transition-all duration-300"><i className="fa-solid fa-chevron-left"></i></button>
-                                        <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1))} className="w-12 h-12 bg-white rounded-2xl shadow-sm border border-black/5 text-black hover:bg-slate-50 transition-all duration-300"><i className="fa-solid fa-chevron-right"></i></button>
+                                        <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1))} className="w-12 h-12 bg-white rounded-2xl shadow-sm border border-black/5 text-black hover:bg-slate-50 transition-all"><i className="fa-solid fa-chevron-left"></i></button>
+                                        <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1))} className="w-12 h-12 bg-white rounded-2xl shadow-sm border border-black/5 text-black hover:bg-slate-50 transition-all"><i className="fa-solid fa-chevron-right"></i></button>
                                     </div>
                                 </div>
                                 <div className="bg-white p-8 rounded-[48px] border border-black/5 shadow-2xl mb-24">
@@ -815,7 +851,7 @@
                                 <div className="fixed-bottom-btn">
                                     <button 
                                         onClick={() => { setViewDate(new Date()); setCurrentPage('home'); }} 
-                                        className="mx-auto block px-10 py-4 rounded-full bg-black text-white font-bold text-[10px] uppercase tracking-[0.2em] shadow-2xl active:scale-95 transition-all duration-300 border border-white/10"
+                                        className="mx-auto block px-10 py-4 rounded-full bg-black text-white font-bold text-[10px] uppercase tracking-[0.2em] shadow-2xl active:scale-95 transition-all border border-white/10"
                                     >
                                         <i className="fa-solid fa-arrow-rotate-left mr-2 opacity-60"></i>
                                         Return to Today
@@ -824,7 +860,7 @@
                             </div>
                         )}
 
-                        {/* --- AI COACH PAGE CONTENT --- */}
+                      {/* --- AI COACH PAGE CONTENT --- */}
                         {currentPage === 'coach' && (
                             <div className="animate-fade flex flex-col gap-6 pb-40">
                                 <div className="mb-2">
@@ -835,34 +871,64 @@
                                 <div className="card-standard bg-black text-white relative overflow-hidden">
                                     <div className="absolute top-0 right-0 p-4 opacity-10"><i className="fa-solid fa-brain text-6xl"></i></div>
                                     <div className="relative z-10">
-                                        <span className="bg-amber-400 text-black text-[8px] font-black px-2 py-1 rounded-full uppercase tracking-tighter">Neural Engine Active</span>
+                                        <span className="bg-amber-400 text-black text-[8px] font-black px-2 py-1 rounded-full uppercase">Neural Engine Active</span>
                                         <p className="mt-4 font-bold text-lg leading-tight">
                                             {stats.winRateNum === 0 
                                                 ? "The hardest part is starting. Pick just one ritual and win the first 5 minutes of your day."
-                                                : stats.winRateNum === 100 
-                                                ? "Absolute Mastery! 100% completion. You have perfect alignment today. Carry this energy into tomorrow."
-                                                : `Discipline is holding steady at ${stats.winRate}%. You've crossed the tipping point. Finish the remaining rituals to claim the day.`
+                                                : stats.winRateNum > 0 && stats.winRateNum <= 25
+                                                ? `You've broken the ice with ${stats.winRate}%. Don't aim for perfection yet, just aim for one more checkmark.`
+                                                : stats.winRateNum > 25 && stats.winRateNum <= 50
+                                                ? `You are at ${stats.winRate}%. You're halfway to a solid day. Focus on the ritual that gives you the most energy next.`
+                                                : stats.winRateNum > 50 && stats.winRateNum <= 75
+                                                ? `Strong momentum at ${stats.winRate}%! You've crossed the tipping point. Finish the remaining rituals to claim the day.`
+                                                : stats.winRateNum > 75 && stats.winRateNum < 100
+                                                ? `Excellent discipline at ${stats.winRate}%! You are almost at total victory. Don't let the last few rituals slide.`
+                                                : "Absolute Mastery! 100% completion. You have perfect alignment today. Carry this energy into tomorrow."
                                             }
                                         </p>
                                     </div>
                                 </div>
 
                                 <div className="space-y-4">
-                                    <p className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] ml-2">Strategic Adjustments</p>
-                                    <div className="card-standard flex items-center gap-4 border border-black/5 transition-all duration-300">
-                                        <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-xl">📉</div>
-                                        <div className="flex-1">
-                                            <h4 className="font-black text-xs uppercase tracking-tighter">Lower the Friction</h4>
-                                            <p className="text-[10px] text-slate-500 font-semibold leading-relaxed">Make rituals smaller if they feel hard. A 1-minute habit is better than a 0-minute habit.</p>
-                                        </div>
-                                    </div>
-                                    <div className="card-standard flex items-center gap-4 border border-black/5 transition-all duration-300">
-                                        <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-xl">🔥</div>
-                                        <div className="flex-1">
-                                            <h4 className="font-black text-xs uppercase tracking-tighter">Momentum Chain</h4>
-                                            <p className="text-[10px] text-slate-500 font-semibold leading-relaxed">You have high energy at specific times. Batch your hardest rituals together during those windows.</p>
-                                        </div>
-                                    </div>
+                                    <p className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] ml-2">
+                                        {stats.winRateNum === 100 ? 'Pro-Level Strategy' : 'Strategic Adjustments'}
+                                    </p>
+                                    
+                                    {stats.winRateNum <= 50 && (
+                                        <Fragment>
+                                            <div className="card-standard flex items-center gap-4 border border-black/5 transition-all">
+                                                <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-xl">📉</div>
+                                                <div className="flex-1">
+                                                    <h4 className="font-black text-xs uppercase">Lower the Friction</h4>
+                                                    <p className="text-[10px] text-slate-500 font-semibold">Make rituals smaller if they feel hard. A 1-minute habit is better than a 0-minute habit.</p>
+                                                </div>
+                                            </div>
+                                        </Fragment>
+                                    )}
+
+                                    {stats.winRateNum > 50 && stats.winRateNum < 100 && (
+                                        <Fragment>
+                                            <div className="card-standard flex items-center gap-4 border border-black/5 transition-all">
+                                                <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-xl">🔥</div>
+                                                <div className="flex-1">
+                                                    <h4 className="font-black text-xs uppercase">Finish Strong</h4>
+                                                    <p className="text-[10px] text-slate-500 font-semibold">You have the "Winning Streak" feeling. Use this dopamine to clear your remaining tasks now.</p>
+                                                </div>
+                                            </div>
+                                        </Fragment>
+                                    )}
+
+                                    {stats.winRateNum === 100 && (
+                                        <Fragment>
+                                            <div className="card-standard flex items-center gap-4 border border-black/5 bg-emerald-50/30 transition-all">
+                                                <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-xl">🏆</div>
+                                                <div className="flex-1">
+                                                    <h4 className="font-black text-xs uppercase">Standard of Excellence</h4>
+                                                    <p className="text-[10px] text-slate-500 font-semibold">You've set a high bar today. Your only job tomorrow is to repeat this exact success.</p>
+                                                </div>
+                                            </div>
+                                        </Fragment>
+                                    )}
                                 </div>
                             </div>
                         )}
