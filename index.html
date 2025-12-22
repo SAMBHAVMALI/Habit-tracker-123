@@ -552,7 +552,7 @@
                                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Consistency Matrix</p>
                                         <span className="bg-slate-50 px-2 py-1 rounded-full text-[8px] font-black text-slate-400 uppercase tracking-tighter">{growthRange} Days</span>
                                     </div>
-                                    <div className="heatmap-grid">
+                                    <div className="heatmap-grid" style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', justifyContent: 'start' }}>
                                         {stats.heatmap.map((cell, idx) => {
                                             let intensity = '#F8FAFC';
                                             if (cell.pct > 0) intensity = '#FFF4CC';
