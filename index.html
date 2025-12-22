@@ -160,13 +160,13 @@
             padding: 5px;
         }
         .heatmap-cell { 
-            aspect-ratio: 1 / 1;
-            min-width: 20px
-            min-height: 20px  
-            border-radius: 5px; 
-            background-color: #f1f5f9;
+            width: 8px !important;    /* Fixed small width */
+            height: 8px !important;   /* Fixed small height */
+            aspect-ratio: 1 / 1; 
+            border-radius: 2px; 
             transition: all 0.2s ease;
-            border: 1px solid rgba(0,0,0,0.05);
+            background-color: #E2E8F0;
+            flex-shrink: 0;
         }
         .heatmap-cell:hover { transform: scale(1.1); z-index: 10; }
         
