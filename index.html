@@ -861,7 +861,7 @@
                             </div>
                         )}
 
-                      {/* --- AI COACH PAGE CONTENT --- */}
+                      {/* --- AI COACH PAGE CONTENT (UPDATED TIERED LOGIC) --- */}
                         {currentPage === 'coach' && (
                             <div className="animate-fade flex flex-col gap-6 pb-40">
                                 <div className="mb-2">
@@ -869,59 +869,63 @@
                                     <p className="text-slate-400 text-xs font-bold mt-2 uppercase tracking-widest">Personal Performance Insights</p>
                                 </div>
 
-                                {/* Dynamic Insight Card */}
                                 <div className="card-standard bg-black text-white relative overflow-hidden">
-                                    <div className="absolute top-0 right-0 p-4 opacity-10">
-                                        <i className="fa-solid fa-brain text-6xl"></i>
-                                    </div>
+                                    <div className="absolute top-0 right-0 p-4 opacity-10"><i className="fa-solid fa-brain text-6xl"></i></div>
                                     <div className="relative z-10">
-                                        <span className="bg-amber-400 text-black text-[8px] font-black px-2 py-1 rounded-full uppercase tracking-tighter">Neural Engine Active</span>
+                                        <span className="bg-amber-400 text-black text-[8px] font-black px-2 py-1 rounded-full uppercase">Neural Engine Active</span>
                                         <p className="mt-4 font-bold text-lg leading-tight">
-                                            {stats.winRateNum >= 70 
-                                                ? `Excellent! Your current score is ${stats.winRate}%. Try to push for 100% today. You are making significant progress!` 
-                                                : `More focus is needed. Your current score is ${stats.winRate}%. Start with the simple suggestions listed below.`
+                                            {stats.winRateNum === 0 
+                                                ? "The hardest part is starting. Pick just one ritual and win the first 5 minutes of your day."
+                                                : stats.winRateNum > 0 && stats.winRateNum <= 25
+                                                ? `You've broken the ice with ${stats.winRate}%. Don't aim for perfection yet, just aim for one more checkmark.`
+                                                : stats.winRateNum > 25 && stats.winRateNum <= 50
+                                                ? `You are at ${stats.winRate}%. You're halfway to a solid day. Focus on the ritual that gives you the most energy next.`
+                                                : stats.winRateNum > 50 && stats.winRateNum <= 75
+                                                ? `Strong momentum at ${stats.winRate}%! You've crossed the tipping point. Finish the remaining rituals to claim the day.`
+                                                : stats.winRateNum > 75 && stats.winRateNum < 100
+                                                ? `Excellent discipline at ${stats.winRate}%! You are almost at total victory. Don't let the last few rituals slide.`
+                                                : "Absolute Mastery! 100% completion. You have perfect alignment today. Carry this energy into tomorrow."
                                             }
                                         </p>
                                     </div>
                                 </div>
 
-                                {/* Coach Advice - Habit Stacking Recommendations */}
                                 <div className="space-y-4">
                                     <p className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] ml-2">
-                                        {stats.winRateNum >= 70 ? 'Recommended for Mastery' : 'Habit Stacking Ideas (For You)'}
+                                        {stats.winRateNum === 100 ? 'Pro-Level Strategy' : 'Strategic Adjustments'}
                                     </p>
                                     
-                                    {stats.winRateNum < 70 ? (
+                                    {stats.winRateNum <= 50 && (
                                         <Fragment>
-                                            <div className="card-standard flex items-center gap-4 border border-black/5 hover:border-amber-200 transition-all">
-                                                <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-xl">🔗</div>
+                                            <div className="card-standard flex items-center gap-4 border border-black/5 transition-all">
+                                                <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-xl">📉</div>
                                                 <div className="flex-1">
-                                                    <h4 className="font-black text-xs uppercase tracking-tight">Morning Link</h4>
-                                                    <p className="text-[10px] text-slate-500 font-semibold">"After I finish my morning coffee (Old), I will meditate for 5 minutes (New)."</p>
-                                                </div>
-                                            </div>
-                                            <div className="card-standard flex items-center gap-4 border border-black/5 hover:border-amber-200 transition-all">
-                                                <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-xl">🔗</div>
-                                                <div className="flex-1">
-                                                    <h4 className="font-black text-xs uppercase tracking-tight">Post-Work Link</h4>
-                                                    <p className="text-[10px] text-slate-500 font-semibold">"Immediately after closing my laptop (Old), I will drink a glass of water (New)."</p>
+                                                    <h4 className="font-black text-xs uppercase">Lower the Friction</h4>
+                                                    <p className="text-[10px] text-slate-500 font-semibold">Make rituals smaller if they feel hard. A 1-minute habit is better than a 0-minute habit.</p>
                                                 </div>
                                             </div>
                                         </Fragment>
-                                    ) : (
+                                    )}
+
+                                    {stats.winRateNum > 50 && stats.winRateNum < 100 && (
                                         <Fragment>
-                                            <div className="card-standard flex items-center gap-4 border border-black/5 hover:border-amber-200 transition-all">
-                                                <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-xl">🚀</div>
+                                            <div className="card-standard flex items-center gap-4 border border-black/5 transition-all">
+                                                <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-xl">🔥</div>
                                                 <div className="flex-1">
-                                                    <h4 className="font-black text-xs uppercase tracking-tight">Raise the Bar</h4>
-                                                    <p className="text-[10px] text-slate-500 font-semibold">Your consistency is remarkable. Test your discipline today by adding one extra high-value ritual.</p>
+                                                    <h4 className="font-black text-xs uppercase">Finish Strong</h4>
+                                                    <p className="text-[10px] text-slate-500 font-semibold">You have the "Winning Streak" feeling. Use this dopamine to clear your remaining tasks now.</p>
                                                 </div>
                                             </div>
-                                            <div className="card-standard flex items-center gap-4 border border-black/5 hover:border-amber-200 transition-all">
-                                                <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-xl">🧘</div>
+                                        </Fragment>
+                                    )}
+
+                                    {stats.winRateNum === 100 && (
+                                        <Fragment>
+                                            <div className="card-standard flex items-center gap-4 border border-black/5 bg-emerald-50/30 transition-all">
+                                                <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-xl">🏆</div>
                                                 <div className="flex-1">
-                                                    <h4 className="font-black text-xs uppercase tracking-tight">Flow State</h4>
-                                                    <p className="text-[10px] text-slate-500 font-semibold">You are in a momentum phase. Maintain this for 21 days to reach full autopilot mode.</p>
+                                                    <h4 className="font-black text-xs uppercase">Standard of Excellence</h4>
+                                                    <p className="text-[10px] text-slate-500 font-semibold">You've set a high bar today. Your only job tomorrow is to repeat this exact success.</p>
                                                 </div>
                                             </div>
                                         </Fragment>
