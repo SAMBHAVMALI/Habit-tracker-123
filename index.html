@@ -154,15 +154,16 @@
         /* heatmap matrix engine - ULTRA COMPACT */
         .heatmap-grid { 
             display: grid; 
-            grid-template-columns: repeat(14, 1fr); 
+            grid-template-columns: repeat(20, 1fr); 
             gap: 2px; 
+            padding: 10px 20px;
         }
         .heatmap-cell { 
-            aspect-ratio: 1; 
+            width: 12px
+            height: 12px
+            margin: 0 auto;    
             border-radius: 2px; 
             transition: transform 0.3s ease; 
-            border: 1px solid rgba(0,0,0,0.01); 
-            max width: 18px;
         }
         .heatmap-cell:hover { transform: scale(1.1); z-index: 10; }
         
@@ -548,7 +549,7 @@
                                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Consistency Matrix</p>
                                         <span className="bg-slate-50 px-2 py-1 rounded-full text-[8px] font-black text-slate-400 uppercase tracking-tighter">{growthRange} Days</span>
                                     </div>
-                                    <div className={`heatmap-grid ${growthRange > 100 ? 'grid-cols-10' : 'grid-cols-7'}`}>
+                                    <div className="heatmap-grid">
                                         {stats.heatmap.map((cell, idx) => {
                                             let intensity = '#F8FAFC';
                                             if (cell.pct > 0) intensity = '#FFF4CC';
