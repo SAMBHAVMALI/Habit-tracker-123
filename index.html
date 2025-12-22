@@ -887,67 +887,87 @@
                         )}
 
                         {/* --- AI COACH PAGE CONTENT --- */}
-                        {currentPage === 'coach' && (
-                            <div className="animate-fade flex flex-col gap-6 pb-40">
-                                <div className="mb-2">
-                                    <h2 className="text-2xl font-black italic text-black leading-none">AI Ritual Coach</h2>
-                                    <p className="text-slate-400 text-xs font-bold mt-2 uppercase tracking-widest">Personal Performance Insights</p>
-                                </div>
+                        {currentPage === 'coach' && (() => {
+                            // Adaptive Logic inside the render block
+                            const winRate = parseFloat(stats.winRate);
+                            let coachData = {
+                                message: `"Aapka current score ${stats.winRate}% hai. Aaj ke rituals par focus banaye rakhein!"`,
+                                suggestions: [
+                                    {title: "Focus Block", desc: "Next 25 mins ke liye phone side mein rakhein aur rituals par focus karein.", icon: "🚀"},
+                                    {title: "Identity Shift", desc: "Main aisa insan hoon jo ye karta hai' sochein.", icon: "🧘"}
+                                ]
+                            };
 
-                                {/* Dynamic Insight Card */}
-                                <div className="card-standard bg-black text-white relative overflow-hidden">
-                                    <div className="absolute top-0 right-0 p-4 opacity-10">
-                                        <i className="fa-solid fa-brain text-6xl"></i>
-                                    </div>
-                                    <div className="relative z-10">
-                                        <span className="bg-amber-400 text-black text-[8px] font-black px-2 py-1 rounded-full uppercase tracking-tighter">Neural Engine Active</span>
-                                        <p className="mt-4 font-bold text-lg leading-tight">
-                                            {coachDisplayMessage || `"Aapka current score ${stats.winRate}% hai. Aaj ke rituals par focus banaye rakhein!"`}
-                                        </p>
-                                    </div>
-                                </div>
+                            if (winRate === 100) {
+                                coachData = {
+                                    message: "Peak Performance! Aaj aapne 100% achieve kiya hai. Level up karne ka sahi waqt hai!",
+                                    suggestions: [
+                                        {title: "Level Up", desc: "Apne sabse mushkil ritual ki intensity 10% badhayein.", icon: "📈"},
+                                        {title: "Reward Yourself", desc: "Aaj ki jeet ko celebrate karein, aapne ise kamaya hai!", icon: "🎁"}
+                                    ]
+                                };
+                            } else if (winRate < 50 && winRate > 0) {
+                                coachData = {
+                                    message: "Struggle ho raha hai? Load kam karein, par rukiye mat.",
+                                    suggestions: [
+                                        {title: "Reduce Frequency", desc: "Mushkil rituals ko 'Daily' se hata kar alternate days par set karein.", icon: "📉"},
+                                        {title: "5-Min Rule", desc: "Sirf 5 minute ke liye ritual shuru karein, resistence khatam ho jayegi.", icon: "⏱️"}
+                                    ]
+                                };
+                            } else if (winRate >= 75) {
+                                coachData = {
+                                    message: "Great Momentum! Aap mastery ke bahut kareeb hain.",
+                                    suggestions: [
+                                        {title: "Habit Stacking", desc: "Ek naye ritual ko apne purane pakke habit se jodein.", icon: "🔗"},
+                                        {title: "Consistency", desc: "Bas isi raftar ko barkarar rakhein.", icon: "⚡"}
+                                    ]
+                                };
+                            }
 
-                                {/* Coach Advice */}
-                                <div className="space-y-4">
-                                    <p className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] ml-2">Recommended for You</p>
-                                    
-                                    <div className="card-standard flex items-center gap-4 border border-black/5 hover:border-amber-200 transition-all">
-                                        <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-xl">🚀</div>
-                                        <div className="flex-1">
-                                            <h4 className="font-black text-xs uppercase tracking-tight">Focus Block</h4>
-                                            <p className="text-[10px] text-slate-500 font-semibold">Next 25 mins ke liye phone side mein rakhein aur rituals par focus karein.</p>
+                            return (
+                                <div className="animate-fade flex flex-col gap-6 pb-40">
+                                    <div className="mb-2">
+                                        <h2 className="text-2xl font-black italic text-black leading-none">AI Ritual Coach</h2>
+                                        <p className="text-slate-400 text-xs font-bold mt-2 uppercase tracking-widest">Adaptive Analysis</p>
+                                    </div>
+
+                                    <div className="card-standard bg-black text-white relative overflow-hidden">
+                                        <div className="absolute top-0 right-0 p-4 opacity-10"><i className="fa-solid fa-brain text-6xl"></i></div>
+                                        <div className="relative z-10">
+                                            <span className="bg-amber-400 text-black text-[8px] font-black px-2 py-1 rounded-full uppercase tracking-tighter">Neural Engine Active</span>
+                                            <p className="mt-4 font-bold text-lg leading-tight italic">{coachData.message}</p>
                                         </div>
                                     </div>
 
-                                    <div className="card-standard flex items-center gap-4 border border-black/5 hover:border-amber-200 transition-all">
-                                        <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-xl">🧘</div>
-                                        <div className="flex-1">
-                                            <h4 className="font-black text-xs uppercase tracking-tight">Identity Shift</h4>
-                                            <p className="text-[10px] text-slate-500 font-semibold">"Main ye kar raha hoon" ki jagah "Main aisa insan hoon jo ye karta hai" sochein.</p>
-                                        </div>
+                                    <div className="space-y-4">
+                                        <p className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] ml-2">Recommended for You</p>
+                                        {coachData.suggestions.map((s, idx) => (
+                                            <div key={idx} className="card-standard flex items-center gap-4 border border-black/5 hover:border-amber-200 transition-all">
+                                                <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-xl shadow-inner">{s.icon}</div>
+                                                <div className="flex-1">
+                                                    <h4 className="font-black text-xs uppercase tracking-tight">{s.title}</h4>
+                                                    <p className="text-[10px] text-slate-500 font-semibold">{s.desc}</p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <div className="mt-4 relative">
+                                        <input 
+                                            type="text" 
+                                            value={coachInput}
+                                            onChange={(e) => setCoachInput(e.target.value)}
+                                            onKeyDown={(e) => e.key === 'Enter' && e.target.blur()}
+                                            placeholder="Ask coach something..." 
+                                            className="w-full p-6 pr-16 rounded-[32px] bg-white shadow-sm border border-black/5 outline-none font-bold text-sm text-black" 
+                                        />
+                                        <button onClick={handleCoachSubmit} className="absolute right-3 top-3 w-12 h-12 rounded-2xl bg-black text-amber-400 flex items-center justify-center shadow-xl active:scale-90 transition-all">
+                                            <i className="fa-solid fa-paper-plane"></i>
+                                        </button>
                                     </div>
                                 </div>
-
-                                {/* Chat Interface */}
-                                <div className="mt-4 relative">
-                                    <input 
-                                        type="text" 
-                                        value={coachInput}
-                                        onChange={(e) => setCoachInput(e.target.value)}
-                                        onKeyPress={(e) => e.key === 'Enter' && handleCoachSubmit()}
-                                        placeholder="Ask coach something..." 
-                                        className="w-full p-6 pr-16 rounded-[32px] bg-white shadow-sm border border-black/5 outline-none font-bold text-sm text-black placeholder:opacity-30" 
-                                    />
-                                    <button 
-                                        onClick={handleCoachSubmit}
-                                        className="absolute right-3 top-3 w-12 h-12 rounded-2xl bg-black text-amber-400 flex items-center justify-center active:scale-90 transition-all"
-                                    >
-                                        <i className="fa-solid fa-paper-plane"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-                    </div>
+                            );
+                        })()}
 
                     {/* PERMANENT NAV ENGINE */}
                     <nav className="rout-nav">
