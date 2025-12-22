@@ -153,17 +153,18 @@
 
         /* heatmap matrix engine - ULTRA COMPACT */
         .heatmap-grid { 
-            display: grid; 
-            grid-template-columns: repeat(20, 1fr); 
-            gap: 2px; 
-            padding: 10px 20px;
+            display: flex; 
+            flex wrap: wrap; 
+            gap: 4px; 
+            justify-content: center;
+            padding: 10px;
+            width: 100%;
         }
         .heatmap-cell { 
-            width: 12px
-            height: 12px
-            margin: 0 auto;    
+            width: 8px
+            height: 8px  
             border-radius: 2px; 
-            transition: transform 0.3s ease; 
+            flex-shrink: 0;
         }
         .heatmap-cell:hover { transform: scale(1.1); z-index: 10; }
         
