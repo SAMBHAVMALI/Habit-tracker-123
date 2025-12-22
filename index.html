@@ -154,14 +154,15 @@
         /* heatmap matrix engine - ULTRA COMPACT */
         .heatmap-grid { 
             display: grid; 
-            grid-template-columns: repeat(10, 1fr); 
+            grid-template-columns: repeat(14, 1fr); 
             gap: 2px; 
         }
         .heatmap-cell { 
             aspect-ratio: 1; 
             border-radius: 2px; 
             transition: transform 0.3s ease; 
-            border: 0.5px solid rgba(0,0,0,0.01); 
+            border: 1px solid rgba(0,0,0,0.01); 
+            max width: 18px;
         }
         .heatmap-cell:hover { transform: scale(1.1); z-index: 10; }
         
