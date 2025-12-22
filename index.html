@@ -861,7 +861,7 @@
                             </div>
                         )}
 
-                        {/* --- AI COACH PAGE CONTENT --- */}
+                      {/* --- AI COACH PAGE CONTENT --- */}
                         {currentPage === 'coach' && (
                             <div className="animate-fade flex flex-col gap-6 pb-40">
                                 <div className="mb-2">
@@ -878,8 +878,8 @@
                                         <span className="bg-amber-400 text-black text-[8px] font-black px-2 py-1 rounded-full uppercase tracking-tighter">Neural Engine Active</span>
                                         <p className="mt-4 font-bold text-lg leading-tight">
                                             {stats.winRateNum >= 70 
-                                                ? `Shaandaar! Aapka score ${stats.winRate}% hai. Aaj ise 100% tak le jaane ki koshish karein. Aap sahi raaste par hain!` 
-                                                : `Thodi mehnat aur zaroori hai. Aapka current score ${stats.winRate}% hai. Neeche diye gaye suggestions se shuru karein.`
+                                                ? `Excellent! Your current score is ${stats.winRate}%. Try to push for 100% today. You are making significant progress!` 
+                                                : `More focus is needed. Your current score is ${stats.winRate}%. Start with the simple suggestions listed below.`
                                             }
                                         </p>
                                     </div>
@@ -897,14 +897,14 @@
                                                 <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-xl">🔗</div>
                                                 <div className="flex-1">
                                                     <h4 className="font-black text-xs uppercase tracking-tight">Morning Link</h4>
-                                                    <p className="text-[10px] text-slate-500 font-semibold">"Chai peene ke baad (Old), main 5 minute meditate (New) karunga."</p>
+                                                    <p className="text-[10px] text-slate-500 font-semibold">"After I finish my morning coffee (Old), I will meditate for 5 minutes (New)."</p>
                                                 </div>
                                             </div>
                                             <div className="card-standard flex items-center gap-4 border border-black/5 hover:border-amber-200 transition-all">
                                                 <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-xl">🔗</div>
                                                 <div className="flex-1">
                                                     <h4 className="font-black text-xs uppercase tracking-tight">Post-Work Link</h4>
-                                                    <p className="text-[10px] text-slate-500 font-semibold">"Laptop band karne ke turant baad (Old), main 1 glass paani (New) piyunga."</p>
+                                                    <p className="text-[10px] text-slate-500 font-semibold">"Immediately after closing my laptop (Old), I will drink a glass of water (New)."</p>
                                                 </div>
                                             </div>
                                         </Fragment>
@@ -914,14 +914,14 @@
                                                 <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-xl">🚀</div>
                                                 <div className="flex-1">
                                                     <h4 className="font-black text-xs uppercase tracking-tight">Raise the Bar</h4>
-                                                    <p className="text-[10px] text-slate-500 font-semibold">Aapki consistency kamaal ki hai. Aaj ek extra ritual complete karke apni limit test karein.</p>
+                                                    <p className="text-[10px] text-slate-500 font-semibold">Your consistency is remarkable. Test your discipline today by adding one extra high-value ritual.</p>
                                                 </div>
                                             </div>
                                             <div className="card-standard flex items-center gap-4 border border-black/5 hover:border-amber-200 transition-all">
                                                 <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-xl">🧘</div>
                                                 <div className="flex-1">
                                                     <h4 className="font-black text-xs uppercase tracking-tight">Flow State</h4>
-                                                    <p className="text-[10px] text-slate-500 font-semibold">Aap momentum mein hain. In rituals ko autopilot mode par lane ke liye 21 din tak break na karein.</p>
+                                                    <p className="text-[10px] text-slate-500 font-semibold">You are in a momentum phase. Maintain this for 21 days to reach full autopilot mode.</p>
                                                 </div>
                                             </div>
                                         </Fragment>
