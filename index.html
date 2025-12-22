@@ -153,21 +153,17 @@
 
         /* heatmap matrix engine - ULTRA COMPACT */
         .heatmap-grid { 
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(10px, 1fr));
-            gap: 4px; 
-            width: 100%;
-            padding: 5px;
+            display: grid; 
+            grid-template-columns: repeat(10, 1fr); 
+            gap: 2px; 
         }
         .heatmap-cell { 
-            width: 30px !important;    /* Fixed small width */
-            height: 30px !important;   /* Fixed small height */
+            aspect-ratio: 1; 
             border-radius: 2px; 
-            transition: all 0.3s ease;
-            background-color: #E2E8F0;
-            flex-shrink: 0;
+            transition: transform 0.3s ease; 
+            border: 0.5px solid rgba(0,0,0,0.01); 
         }
-        .heatmap-cell:hover { transform: scale(1.2); }
+        .heatmap-cell:hover { transform: scale(1.1); z-index: 10; }
         
         .filter-chip { 
             padding: 10px 18px; 
@@ -546,19 +542,12 @@
                                 </div>
 
                                 {/* MATRIX GRID - ULTRA REDUCED BLOCKS */}
-                                <div className="card-standard !p-4">
-                                    <div className="flex justify-between items-center mb-6 px-1">
+                                <div className="card-standard !p-3">
+                                    <div className="flex justify-between items-center mb-5 px-1">
                                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Consistency Matrix</p>
                                         <span className="bg-slate-50 px-2 py-1 rounded-full text-[8px] font-black text-slate-400 uppercase tracking-tighter">{growthRange} Days</span>
                                     </div>
-                                    <div className="heatmap-grid" style={{ 
-                                         display: 'flex', 
-                                         flexWrap: 'wrap', 
-                                         gap: '4px', 
-                                         padding: '8px', 
-                                         justifyContent: 'start',
-                                         backgroundColor: '#fdfdfd',
-                                         borderRadius: '16px'
+                                    <div className={`heatmap-grid ${growthRange > 100 ? 'grid-cols-10' : 'grid-cols-7'}`}>
                                         {stats.heatmap.map((cell, idx) => {
                                             let intensity = '#F8FAFC';
                                             if (cell.pct > 0) intensity = '#FFF4CC';
