@@ -223,21 +223,6 @@
             border-top: 1px solid rgba(0,0,0,0.05);
             box-shadow: 0 -5px 20px rgba(0,0,0,0.02);
         }
-
-        /* --- STREAK & MILESTONE STYLES --- */
-        .milestone-popup {
-            position: fixed; inset: 0; z-index: 99999;
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(12px);
-            display: flex; align-items: center; justify-content: center; padding: 30px;
-        }
-        .milestone-card {
-            background: white; border-radius: 48px; padding: 40px; text-align: center;
-            max-width: 400px; width: 100%; animation: fadeInScale 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .streak-badge {
-            font-size: 9px; font-weight: 900; text-transform: uppercase;
-            letter-spacing: 0.1em; padding: 2px 8px; border-radius: 100px;
-        }
     </style>
 </head>
 <body>
@@ -247,22 +232,6 @@
         const { useState, useEffect, useMemo, Fragment } = React;
 
         const App = () => {
-            // --- IST TIME HELPER ---
-            const getISTDateString = (date = new Date()) => {
-                return new Intl.DateTimeFormat('en-CA', {
-                    timeZone: 'Asia/Kolkata',
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit'
-                }).format(date);
-            };
-
-            const getPrevDate = (dateStr) => {
-                const d = new Date(dateStr);
-                d.setDate(d.getDate() - 1);
-                return getISTDateString(d);
-            };
-
             // --- 1. CORE STATE ARCHITECTURE ---
             const [overlayStage, setOverlayStage] = useState('logo');
             const [currentPage, setCurrentPage] = useState('home');
@@ -286,17 +255,6 @@
                     return savedLogs ? JSON.parse(savedLogs) : {};
                 } catch (e) { return {}; }
             });
-
-            // NEW: Streak Shield State
-            const [shields, setShields] = useState(() => {
-                try {
-                    const saved = localStorage.getItem('habitShields');
-                    return saved ? JSON.parse(saved) : {};
-                } catch (e) { return {}; }
-            });
-
-            // NEW: Milestone State
-            const [activeMilestone, setActiveMilestone] = useState(null);
             
             // Default Data Structure
             const defaultForm = {
@@ -327,30 +285,7 @@
             const colorPalette = ['#1A1A1A', '#D4AF37', '#6366F1', '#EC4899', '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6', '#FF6B6B', '#4ECDC4', '#A8E6CF', '#FFD3B6', '#FFAAA5', '#88D8B0'];
             const iconLibrary = ['✨', '🏃‍♂️', '💧', '📚', '🧘‍♂️', '🍎', '💪', '🧠', '☀️', '💼', '🎨', '🔥', '🧗', '🔋', '🧘', '🛌', '🚶', '🚴', '🥗', '🥛', '🎧', '⚡'];
 
-            // --- 2. STREAK CALCULATION LOGIC ---
-            const getStreak = (habitId) => {
-                let streak = 0;
-                let checkDate = (logs[todayStr] || []).includes(habitId) ? todayStr : getPrevDate(todayStr);
-
-                while (true) {
-                    if ((logs[checkDate] || []).includes(habitId)) {
-                        streak++;
-                        checkDate = getPrevDate(checkDate);
-                    } else {
-                        break;
-                    }
-                }
-                return streak;
-            };
-
-            const checkMilestones = (streak, name) => {
-                const targets = [1, 7, 30, 90, 180, 365];
-                if (targets.includes(streak)) {
-                    setActiveMilestone({ days: streak, name: name });
-                }
-            };
-
-            // --- 3. LIFECYCLE & SYNC ---
+            // --- 2. LIFECYCLE & SYNC ---
             useEffect(() => {
                 const timer1 = setTimeout(() => setOverlayStage('quote'), 1400);
                 const timer2 = setTimeout(() => setOverlayStage('none'), 3800);
@@ -360,12 +295,11 @@
             useEffect(() => {
                 localStorage.setItem('habits', JSON.stringify(habits));
                 localStorage.setItem('habitLogs', JSON.stringify(logs));
-                localStorage.setItem('habitShields', JSON.stringify(shields));
-            }, [habits, logs, shields]);
+            }, [habits, logs]);
 
-            const todayStr = getISTDateString();
+            const todayStr = new Date().toISOString().split('T')[0];
 
-            // --- 4. ANALYTICS CALCULATION ---
+            // --- 3. ANALYTICS CALCULATION ---
             const stats = useMemo(() => {
                 const totalRituals = habits.length;
                 const completedToday = (logs[todayStr] || []).length;
@@ -380,7 +314,7 @@
                 for (let i = growthRange; i >= 0; i--) {
                     const targetDate = new Date();
                     targetDate.setDate(targetDate.getDate() - i);
-                    const dsKey = getISTDateString(targetDate);
+                    const dsKey = targetDate.toISOString().split('T')[0];
                     
                     const dailyChecks = (logs[dsKey] || []).length;
                     rangeChecksCount += dailyChecks;
@@ -403,7 +337,7 @@
                 };
             }, [habits, logs, todayStr, growthRange]);
 
-            // --- 5. SYSTEM HANDLERS ---
+            // --- 4. SYSTEM HANDLERS ---
             const processHabitSave = () => {
                 if(!form.name.trim()) return;
                 
@@ -412,11 +346,8 @@
                     setHabits(updatedHabits);
                     setEditingId(null);
                 } else {
-                    const newId = Date.now();
-                    const newHabit = { ...form, id: newId };
+                    const newHabit = { ...form, id: Date.now() };
                     setHabits([...habits, newHabit]);
-                    // Initialize shield
-                    setShields(prev => ({ ...prev, [newId]: { available: true } }));
                 }
                 
                 setForm(defaultForm);
@@ -424,35 +355,15 @@
                 setCurrentPage('home');
             };
 
-            const toggleHabitAction = (id, name) => {
+            const toggleHabitAction = (id) => {
                 const currentDayList = logs[todayStr] || [];
                 let newList;
                 if (currentDayList.includes(id)) {
                     newList = currentDayList.filter(item => item !== id);
                 } else {
                     newList = [...currentDayList, id];
-                    // Logic: Calculate streak post-action and check milestones
-                    const currentStreak = getStreak(id);
-                    checkMilestones(currentStreak + 1, name);
-
-                    // Shield Recharge Logic: If completed 3 days in a row (today, yesterday, day before)
-                    const d1 = getPrevDate(todayStr);
-                    const d2 = getPrevDate(d1);
-                    if ((logs[d1] || []).includes(id) && (logs[d2] || []).includes(id)) {
-                        setShields(prev => ({ ...prev, [id]: { available: true } }));
-                    }
                 }
                 setLogs({ ...logs, [todayStr]: newList });
-            };
-
-            const useShield = (id) => {
-                if (!shields[id]?.available) return;
-                const yesterday = getPrevDate(todayStr);
-                const yList = logs[yesterday] || [];
-                if (!yList.includes(id)) {
-                    setLogs({ ...logs, [yesterday]: [...yList, id] });
-                    setShields(prev => ({ ...prev, [id]: { available: false } }));
-                }
             };
 
             const triggerEditMode = (habit) => {
@@ -510,18 +421,6 @@
             return (
                 <div className="app-shell max-w-lg mx-auto">
                     
-                    {/* NEW: MILESTONE POPUP COMPONENT */}
-                    {activeMilestone && (
-                        <div className="milestone-popup">
-                            <div className="milestone-card shadow-2xl">
-                                <div className="text-6xl mb-6">🏆</div>
-                                <h2 className="text-3xl font-black italic tracking-tighter text-black mb-2">{activeMilestone.days} DAY STREAK</h2>
-                                <p className="text-slate-500 text-sm font-bold mb-8">"{activeMilestone.name}" is now a permanent ritual. Your discipline is legendary.</p>
-                                <button onClick={() => setActiveMilestone(null)} className="btn-today-primary w-full !bg-black">Continue Journey</button>
-                            </div>
-                        </div>
-                    )}
-
                     {/* SYSTEM OVERLAY / SPLASH */}
                     <div className={`overlay-screen ${overlayStage === 'none' ? 'hide-overlay' : ''}`}>
                         <div className="flex flex-col items-center animate-fade text-center px-10">
@@ -565,32 +464,17 @@
                                         <p className="text-[11px] font-black uppercase text-slate-400 tracking-[0.2em] ml-2">Due Today</p>
                                         {habits.map(h => {
                                             const ritualDone = (logs[todayStr] || []).includes(h.id);
-                                            const streakCount = getStreak(h.id);
-                                            const hasShield = shields[h.id]?.available;
-
                                             return (
                                                 <div key={h.id} className="card-standard flex justify-between items-center transition-all duration-300 active:scale-[0.97] !py-4 !px-6" style={{ borderLeft: `6px solid ${h.color}` }}>
                                                     <div className="flex items-center gap-4">
                                                         <div className="text-2xl grayscale-[0.5]">{h.icon}</div>
                                                         <div className="flex flex-col">
                                                             <span className={`font-bold text-base leading-tight ${ritualDone ? 'text-slate-300 line-through' : 'text-black'}`}>{h.name}</span>
-                                                            <div className="flex items-center gap-2 mt-1">
-                                                                <span className="streak-badge bg-amber-50 text-amber-600 flex items-center gap-1">
-                                                                    <i className="fa-solid fa-fire"></i> {streakCount} Days
-                                                                </span>
-                                                                {hasShield && (
-                                                                    <button 
-                                                                        onClick={() => useShield(h.id)} 
-                                                                        className="streak-badge bg-blue-50 text-blue-500 border border-blue-100 flex items-center gap-1 active:scale-90"
-                                                                    >
-                                                                        <i className="fa-solid fa-shield-halved"></i> Shield
-                                                                    </button>
-                                                                )}
-                                                            </div>
+                                                            <span className="text-[8px] font-black uppercase text-slate-400 tracking-widest mt-0.5">{h.category}</span>
                                                         </div>
                                                     </div>
                                                     <button 
-                                                        onClick={() => toggleHabitAction(h.id, h.name)} 
+                                                        onClick={() => toggleHabitAction(h.id)} 
                                                         className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-500 ${ritualDone ? 'bg-black text-amber-400 shadow-lg rotate-[360deg]' : 'bg-slate-50 border border-slate-100 text-slate-200'}`}
                                                     >
                                                         <i className={`fa-solid ${ritualDone ? 'fa-check-double' : 'fa-check'} text-base`}></i>
@@ -657,7 +541,7 @@
                                     </div>
                                 </div>
 
-                                {/* MATRIX GRID */}
+                                {/* MATRIX GRID (Oldest -> Newest) */}
                                 <div className="card-standard">
                                     <div className="flex justify-between items-center mb-8">
                                         <p className="text-xs font-black uppercase tracking-widest text-slate-400">Consistency Matrix</p>
@@ -702,41 +586,38 @@
                                 
                                 {habits.length > 0 ? (
                                     <div className="space-y-4">
-                                        {habits.map(h => {
-                                            const streak = getStreak(h.id);
-                                            return (
-                                                <div key={h.id} className="card-standard relative overflow-hidden !py-5 !px-6" style={{ borderTop: `6px solid ${h.color}` }}>
-                                                    <div className="flex justify-between items-start mb-3">
-                                                        <div className="flex items-center gap-4">
-                                                            <div className="w-11 h-11 rounded-xl bg-slate-50 flex items-center justify-center text-2xl shadow-inner border border-black/5">{h.icon}</div>
-                                                            <div className="flex flex-col">
-                                                                <h3 className="font-black text-lg text-black leading-tight">{h.name}</h3>
-                                                                <p className="text-[9px] font-black uppercase text-amber-500 tracking-[0.15em] mt-0.5">{h.category} • {streak} Day Streak</p>
-                                                            </div>
-                                                        </div>
-                                                        <div className="flex gap-1.5">
-                                                            <button onClick={() => triggerEditMode(h)} className="w-9 h-9 rounded-xl bg-slate-50 text-slate-400 hover:text-black hover:bg-slate-100 transition-all flex items-center justify-center"><i className="fa-solid fa-pen-nib text-xs"></i></button>
-                                                            <button onClick={() => triggerDelete(h.id)} className="w-9 h-9 rounded-xl bg-rose-50 text-rose-400 hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center"><i className="fa-solid fa-trash-can text-xs"></i></button>
+                                        {habits.map(h => (
+                                            <div key={h.id} className="card-standard relative overflow-hidden !py-5 !px-6" style={{ borderTop: `6px solid ${h.color}` }}>
+                                                <div className="flex justify-between items-start mb-3">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="w-11 h-11 rounded-xl bg-slate-50 flex items-center justify-center text-2xl shadow-inner border border-black/5">{h.icon}</div>
+                                                        <div className="flex flex-col">
+                                                            <h3 className="font-black text-lg text-black leading-tight">{h.name}</h3>
+                                                            <p className="text-[9px] font-black uppercase text-amber-500 tracking-[0.15em] mt-0.5">{h.category}</p>
                                                         </div>
                                                     </div>
-                                                    <div className="bg-slate-50/50 p-3 rounded-2xl">
-                                                        <p className="text-[9px] font-black uppercase text-slate-400 tracking-widest flex items-center gap-2">
-                                                            <i className="fa-solid fa-repeat text-slate-300"></i>
-                                                            {
-                                                                h.frequency === 'Specific Days of Week' ? h.weekDays.join(', ') : 
-                                                                h.frequency === 'Specific Days of Month' ? `Scheduled: ${h.monthDays.join(', ')}` : 
-                                                                h.frequency === 'Customise Days' ? `${h.customCount} times per ${h.customPeriod}` : h.frequency
-                                                            }
-                                                        </p>
-                                                        {h.description && (
-                                                            <p className="text-slate-500 text-[11px] mt-2 font-semibold leading-relaxed italic border-l-2 border-slate-200 pl-3">
-                                                                "{h.description}"
-                                                            </p>
-                                                        )}
+                                                    <div className="flex gap-1.5">
+                                                        <button onClick={() => triggerEditMode(h)} className="w-9 h-9 rounded-xl bg-slate-50 text-slate-400 hover:text-black hover:bg-slate-100 transition-all flex items-center justify-center"><i className="fa-solid fa-pen-nib text-xs"></i></button>
+                                                        <button onClick={() => triggerDelete(h.id)} className="w-9 h-9 rounded-xl bg-rose-50 text-rose-400 hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center"><i className="fa-solid fa-trash-can text-xs"></i></button>
                                                     </div>
                                                 </div>
-                                            );
-                                        })}
+                                                <div className="bg-slate-50/50 p-3 rounded-2xl">
+                                                    <p className="text-[9px] font-black uppercase text-slate-400 tracking-widest flex items-center gap-2">
+                                                        <i className="fa-solid fa-repeat text-slate-300"></i>
+                                                        {
+                                                            h.frequency === 'Specific Days of Week' ? h.weekDays.join(', ') : 
+                                                            h.frequency === 'Specific Days of Month' ? `Scheduled: ${h.monthDays.join(', ')}` : 
+                                                            h.frequency === 'Customise Days' ? `${h.customCount} times per ${h.customPeriod}` : h.frequency
+                                                        }
+                                                    </p>
+                                                    {h.description && (
+                                                        <p className="text-slate-500 text-[11px] mt-2 font-semibold leading-relaxed italic border-l-2 border-slate-200 pl-3">
+                                                            "{h.description}"
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ))}
                                     </div>
                                 ) : (
                                     <div className="centered-container opacity-20 py-20">
@@ -773,7 +654,7 @@
                                 </div>
                                 
                                 <div className="flex gap-4">
-                                    {/* COLOR PICKER */}
+                                    {/* COLOR PICKER (REDUCED & SIDE-BY-SIDE) */}
                                     <div className="flex-1 flex flex-col gap-3 min-w-0">
                                         <p className="text-[9px] font-black uppercase tracking-[0.2em] ml-4 text-slate-400">Color</p>
                                         <div className="flex items-center overflow-hidden">
@@ -795,7 +676,7 @@
                                         </div>
                                     </div>
 
-                                    {/* ICON PICKER */}
+                                    {/* ICON PICKER (REDUCED & SIDE-BY-SIDE) */}
                                     <div className="flex-1 flex flex-col gap-3 min-w-0">
                                         <p className="text-[9px] font-black uppercase tracking-[0.2em] ml-4 text-slate-400">Symbol</p>
                                         <div className="flex items-center overflow-hidden">
@@ -953,7 +834,7 @@
                                         {[...Array(new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay())].map((_, i) => <div key={`empty-${i}`}></div>)}
                                         {[...Array(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate())].map((_, i) => {
                                             const dayNum = i + 1;
-                                            const dsString = getISTDateString(new Date(viewDate.getFullYear(), viewDate.getMonth(), dayNum));
+                                            const dsString = `${viewDate.getFullYear()}-${String(viewDate.getMonth() + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
                                             const dayCount = (logs[dsString] || []).length;
                                             const dayPct = habits.length > 0 ? (dayCount / habits.length) * 100 : 0;
                                             
@@ -978,7 +859,7 @@
                             </div>
                         )}
 
-                        {/* --- AI COACH PAGE CONTENT --- */}
+                      {/* --- AI COACH PAGE CONTENT --- */}
                         {currentPage === 'coach' && (
                             <div className="animate-fade flex flex-col gap-6 pb-40">
                                 <div className="mb-2">
@@ -993,12 +874,60 @@
                                         <p className="mt-4 font-bold text-lg leading-tight">
                                             {stats.winRateNum === 0 
                                                 ? "The hardest part is starting. Pick just one ritual and win the first 5 minutes of your day."
-                                                : stats.winRateNum > 75 
-                                                ? "Excellent discipline! You are almost at total victory."
-                                                : "Strong momentum! Use this energy to clear your remaining rituals."
+                                                : stats.winRateNum > 0 && stats.winRateNum <= 25
+                                                ? `You've broken the ice with ${stats.winRate}%. Don't aim for perfection yet, just aim for one more checkmark.`
+                                                : stats.winRateNum > 25 && stats.winRateNum <= 50
+                                                ? `You are at ${stats.winRate}%. You're halfway to a solid day. Focus on the ritual that gives you the most energy next.`
+                                                : stats.winRateNum > 50 && stats.winRateNum <= 75
+                                                ? `Strong momentum at ${stats.winRate}%! You've crossed the tipping point. Finish the remaining rituals to claim the day.`
+                                                : stats.winRateNum > 75 && stats.winRateNum < 100
+                                                ? `Excellent discipline at ${stats.winRate}%! You are almost at total victory. Don't let the last few rituals slide.`
+                                                : "Absolute Mastery! 100% completion. You have perfect alignment today. Carry this energy into tomorrow."
                                             }
                                         </p>
                                     </div>
+                                </div>
+
+                                <div className="space-y-4">
+                                    <p className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] ml-2">
+                                        {stats.winRateNum === 100 ? 'Pro-Level Strategy' : 'Strategic Adjustments'}
+                                    </p>
+                                    
+                                    {stats.winRateNum <= 50 && (
+                                        <Fragment>
+                                            <div className="card-standard flex items-center gap-4 border border-black/5 transition-all">
+                                                <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-xl">📉</div>
+                                                <div className="flex-1">
+                                                    <h4 className="font-black text-xs uppercase">Lower the Friction</h4>
+                                                    <p className="text-[10px] text-slate-500 font-semibold">Make rituals smaller if they feel hard. A 1-minute habit is better than a 0-minute habit.</p>
+                                                </div>
+                                            </div>
+                                        </Fragment>
+                                    )}
+
+                                    {stats.winRateNum > 50 && stats.winRateNum < 100 && (
+                                        <Fragment>
+                                            <div className="card-standard flex items-center gap-4 border border-black/5 transition-all">
+                                                <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-xl">🔥</div>
+                                                <div className="flex-1">
+                                                    <h4 className="font-black text-xs uppercase">Finish Strong</h4>
+                                                    <p className="text-[10px] text-slate-500 font-semibold">You have the "Winning Streak" feeling. Use this dopamine to clear your remaining tasks now.</p>
+                                                </div>
+                                            </div>
+                                        </Fragment>
+                                    )}
+
+                                    {stats.winRateNum === 100 && (
+                                        <Fragment>
+                                            <div className="card-standard flex items-center gap-4 border border-black/5 bg-emerald-50/30 transition-all">
+                                                <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-xl">🏆</div>
+                                                <div className="flex-1">
+                                                    <h4 className="font-black text-xs uppercase">Standard of Excellence</h4>
+                                                    <p className="text-[10px] text-slate-500 font-semibold">You've set a high bar today. Your only job tomorrow is to repeat this exact success.</p>
+                                                </div>
+                                            </div>
+                                        </Fragment>
+                                    )}
                                 </div>
                             </div>
                         )}
