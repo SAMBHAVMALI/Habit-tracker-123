@@ -224,19 +224,39 @@
             box-shadow: 0 -5px 20px rgba(0,0,0,0.02);
         }
 
-        /* --- STREAK & MILESTONE STYLES --- */
+        /* --- STREAK LOGIC STYLES --- */
         .milestone-popup {
-            position: fixed; inset: 0; z-index: 99999;
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(12px);
-            display: flex; align-items: center; justify-content: center; padding: 30px;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            backdrop-filter: blur(10px);
         }
         .milestone-card {
-            background: white; border-radius: 48px; padding: 40px; text-align: center;
-            max-width: 400px; width: 100%; animation: fadeInScale 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: #FFFFFF;
+            border-radius: 40px;
+            padding: 40px;
+            text-align: center;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+            animation: fadeInScale 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .streak-badge {
-            font-size: 9px; font-weight: 900; text-transform: uppercase;
-            letter-spacing: 0.1em; padding: 2px 8px; border-radius: 100px;
+        .streak-info-badge {
+            font-size: 9px;
+            font-weight: 900;
+            padding: 2px 10px;
+            border-radius: 100px;
+            background: rgba(212, 175, 55, 0.1);
+            color: #D4AF37;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 4px;
         }
     </style>
 </head>
@@ -257,7 +277,7 @@
                 }).format(date);
             };
 
-            const getPrevDate = (dateStr) => {
+            const getPrevDateStr = (dateStr) => {
                 const d = new Date(dateStr);
                 d.setDate(d.getDate() - 1);
                 return getISTDateString(d);
@@ -287,7 +307,7 @@
                 } catch (e) { return {}; }
             });
 
-            // NEW: Streak Shield State
+            // NEW: Streak Shield Persistence
             const [shields, setShields] = useState(() => {
                 try {
                     const saved = localStorage.getItem('habitShields');
@@ -295,8 +315,8 @@
                 } catch (e) { return {}; }
             });
 
-            // NEW: Milestone State
-            const [activeMilestone, setActiveMilestone] = useState(null);
+            // NEW: Milestone Tracker
+            const [milestone, setMilestone] = useState(null);
             
             // Default Data Structure
             const defaultForm = {
@@ -324,18 +344,38 @@
             ];
             const [activeQuote] = useState(() => quotes[Math.floor(Math.random() * quotes.length)]);
 
-            const colorPalette = ['#1A1A1A', '#D4AF37', '#6366F1', '#EC4899', '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6', '#FF6B6B', '#4ECDC4', '#A8E6CF', '#FFD3B6', '#FFAAA5', '#88D8B0'];
-            const iconLibrary = ['✨', '🏃‍♂️', '💧', '📚', '🧘‍♂️', '🍎', '💪', '🧠', '☀️', '💼', '🎨', '🔥', '🧗', '🔋', '🧘', '🛌', '🚶', '🚴', '🥗', '🥛', '🎧', '⚡'];
+            const colorPalette = [
+                '#1A1A1A', 
+                '#D4AF37', 
+                '#6366F1', 
+                '#EC4899', 
+                '#F59E0B', 
+                '#10B981', 
+                '#3B82F6', 
+                '#8B5CF6', 
+                '#FF6B6B', 
+                '#4ECDC4', 
+                '#A8E6CF', 
+                '#FFD3B6', 
+                '#FFAAA5', 
+                '#88D8B0'
+            ];
+            const iconLibrary = [
+                '✨', '🏃‍♂️', '💧', '📚', '🧘‍♂️', '🍎', 
+                '💪', '🧠', '☀️', '💼', '🎨', '🔥', 
+                '🧗', '🔋', '🧘', '🛌', '🚶', '🚴', 
+                '🥗', '🥛', '🎧', '⚡'
+            ];
 
-            // --- 2. STREAK CALCULATION LOGIC ---
+            // --- 2. STREAK ENGINE ---
             const getStreak = (habitId) => {
                 let streak = 0;
-                let checkDate = (logs[todayStr] || []).includes(habitId) ? todayStr : getPrevDate(todayStr);
+                let checkDate = (logs[todayStr] || []).includes(habitId) ? todayStr : getPrevDateStr(todayStr);
 
                 while (true) {
                     if ((logs[checkDate] || []).includes(habitId)) {
                         streak++;
-                        checkDate = getPrevDate(checkDate);
+                        checkDate = getPrevDateStr(checkDate);
                     } else {
                         break;
                     }
@@ -344,9 +384,9 @@
             };
 
             const checkMilestones = (streak, name) => {
-                const targets = [1, 7, 30, 90, 180, 365];
-                if (targets.includes(streak)) {
-                    setActiveMilestone({ days: streak, name: name });
+                const goals = [1, 7, 30, 90, 180, 365];
+                if (goals.includes(streak)) {
+                    setMilestone({ days: streak, name: name });
                 }
             };
 
@@ -415,7 +455,6 @@
                     const newId = Date.now();
                     const newHabit = { ...form, id: newId };
                     setHabits([...habits, newHabit]);
-                    // Initialize shield
                     setShields(prev => ({ ...prev, [newId]: { available: true } }));
                 }
                 
@@ -431,23 +470,23 @@
                     newList = currentDayList.filter(item => item !== id);
                 } else {
                     newList = [...currentDayList, id];
-                    // Logic: Calculate streak post-action and check milestones
-                    const currentStreak = getStreak(id);
-                    checkMilestones(currentStreak + 1, name);
+                    // Logic: Check streak for milestone popup
+                    const currentStreak = getStreak(id) + 1;
+                    checkMilestones(currentStreak, name);
 
-                    // Shield Recharge Logic: If completed 3 days in a row (today, yesterday, day before)
-                    const d1 = getPrevDate(todayStr);
-                    const d2 = getPrevDate(d1);
-                    if ((logs[d1] || []).includes(id) && (logs[d2] || []).includes(id)) {
+                    // Shield Recharge: Check 3 consecutive days
+                    const yesterday = getPrevDateStr(todayStr);
+                    const beforeYesterday = getPrevDateStr(yesterday);
+                    if ((logs[yesterday] || []).includes(id) && (logs[beforeYesterday] || []).includes(id)) {
                         setShields(prev => ({ ...prev, [id]: { available: true } }));
                     }
                 }
                 setLogs({ ...logs, [todayStr]: newList });
             };
 
-            const useShield = (id) => {
+            const activateShield = (id) => {
                 if (!shields[id]?.available) return;
-                const yesterday = getPrevDate(todayStr);
+                const yesterday = getPrevDateStr(todayStr);
                 const yList = logs[yesterday] || [];
                 if (!yList.includes(id)) {
                     setLogs({ ...logs, [yesterday]: [...yList, id] });
@@ -510,14 +549,16 @@
             return (
                 <div className="app-shell max-w-lg mx-auto">
                     
-                    {/* NEW: MILESTONE POPUP COMPONENT */}
-                    {activeMilestone && (
+                    {/* MILESTONE POPUP */}
+                    {milestone && (
                         <div className="milestone-popup">
                             <div className="milestone-card shadow-2xl">
                                 <div className="text-6xl mb-6">🏆</div>
-                                <h2 className="text-3xl font-black italic tracking-tighter text-black mb-2">{activeMilestone.days} DAY STREAK</h2>
-                                <p className="text-slate-500 text-sm font-bold mb-8">"{activeMilestone.name}" is now a permanent ritual. Your discipline is legendary.</p>
-                                <button onClick={() => setActiveMilestone(null)} className="btn-today-primary w-full !bg-black">Continue Journey</button>
+                                <h2 className="text-3xl font-black italic text-black mb-2">{milestone.days} DAY STREAK!</h2>
+                                <p className="text-slate-500 text-sm font-bold mb-8">
+                                    You have maintained "{milestone.name}" with absolute discipline. Your routine is your power.
+                                </p>
+                                <button onClick={() => setMilestone(null)} className="btn-today-primary w-full !bg-black">Keep Forging</button>
                             </div>
                         </div>
                     )}
@@ -565,8 +606,8 @@
                                         <p className="text-[11px] font-black uppercase text-slate-400 tracking-[0.2em] ml-2">Due Today</p>
                                         {habits.map(h => {
                                             const ritualDone = (logs[todayStr] || []).includes(h.id);
-                                            const streakCount = getStreak(h.id);
-                                            const hasShield = shields[h.id]?.available;
+                                            const streakValue = getStreak(h.id);
+                                            const shieldAvailable = shields[h.id]?.available;
 
                                             return (
                                                 <div key={h.id} className="card-standard flex justify-between items-center transition-all duration-300 active:scale-[0.97] !py-4 !px-6" style={{ borderLeft: `6px solid ${h.color}` }}>
@@ -574,14 +615,14 @@
                                                         <div className="text-2xl grayscale-[0.5]">{h.icon}</div>
                                                         <div className="flex flex-col">
                                                             <span className={`font-bold text-base leading-tight ${ritualDone ? 'text-slate-300 line-through' : 'text-black'}`}>{h.name}</span>
-                                                            <div className="flex items-center gap-2 mt-1">
-                                                                <span className="streak-badge bg-amber-50 text-amber-600 flex items-center gap-1">
-                                                                    <i className="fa-solid fa-fire"></i> {streakCount} Days
+                                                            <div className="flex items-center gap-2">
+                                                                <span className="streak-info-badge">
+                                                                    <i className="fa-solid fa-fire"></i> {streakValue} Days
                                                                 </span>
-                                                                {hasShield && (
+                                                                {shieldAvailable && (
                                                                     <button 
-                                                                        onClick={() => useShield(h.id)} 
-                                                                        className="streak-badge bg-blue-50 text-blue-500 border border-blue-100 flex items-center gap-1 active:scale-90"
+                                                                        onClick={() => activateShield(h.id)} 
+                                                                        className="streak-info-badge !bg-blue-50 !text-blue-500 border border-blue-100 uppercase"
                                                                     >
                                                                         <i className="fa-solid fa-shield-halved"></i> Shield
                                                                     </button>
@@ -657,7 +698,7 @@
                                     </div>
                                 </div>
 
-                                {/* MATRIX GRID */}
+                                {/* HEATMAP MATRIX */}
                                 <div className="card-standard">
                                     <div className="flex justify-between items-center mb-8">
                                         <p className="text-xs font-black uppercase tracking-widest text-slate-400">Consistency Matrix</p>
@@ -703,7 +744,7 @@
                                 {habits.length > 0 ? (
                                     <div className="space-y-4">
                                         {habits.map(h => {
-                                            const streak = getStreak(h.id);
+                                            const ritualStreak = getStreak(h.id);
                                             return (
                                                 <div key={h.id} className="card-standard relative overflow-hidden !py-5 !px-6" style={{ borderTop: `6px solid ${h.color}` }}>
                                                     <div className="flex justify-between items-start mb-3">
@@ -711,7 +752,7 @@
                                                             <div className="w-11 h-11 rounded-xl bg-slate-50 flex items-center justify-center text-2xl shadow-inner border border-black/5">{h.icon}</div>
                                                             <div className="flex flex-col">
                                                                 <h3 className="font-black text-lg text-black leading-tight">{h.name}</h3>
-                                                                <p className="text-[9px] font-black uppercase text-amber-500 tracking-[0.15em] mt-0.5">{h.category} • {streak} Day Streak</p>
+                                                                <p className="text-[9px] font-black uppercase text-amber-500 tracking-[0.15em] mt-0.5">{h.category} • {ritualStreak} Day Streak</p>
                                                             </div>
                                                         </div>
                                                         <div className="flex gap-1.5">
@@ -833,7 +874,12 @@
                                             onChange={e => setForm({...form, category: e.target.value})}
                                         >
                                             <option value="Category" disabled>Category</option>
-                                            <option>Body</option><option>Mind</option><option>Work</option><option>Growth</option><option>Finance</option><option>Social</option>
+                                            <option>Body</option>
+                                            <option>Mind</option>
+                                            <option>Work</option>
+                                            <option>Growth</option>
+                                            <option>Finance</option>
+                                            <option>Social</option>
                                         </select>
                                     </div>
                                     <div className="space-y-1.5">
@@ -943,8 +989,12 @@
                                         <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">{viewDate.getFullYear()}</p>
                                     </div>
                                     <div className="flex gap-3">
-                                        <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1))} className="w-12 h-12 bg-white rounded-2xl shadow-sm border border-black/5 text-black hover:bg-slate-50 transition-all"><i className="fa-solid fa-chevron-left"></i></button>
-                                        <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1))} className="w-12 h-12 bg-white rounded-2xl shadow-sm border border-black/5 text-black hover:bg-slate-50 transition-all"><i className="fa-solid fa-chevron-right"></i></button>
+                                        <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1))} className="w-12 h-12 bg-white rounded-2xl shadow-sm border border-black/5 text-black hover:bg-slate-50 transition-all">
+                                            <i className="fa-solid fa-chevron-left"></i>
+                                        </button>
+                                        <button onClick={() => setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1))} className="w-12 h-12 bg-white rounded-2xl shadow-sm border border-black/5 text-black hover:bg-slate-50 transition-all">
+                                            <i className="fa-solid fa-chevron-right"></i>
+                                        </button>
                                     </div>
                                 </div>
                                 <div className="bg-white p-8 rounded-[48px] border border-black/5 shadow-2xl mb-24">
@@ -978,7 +1028,7 @@
                             </div>
                         )}
 
-                        {/* --- AI COACH PAGE CONTENT --- */}
+                        {/* --- COACH PAGE --- */}
                         {currentPage === 'coach' && (
                             <div className="animate-fade flex flex-col gap-6 pb-40">
                                 <div className="mb-2">
@@ -993,18 +1043,60 @@
                                         <p className="mt-4 font-bold text-lg leading-tight">
                                             {stats.winRateNum === 0 
                                                 ? "The hardest part is starting. Pick just one ritual and win the first 5 minutes of your day."
-                                                : stats.winRateNum > 75 
-                                                ? "Excellent discipline! You are almost at total victory."
-                                                : "Strong momentum! Use this energy to clear your remaining rituals."
+                                                : stats.winRateNum > 0 && stats.winRateNum <= 25
+                                                ? `You've broken the ice with ${stats.winRate}%. Don't aim for perfection yet, just aim for one more checkmark.`
+                                                : stats.winRateNum > 25 && stats.winRateNum <= 50
+                                                ? `You're at ${stats.winRate}%. You're halfway to a solid day. Focus on the ritual that gives you energy.`
+                                                : stats.winRateNum > 50 && stats.winRateNum <= 75
+                                                ? `Strong momentum at ${stats.winRate}%! You've crossed the tipping point. Finish the remaining rituals.`
+                                                : stats.winRateNum > 75 && stats.winRateNum < 100
+                                                ? `Excellent discipline at ${stats.winRate}%! You're almost at total victory. Don't let the last few slide.`
+                                                : "Absolute Mastery! 100% completion. You have perfect alignment today. Repeat this tomorrow."
                                             }
                                         </p>
                                     </div>
+                                </div>
+
+                                <div className="space-y-4">
+                                    <p className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] ml-2">
+                                        {stats.winRateNum === 100 ? 'Pro-Level Strategy' : 'Strategic Adjustments'}
+                                    </p>
+                                    
+                                    {stats.winRateNum <= 50 && (
+                                        <div className="card-standard flex items-center gap-4 border border-black/5 transition-all">
+                                            <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-xl">📉</div>
+                                            <div className="flex-1">
+                                                <h4 className="font-black text-xs uppercase">Lower the Friction</h4>
+                                                <p className="text-[10px] text-slate-500 font-semibold">Make rituals smaller if they feel hard. A 1-min habit is better than a 0-min habit.</p>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {stats.winRateNum > 50 && stats.winRateNum < 100 && (
+                                        <div className="card-standard flex items-center gap-4 border border-black/5 transition-all">
+                                            <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-xl">🔥</div>
+                                            <div className="flex-1">
+                                                <h4 className="font-black text-xs uppercase">Finish Strong</h4>
+                                                <p className="text-[10px] text-slate-500 font-semibold">You have the "Winning Streak" feeling. Use this dopamine to clear your remaining tasks.</p>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {stats.winRateNum === 100 && (
+                                        <div className="card-standard flex items-center gap-4 border border-black/5 bg-emerald-50/30 transition-all">
+                                            <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-xl">🏆</div>
+                                            <div className="flex-1">
+                                                <h4 className="font-black text-xs uppercase">Standard of Excellence</h4>
+                                                <p className="text-[10px] text-slate-500 font-semibold">You've set a high bar today. Your only job tomorrow is to repeat this success.</p>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         )}
                     </div>
 
-                    {/* PERMANENT NAV ENGINE */}
+                    {/* NAV */}
                     <nav className="rout-nav">
                         <button onClick={() => { setEditingId(null); setForm(defaultForm); setCurrentPage('home'); }} className={`flex flex-col items-center w-14 transition-all duration-300 ${currentPage === 'home' ? 'text-black scale-110' : 'text-slate-300'}`}>
                             <i className="fa-solid fa-house-chimney text-xl"></i>
