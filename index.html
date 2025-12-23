@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Routiq Master Pro Build</title>
     
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#6366F1">
+    <link rel="apple-touch-icon" href="./logo192.png">
+    
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -1035,6 +1039,16 @@
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
+    </script>
+    
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('SW Registered!'))
+            .catch(err => console.log('SW Registration failed', err));
+        });
+      }
     </script>
 </body>
 </html>
